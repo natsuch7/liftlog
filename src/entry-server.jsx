@@ -15,6 +15,7 @@ import SquatAccessoryExercises from './pages/blog/articles/SquatAccessoryExercis
 import OvertrainingRecovery from './pages/blog/articles/OvertrainingRecovery.jsx'
 import Big3TrainingFrequency from './pages/blog/articles/Big3TrainingFrequency.jsx'
 import PeriodizationTrainingGuide from './pages/blog/articles/PeriodizationTrainingGuide.jsx'
+import WeeklyVolumeOptimization from './pages/blog/articles/WeeklyVolumeOptimization.jsx'
 
 export function render(url) {
   const helmetContext = {}
@@ -34,6 +35,7 @@ export function render(url) {
           <Route path="/blog/overtraining-recovery-method" element={<OvertrainingRecovery />} />
           <Route path="/blog/bench-squat-deadlift-training-frequency" element={<Big3TrainingFrequency />} />
           <Route path="/blog/periodization-training-guide" element={<PeriodizationTrainingGuide />} />
+          <Route path="/blog/weekly-volume-sweet-spot" element={<WeeklyVolumeOptimization />} />
         </Routes>
       </StaticRouter>
     </HelmetProvider>

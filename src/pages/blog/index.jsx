@@ -107,6 +107,14 @@ const ARTICLES = [
     date: '2025-03-28',
     readTime: '約4分',
   },
+  {
+    slug: 'weekly-volume-sweet-spot',
+    title: '筋トレはやればやるほど良い？週セット数に「スイートスポット」が存在する理由',
+    description: '研究データをもとに、週あたり何セットが最も効果的かを解説。部位ごとに週18セット前後がスイートスポットである理由と、ボリューム管理の正しい考え方を紹介します。',
+    category: 'トレーニング',
+    date: '2026-03-31',
+    readTime: '約5分',
+  },
 ]
 
 function CategoryBar({ active, onSelect }) {
