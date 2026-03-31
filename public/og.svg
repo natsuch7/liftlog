@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#000"/>
+
+  <!-- Red accent line top -->
+  <rect x="0" y="0" width="1200" height="5" fill="#e63946"/>
+
+  <!-- Barbell icon (left side, large) -->
+  <!-- bar -->
+  <rect x="80" y="305" width="220" height="20" rx="10" fill="#e63946" opacity="0.9"/>
+  <!-- left plate outer -->
+  <rect x="60" y="260" width="38" height="110" rx="10" fill="#e63946"/>
+  <!-- left collar -->
+  <rect x="98" y="283" width="14" height="64" rx="5" fill="#cc2233"/>
+  <!-- right collar -->
+  <rect x="268" y="283" width="14" height="64" rx="5" fill="#cc2233"/>
+  <!-- right plate outer -->
+  <rect x="282" y="260" width="38" height="110" rx="10" fill="#e63946"/>
+
+  <!-- LIFT text -->
+  <text x="380" y="340" font-family="Arial Black, Arial, sans-serif" font-weight="900"
+        font-size="168" fill="#ffffff" letter-spacing="-4">LIFT</text>
+
+  <!-- LOG text (red) -->
+  <text x="380" y="490" font-family="Arial Black, Arial, sans-serif" font-weight="900"
+        font-size="112" fill="#e63946" letter-spacing="8">LOG</text>
+
+  <!-- Divider line -->
+  <rect x="380" y="356" width="740" height="3" fill="#1a1a1a"/>
+
+  <!-- Description -->
+  <text x="384" y="420" font-family="system-ui, -apple-system, sans-serif" font-weight="600"
+        font-size="28" fill="#666">1RMを入力するだけで9週間のトレーニングプログラムが自動生成</text>
+
+  <!-- Tags -->
+  <rect x="384" y="508" width="130" height="36" rx="18" fill="#1a1a1a" stroke="#e63946" stroke-width="1.5"/>
+  <text x="449" y="531" font-family="system-ui, sans-serif" font-weight="700" font-size="15"
+        fill="#e63946" text-anchor="middle">BIG5</text>
+
+  <rect x="526" y="508" width="170" height="36" rx="18" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+  <text x="611" y="531" font-family="system-ui, sans-serif" font-weight="700" font-size="15"
+        fill="#888" text-anchor="middle">9週間プログラム</text>
+
+  <rect x="708" y="508" width="180" height="36" rx="18" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+  <text x="798" y="531" font-family="system-ui, sans-serif" font-weight="700" font-size="15"
+        fill="#888" text-anchor="middle">1RM自動計算</text>
+
+  <!-- URL -->
+  <text x="1180" y="610" font-family="system-ui, sans-serif" font-size="18" fill="#333"
+        text-anchor="end">liftlog-theta.vercel.app</text>
+
+  <!-- Red accent line bottom -->
+  <rect x="0" y="625" width="1200" height="5" fill="#e63946"/>
+</svg>

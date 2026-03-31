@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFTLOG - BIG3特化トレーニングプランナー</title>
+  <meta name="description" content="1RMを入力するだけで9週間のブロックピリオダイゼーションプログラムを自動生成。BIG3に特化した無料トレーニングプランナー。部位別週間ボリューム管理・BIG3相対強度計算機能搭載。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #0a0a0a;
+      border-bottom: 1px solid #1a1a1a;
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 28px;
+      letter-spacing: 4px;
+      color: #f0f0f0;
+    }
+    .header-cta {
+      background: #e63946;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+    }
+    .header-cta:hover { background: #c8303c; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 72px 0 60px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #e63946;
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(48px, 12vw, 80px);
+      letter-spacing: 6px;
+      line-height: 1;
+      color: #f0f0f0;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: #555;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-bottom: 36px;
+    }
+    .hero-cta {
+      display: inline-block;
+      background: #e63946;
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 16px 40px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .hero-cta:hover { background: #c8303c; }
+    .hero-note {
+      font-size: 11px;
+      color: #333;
+      margin-top: 12px;
+    }
+
+    /* ── CATCH ── */
+    .catch {
+      background: #111;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+      padding: 56px 0;
+      text-align: center;
+    }
+    .catch-text {
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 800;
+      color: #f0f0f0;
+      line-height: 1.55;
+    }
+    .catch-text em {
+      font-style: normal;
+      color: #e63946;
+    }
+    .catch-desc {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section {
+      padding: 64px 0;
+    }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #e63946;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .section-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(28px, 7vw, 40px);
+      letter-spacing: 3px;
+      color: #f0f0f0;
+      margin-bottom: 40px;
+    }
+
+    /* ── FEATURES ── */
+    .features { background: #0a0a0a; }
+    .feature-item {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin-bottom: 16px;
+    }
+    .feature-item:last-child { margin-bottom: 0; }
+    .feature-number {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #333;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .feature-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #f0f0f0;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feature-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .feature-body {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.8;
+    }
+    .feature-body strong {
+      color: #bbb;
+      font-weight: 700;
+    }
+    .tag {
+      display: inline-block;
+      background: rgba(230,57,70,0.12);
+      color: #e63946;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    /* ── HOW TO USE ── */
+    .howto { background: #0d0d0d; }
+    .steps {
+      display: grid;
+      gap: 16px;
+    }
+    .step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 22px 20px;
+    }
+    .step-num {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 36px;
+      color: #e63946;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 42px;
+    }
+    .step-content {}
+    .step-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f0f0f0;
+      margin-bottom: 6px;
+    }
+    .step-body {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* ── FAQ ── */
+    .faq { background: #0a0a0a; }
+    .faq-list { display: grid; gap: 12px; }
+    .faq-item {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 22px 20px;
+    }
+    .faq-q {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f0f0f0;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .faq-q::before {
+      content: "Q.";
+      color: #e63946;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .faq-a {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.75;
+      padding-left: 26px;
+    }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      background: #111;
+      border-top: 1px solid #1a1a1a;
+      text-align: center;
+      padding: 64px 0;
+    }
+    .final-cta-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(32px, 8vw, 52px);
+      letter-spacing: 4px;
+      color: #f0f0f0;
+      margin-bottom: 10px;
+    }
+    .final-cta-sub {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 32px;
+    }
+    .final-cta-btn {
+      display: inline-block;
+      background: #e63946;
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 16px 48px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .final-cta-btn:hover { background: #c8303c; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0a0a0a;
+      border-top: 1px solid #151515;
+      padding: 32px 0;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: #444;
+      font-weight: 600;
+    }
+    .footer-links a:hover { color: #888; }
+    .footer-copy {
+      font-size: 11px;
+      color: #2a2a2a;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .hero { padding: 52px 0 44px; }
+      .section { padding: 48px 0; }
+      .feature-item { padding: 22px 18px; }
+      .step { padding: 18px 16px; }
+      .faq-item { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">LIFTLOG</div>
+    <a href="/" class="header-cta">今すぐ無料で使う</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">BIG3特化トレーニングプランナー</div>
+    <div class="hero-title">LIFTLOG</div>
+    <div class="hero-sub">考えるな、持ち上げろ。</div>
+    <a href="/" class="hero-cta">今すぐ無料で使う →</a>
+    <div class="hero-note">登録不要・完全無料・データはブラウザに保存</div>
+  </div>
+</section>
+
+<!-- CATCH -->
+<section class="catch">
+  <div class="container">
+    <div class="catch-text">
+      1RMを入力するだけで<br>
+      <em>9週間のトレーニングプログラム</em>が<br>
+      自動生成されます
+    </div>
+    <p class="catch-desc">
+      重量・回数・インターバルまですべて自動設定。ジムでアプリを開くだけで、今日やるべきことがすべて決まっています。
+      科学的根拠に基づいたブロックピリオダイゼーションで、BIG3を着実に伸ばしましょう。
+    </p>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <div class="section-title">LIFTLOGの特徴</div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 01</div>
+      <div class="feature-title">
+        <span class="feature-icon">📅</span>ブロックピリオダイゼーション
+      </div>
+      <div class="tag">SCIENCE-BASED</div>
+      <p class="feature-body">
+        BIG3を効果的に強化するためのプログラム設計方法として、<strong>ブロックピリオダイゼーション</strong>を採用しています。
+        9週間を<strong>蓄積期（W1〜3）・強化期（W4〜6）・MAX測定週（W7）・ピーク期（W8）・デロード（W9）</strong>の5フェーズに分け、科学的根拠に基づいた強度・ボリューム設定で確実に筋力・筋肥大を実現します。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        単純に毎週重量を上げ続けるリニアプログレッションと異なり、フェーズを区切ることで<strong>中級者以上でも停滞しにくい</strong>設計になっています。
+        蓄積期は高ボリューム・中強度でベースを作り、強化期で強度を高めてパワーを引き出し、ピーク期で最大重量に挑戦する——この流れが9週間で一巡します。
+        9週間が終わるたびに新サイクルを自動提案し、継続的に記録更新を目指せます。
+      </p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 02</div>
+      <div class="feature-title">
+        <span class="feature-icon">📊</span>部位別週間ボリューム管理
+      </div>
+      <div class="tag">VOLUME TRACKING</div>
+      <p class="feature-body">
+        各部位あたり<strong>週18セットが筋肥大に最も効果的</strong>という研究に基づき、
+        <strong>大胸筋・広背筋・大腿四頭筋・ハムストリングス・三角筋・上腕三頭筋・上腕二頭筋・臀筋</strong>の8部位について、週間セット数をリアルタイムで追跡できます。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        コンパウンド種目（多関節運動）は複数の部位に同時にカウントされるため、BIG3を中心に補助種目を加えるだけでほぼすべての部位で目標セット数に到達できます。
+        ボリュームが不足している部位は色で視覚的に確認できるため、<strong>どの補助種目を追加すべきか</strong>が一目でわかります。
+      </p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 03</div>
+      <div class="feature-title">
+        <span class="feature-icon">⚡</span>BIG3相対強度
+      </div>
+      <div class="tag">STRENGTH LEVEL</div>
+      <p class="feature-body">
+        ベンチプレス・スクワット・デッドリフトの<strong>1RMを体重で割った相対強度</strong>を自動計算します。
+        体重が異なる人とも公平に比較でき、自分の本当の強さのレベルが一目でわかります。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        <strong>初心者（1.0倍未満）</strong>から<strong>中級者（1.5〜2.0倍）</strong>、<strong>上級者（2.0〜2.5倍）</strong>、<strong>エリート（2.5倍以上）</strong>まで段階的に評価されます。
+        体重を記録するだけで3種目それぞれのレベルが自動更新されるため、今の自分がどの水準にいるかを常に把握できます。
+        数値が上がるたびに達成感が得られ、トレーニングのモチベーション維持にも役立ちます。
+      </p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 04</div>
+      <div class="feature-title">
+        <span class="feature-icon">🔥</span>ウォームアップ自動計算
+      </div>
+      <div class="tag">AUTO WARMUP</div>
+      <p class="feature-body">
+        本番重量の<strong>40%・60%・80%の3段階</strong>でウォームアップセットを自動生成します。
+        重量・回数が最初から入力されているため、ジムでアプリを開くだけで今日やることがすべて決まっています。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        ウォームアップを省くと怪我のリスクが高まりますが、どの重量から始めればよいか迷う人も多いです。
+        LIFTLOGでは<strong>その日の本番重量から逆算して最適なウォームアップ重量を自動提示</strong>するため、アプリを開いた瞬間から迷わずスタートできます。
+        特に高強度のMAX測定週やピーク期では、適切なウォームアップが最高パフォーマンスを引き出すために欠かせません。
+      </p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 05</div>
+      <div class="feature-title">
+        <span class="feature-icon">⏱️</span>RPE連動インターバルタイマー
+      </div>
+      <div class="tag">SMART TIMER</div>
+      <p class="feature-body">
+        <strong>RPE（主観的運動強度）</strong>を入力するとインターバルタイマーが自動起動します。
+        スクワット・デッドリフトは<strong>5分</strong>、その他の種目は<strong>3分30秒</strong>に自動設定されます。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        休憩時間を自分で計るのを忘れたり、なんとなく長く休みすぎたりすることはよくあります。
+        LIFTLOGのタイマーは<strong>セット終了後に即座に起動</strong>し、次のセットを始めるべきタイミングを通知します。
+        適切なインターバル管理はトレーニングの質を高め、限られた時間でより効果的なセッションを実現します。
+      </p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-number">FEATURE 06</div>
+      <div class="feature-title">
+        <span class="feature-icon">💪</span>1RM自動更新
+      </div>
+      <div class="tag">PR TRACKING</div>
+      <p class="feature-body">
+        セッション保存時に推定1RMが向上していれば<strong>自動で更新・通知</strong>されます。
+        <strong>Epley式（weight × (1 + reps/30)）</strong>を使用した精度の高い推定1RM計算を採用しています。
+      </p>
+      <p class="feature-body" style="margin-top:10px;">
+        毎回1RMを測定するのは体への負担が大きいですが、Epley式を使えばサブマキシマル（最大重量以下）の重量と回数から高精度で推定できます。
+        セッションを保存するたびに記録が更新されていく達成感は、<strong>継続的なトレーニングの最大のモチベーション</strong>になります。
+        進捗グラフでは1RM推移を時系列で確認でき、長期的な成長を可視化できます。
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section class="section howto">
+  <div class="container">
+    <div class="section-label">How to use</div>
+    <div class="section-title">使い方</div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">1RMを設定する</div>
+          <p class="step-body">
+            設定タブから5種目（ベンチプレス・スクワット・デッドリフト・ミリタリープレス・チンニング）の1RMを入力します。
+            実際に計測していない場合は、推定1RM計算機（重量・回数を入力するだけ）を使用してください。
+            初めての方は扱える重量の80〜85%×5回程度を入力すると概算が出ます。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">プランを確認する</div>
+          <p class="step-body">
+            プランタブを開くと今週のトレーニングが自動生成されています。
+            月曜・水曜・金曜・土曜の4日分が表示され、各日の種目・重量・回数・セット数がすべて決まっています。
+            補助種目はカスタマイズも可能です。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">記録する</div>
+          <p class="step-body">
+            セットごとに重量・回数・RPEを入力します。
+            RPEを入力するとインターバルタイマーが自動起動します。
+            ウォームアップセットは自動で表示されているので、上から順に実施するだけです。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">セッションを保存する</div>
+          <p class="step-body">
+            全セット完了後に「SAVE SESSION」ボタンを押します。
+            推定1RMが更新されていた場合は自動で通知されます。
+            記録したセッションはログタブで確認でき、進捗グラフで成長を可視化できます。
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq">
+  <div class="container">
+    <div class="section-label">FAQ</div>
+    <div class="section-title">よくある質問</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q">完全無料ですか？</div>
+        <p class="faq-a">
+          はい、すべての機能を完全無料でご利用いただけます。課金・会員登録は一切不要です。
+          広告表示もなく、機能制限もありません。BIG3に特化した本格的なトレーニングプランナーをそのまま使えます。
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">データはどこに保存されますか？</div>
+        <p class="faq-a">
+          お使いのブラウザのLocalStorageに保存されます。サーバーには送信されないため、プライバシーが完全に保護されます。
+          インターネット接続がない環境でも利用でき、他の人に記録を見られる心配もありません。
+          ブラウザのデータを削除する際はご注意ください。
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">初心者でも使えますか？</div>
+        <p class="faq-a">
+          はい。1RMを入力するだけですべて自動設定されます。筋トレを始めたばかりの方でも迷わず使えます。
+          推定1RM計算機も内蔵しているため、「1RMがわからない」という方でも扱える重量から逆算して設定できます。
+          使い方ガイドも用意していますのでご活用ください。
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">BIG3以外の種目はできますか？</div>
+        <p class="faq-a">
+          メイン種目はBIG3（ベンチプレス・スクワット・デッドリフト）に特化していますが、補助種目（アクセサリー種目）はバーベル・ダンベル種目を中心に豊富なラインナップから選択できます。
+          各トレーニング日に補助種目を追加・変更することも可能です。
+          ミリタリープレス・チンニングも主要種目として扱えます。
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">スマートフォンで使えますか？</div>
+        <p class="faq-a">
+          はい。スマートフォンに最適化されたデザインです。iPhoneのSafariでは「ホーム画面に追加」機能を使うことで、アプリのように起動できます。
+          ジムでスマートフォンを見ながらトレーニング記録を入力する使い方に最適化されており、片手でも操作しやすいレイアウトになっています。
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">9週間が終わったらどうなりますか？</div>
+        <p class="faq-a">
+          9週間のサイクルが終了すると、次のサイクル開始を提案するモーダルが表示されます。
+          そのサイクルの成果（1RMの向上など）を振り返ったあと、新しいサイクルを開始できます。
+          新しいサイクルでは更新された1RMをもとにプログラムが再生成されるため、継続的に記録を伸ばせます。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="container">
+    <div class="final-cta-title">START LIFTING</div>
+    <p class="final-cta-sub">登録不要・完全無料・今すぐ始められます</p>
+    <a href="/" class="final-cta-btn">今すぐ無料で使う →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="/privacy">プライバシーポリシー</a>
+      <a href="/contact">お問い合わせ</a>
+      <a href="/guide">使い方ガイド</a>
+    </div>
+    <div class="footer-copy">© 2026 LIFTLOG</div>
+  </div>
+</footer>
+
+</body>
+</html>
