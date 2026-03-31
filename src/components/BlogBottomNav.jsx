@@ -28,7 +28,7 @@ export default function BlogBottomNav() {
         return (
           <button
             key={id}
-            onClick={() => id === 'blog' ? navigate('/blog') : navigate('/')}
+            onClick={() => id === 'blog' ? navigate('/blog') : navigate(`/?screen=${id}`)}
             style={{
               flex: 1, padding: '10px 0 14px', background: 'transparent',
               border: 'none', cursor: 'pointer', display: 'flex',

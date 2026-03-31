@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { Dumbbell, Flame, Zap, Target, BarChart2, Settings, ClipboardList, Calendar, ChevronRight, ChevronLeft, Check, RotateCcw, X, TrendingUp, Award, Clock, BookOpen } from "lucide-react";
 import { getAllPosts, getPostBySlug } from "./lib/blog";
@@ -2203,6 +2203,7 @@ function GeneratingScreen({ onComplete }) {
 export default function App() {
   const { trackGenerateProgram, trackStartSession, trackCompleteSession, trackExitPoint } = useAnalytics();
   const navigate = useNavigate();
+  const location = useLocation();
   const [screen,setScreen]   = useState("setup");
 
   // 永続化する状態（LocalStorage）
@@ -2259,9 +2260,16 @@ export default function App() {
     setShowInstallBanner(false);
   }
 
-  // 設定済みなら直接プラン画面へ
+  // 設定済みなら直接プラン画面へ（URLクエリで画面指定がある場合はそちらを優先）
   useEffect(()=>{
-    if (rm.bench&&rm.dead&&rm.squat&&(!useMil||rm.mil>0)) setScreen("plan");
+    const params = new URLSearchParams(location.search);
+    const target = params.get("screen");
+    const valid = ["setup","plan","log","progress","blog"];
+    if (target && valid.includes(target)) {
+      setScreen(target);
+    } else if (rm.bench&&rm.dead&&rm.squat&&(!useMil||rm.mil>0)) {
+      setScreen("plan");
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
