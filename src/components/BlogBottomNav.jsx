@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import { Dumbbell, ClipboardList, BarChart2, BookOpen, Settings } from 'lucide-react'
+import { Dumbbell, Calendar, BarChart2, BookOpen, Settings } from 'lucide-react'
 
 const NAV = [
-  { id: 'today', label: 'TODAY', Icon: Dumbbell },
-  { id: 'log',   label: 'LOG',   Icon: ClipboardList },
-  { id: 'stats', label: 'STATS', Icon: BarChart2 },
-  { id: 'blog',  label: 'GUIDE', Icon: BookOpen },
-  { id: 'setup', label: 'SETUP', Icon: Settings },
+  { id: 'setup',    label: '設定',  Icon: Settings  },
+  { id: 'plan',     label: 'プラン', Icon: Dumbbell  },
+  { id: 'log',      label: 'ログ',  Icon: Calendar  },
+  { id: 'progress', label: '進捗',  Icon: BarChart2 },
+  { id: 'blog',     label: 'ブログ', Icon: BookOpen  },
 ]
 
 export default function BlogBottomNav() {
