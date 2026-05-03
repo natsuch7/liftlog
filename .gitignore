@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# TWA signing keys (NEVER commit these)
+*.keystore
+*.jks

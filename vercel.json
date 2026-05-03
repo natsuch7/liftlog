@@ -1,7 +1,18 @@
 {
+  "headers": [
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/landing", "destination": "/landing.html" },
     { "source": "/google87f543dd62f33c63.html", "destination": "/google87f543dd62f33c63.html" },
-    { "source": "/((?!blog).*)", "destination": "/index.html" }
+    { "source": "/((?!blog|\\.well-known).*)", "destination": "/index.html" }
   ]
 }

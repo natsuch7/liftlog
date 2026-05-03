@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.liftlog.app",
+    "sha256_cert_fingerprints": [
+      "D0:9F:5B:19:63:43:9E:62:0C:85:9B:4F:DB:6A:2B:F4:CB:D9:8D:78:6A:63:FD:36:95:DF:6E:7E:78:61:60:1B"
+    ]
+  }
+}]
