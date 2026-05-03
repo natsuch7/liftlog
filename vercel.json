@@ -13,6 +13,7 @@
   "rewrites": [
     { "source": "/landing", "destination": "/landing.html" },
     { "source": "/google87f543dd62f33c63.html", "destination": "/google87f543dd62f33c63.html" },
-    { "source": "/((?!blog|\\.well-known).*)", "destination": "/index.html" }
+    { "source": "/.well-known/assetlinks.json", "destination": "/.well-known/assetlinks.json" },
+    { "source": "/((?!blog).*)", "destination": "/index.html" }
   ]
 }
