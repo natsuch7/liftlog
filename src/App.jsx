@@ -6,24 +6,67 @@ import { getAllPosts, getPostBySlug } from "./lib/blog";
 import InstallBanner from "./components/InstallBanner";
 
 // ─── DESIGN SYSTEM ────────────────────────────────────────
-const C = {
-  bg:       "#0a0a0a",
-  surface:  "#111111",
-  card:     "#161616",
-  border:   "#222222",
-  borderHi: "#333333",
-  text:     "#f0f0f0",
-  textSub:  "#666666",
-  textMid:  "#999999",
-  red:      "#e63946",
-  redDim:   "#3d1012",
-  // Day accent colors — muted, refined
+const DARK = {
+  bg:          "#0a0a0a",
+  surface:     "#111111",
+  surface2:    "#0d0d0d",
+  card:        "#161616",
+  headerBg:    "#000000",
+  border:      "#222222",
+  borderHi:    "#333333",
+  borderSub:   "#1e1e1e",
+  borderFaint: "#1a1a1a",
+  borderCard:  "#161616",
+  borderDeep:  "#2a2a2a",
+  b:           "1px solid #222222",
+  bSub:        "1px solid #1e1e1e",
+  bFaint:      "1px solid #1a1a1a",
+  bCard:       "1px solid #161616",
+  text:        "#f0f0f0",
+  textSub:     "#666666",
+  textMid:     "#999999",
+  textDim:     "#444444",
+  textFaint:   "#333333",
+  red:         "#e63946",
+  redDim:      "#3d1012",
   ppA:  { accent:"#e07b39", dim:"#2a1608", border:"#3d2010" },
   ppB:  { accent:"#d4891f", dim:"#281a04", border:"#3d2808" },
   ppC:  { accent:"#8b5cf6", dim:"#1a0d38", border:"#2d1a5a" },
   legA: { accent:"#3b82f6", dim:"#0a1628", border:"#162240" },
   legB: { accent:"#22c55e", dim:"#071a10", border:"#102a1a" },
 };
+
+const LIGHT = {
+  bg:          "#f2f2f2",
+  surface:     "#ffffff",
+  surface2:    "#f5f5f5",
+  card:        "#f0f0f0",
+  headerBg:    "#ffffff",
+  border:      "#e0e0e0",
+  borderHi:    "#cccccc",
+  borderSub:   "#ebebeb",
+  borderFaint: "#eeeeee",
+  borderCard:  "#e5e5e5",
+  borderDeep:  "#d5d5d5",
+  b:           "1px solid #e0e0e0",
+  bSub:        "1px solid #ebebeb",
+  bFaint:      "1px solid #eeeeee",
+  bCard:       "1px solid #e5e5e5",
+  text:        "#111111",
+  textSub:     "#888888",
+  textMid:     "#555555",
+  textDim:     "#aaaaaa",
+  textFaint:   "#c0c0c0",
+  red:         "#e63946",
+  redDim:      "#fff0f1",
+  ppA:  { accent:"#e07b39", dim:"#fff4ee", border:"#ffd9b8" },
+  ppB:  { accent:"#d4891f", dim:"#fffbee", border:"#ffe0a0" },
+  ppC:  { accent:"#8b5cf6", dim:"#f5f0ff", border:"#d8b4fe" },
+  legA: { accent:"#3b82f6", dim:"#eff6ff", border:"#bfdbfe" },
+  legB: { accent:"#22c55e", dim:"#f0fdf4", border:"#bbf7d0" },
+};
+
+const C = DARK;
 
 const DAY_META = [
   { key:"ppA",  label:"ベンチプレス",          sub:"Bench + Row",         c:C.ppA  },
@@ -535,25 +578,25 @@ function BodyWeightSection({ weights, onSave }) {
   const diff = (avgThis && avgPrev) ? (parseFloat(avgThis)-parseFloat(avgPrev)).toFixed(1) : null;
 
   const iStyle = {
-    flex:1, minWidth:0, background:"#0d0d0d", border:"1px solid #1e1e1e", borderRadius:10,
+    flex:1, minWidth:0, background:C.surface2, border:C.bSub, borderRadius:10,
     color:"#f0f0f0", outline:"none", fontWeight:700, padding:"11px 14px",
     fontSize:20, textAlign:"center", boxSizing:"border-box",
   };
 
   return (
     <div style={{marginBottom:16}}>
-      <div style={{fontSize:9,color:"#2a2a2a",letterSpacing:2,fontWeight:700,marginBottom:10}}>BODY WEIGHT</div>
-      <div style={{background:"#161616",borderRadius:14,padding:"16px",border:"1px solid #1e1e1e"}}>
+      <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>BODY WEIGHT</div>
+      <div style={{background:C.card,borderRadius:14,padding:"16px",border:C.bSub}}>
 
         {/* 入力 */}
-        <div style={{fontSize:10,color:"#444",fontWeight:700,marginBottom:8}}>今日の体重</div>
+        <div style={{fontSize:10,color:C.textDim,fontWeight:700,marginBottom:8}}>今日の体重</div>
         <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,width:"100%",boxSizing:"border-box",overflowX:"hidden"}}>
           <input
             type="number" inputMode="decimal" placeholder="72.5" step="0.1"
             value={input} onChange={e=>setInput(e.target.value)}
             style={iStyle}
           />
-          <span style={{fontSize:13,color:"#444",fontWeight:700}}>kg</span>
+          <span style={{fontSize:13,color:C.textDim,fontWeight:700}}>kg</span>
           <button
             onClick={()=>{
               const v = parseFloat(input);
@@ -575,20 +618,20 @@ function BodyWeightSection({ weights, onSave }) {
         {/* 統計 */}
         {avgThis&&(
           <div style={{display:"flex",gap:8,marginTop:14,flexWrap:"wrap"}}>
-            <div style={{flex:1,background:"#111",borderRadius:10,padding:"10px 12px",border:"1px solid #222",minWidth:80}}>
-              <div style={{fontSize:9,color:"#444",letterSpacing:1,marginBottom:4}}>7日間平均</div>
+            <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>7日間平均</div>
               <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:COLOR,lineHeight:1}}>{avgThis}<span style={{fontSize:12}}>kg</span></div>
             </div>
             {diff!==null&&(
-              <div style={{flex:1,background:"#111",borderRadius:10,padding:"10px 12px",border:"1px solid #222",minWidth:80}}>
-                <div style={{fontSize:9,color:"#444",letterSpacing:1,marginBottom:4}}>先週比</div>
+              <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
+                <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>先週比</div>
                 <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:parseFloat(diff)>0?"#e63946":"#22c55e",lineHeight:1}}>
                   {parseFloat(diff)>0?"+":""}{diff}<span style={{fontSize:12}}>kg</span>
                 </div>
               </div>
             )}
-            <div style={{flex:1,background:"#111",borderRadius:10,padding:"10px 12px",border:"1px solid #222",minWidth:80}}>
-              <div style={{fontSize:9,color:"#444",letterSpacing:1,marginBottom:4}}>記録日数</div>
+            <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>記録日数</div>
               <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#f0f0f0",lineHeight:1}}>{weights.length}<span style={{fontSize:12}}>日</span></div>
             </div>
           </div>
@@ -600,24 +643,24 @@ function BodyWeightSection({ weights, onSave }) {
 
 // ─── BODY STATS GRADE HELPERS ────────────────────────────────
 function getBenchGrade(r) {
-  if(!r) return {label:"未設定",color:"#444"};
-  if(r<1.0) return {label:"初心者レベル",color:"#666"};
+  if(!r) return {label:"未設定",color:C.textDim};
+  if(r<1.0) return {label:"初心者レベル",color:C.textSub};
   if(r<1.5) return {label:"初中級者レベル",color:"#e07b39"};
   if(r<2.0) return {label:"中級者レベル",color:"#22c55e"};
   if(r<2.5) return {label:"上級者レベル",color:"#3b82f6"};
   return {label:"エリートレベル💪",color:"#e63946"};
 }
 function getSquatGrade(r) {
-  if(!r) return {label:"未設定",color:"#444"};
-  if(r<1.2) return {label:"初心者レベル",color:"#666"};
+  if(!r) return {label:"未設定",color:C.textDim};
+  if(r<1.2) return {label:"初心者レベル",color:C.textSub};
   if(r<1.7) return {label:"初中級者レベル",color:"#e07b39"};
   if(r<2.2) return {label:"中級者レベル",color:"#22c55e"};
   if(r<2.8) return {label:"上級者レベル",color:"#3b82f6"};
   return {label:"エリートレベル💪",color:"#e63946"};
 }
 function getDeadGrade(r) {
-  if(!r) return {label:"未設定",color:"#444"};
-  if(r<1.5) return {label:"初心者レベル",color:"#666"};
+  if(!r) return {label:"未設定",color:C.textDim};
+  if(r<1.5) return {label:"初心者レベル",color:C.textSub};
   if(r<2.0) return {label:"初中級者レベル",color:"#e07b39"};
   if(r<2.5) return {label:"中級者レベル",color:"#22c55e"};
   if(r<3.0) return {label:"上級者レベル",color:"#3b82f6"};
@@ -957,19 +1000,19 @@ function BodyStatsSection({ weights, rm, onToast }) {
   return (
     <div style={{marginBottom:16}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-        <div style={{fontSize:9,color:"#2a2a2a",letterSpacing:2,fontWeight:700}}>BODY STATS</div>
+        <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700}}>BODY STATS</div>
         <button onClick={handleShare}
-          style={{background:"#111",border:"1px solid #2a2a2a",borderRadius:8,padding:"5px 12px",
-                  fontSize:10,color:"#888",cursor:"pointer",fontWeight:700,letterSpacing:0.5}}>
+          style={{background:C.surface,border:"1px solid #2a2a2a",borderRadius:8,padding:"5px 12px",
+                  fontSize:10,color:C.textSub,cursor:"pointer",fontWeight:700,letterSpacing:0.5}}>
           {isWebShare ? "📸 Xにシェア" : "📸 画像を保存してシェア"}
         </button>
       </div>
-      <div style={{background:"#161616",borderRadius:14,padding:"14px",border:"1px solid #1e1e1e"}}>
+      <div style={{background:C.card,borderRadius:14,padding:"14px",border:C.bSub}}>
         {/* 最新体重 */}
-        <div style={{background:"#111",borderRadius:10,padding:"12px 14px",border:"1px solid #222",marginBottom:8}}>
+        <div style={{background:C.surface,borderRadius:10,padding:"12px 14px",border:C.b,marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{fontSize:9,color:"#444",letterSpacing:1}}>最新体重</div>
-            <div style={{fontSize:9,color:"#333"}}>{latest.date}</div>
+            <div style={{fontSize:9,color:C.textDim,letterSpacing:1}}>最新体重</div>
+            <div style={{fontSize:9,color:C.textFaint}}>{latest.date}</div>
           </div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#06b6d4",lineHeight:1,marginTop:4}}>
             {bw}<span style={{fontSize:13}}>kg</span>
@@ -978,18 +1021,18 @@ function BodyStatsSection({ weights, rm, onToast }) {
         {/* BIG3 相対強度 3列 */}
         <div style={{display:"flex",gap:6}}>
           {LIFTS.map(({label,ratio,grade,rmKg})=>(
-            <div key={label} style={{flex:1,background:"#111",borderRadius:10,padding:"10px 8px",border:"1px solid #222",minWidth:0}}>
-              <div style={{fontSize:8,color:"#555",letterSpacing:1,marginBottom:2}}>{label}</div>
+            <div key={label} style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 8px",border:C.b,minWidth:0}}>
+              <div style={{fontSize:8,color:C.textMid,letterSpacing:1,marginBottom:2}}>{label}</div>
               {ratio!==null?(
                 <>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:grade.color,lineHeight:1}}>
                     {ratio.toFixed(2)}<span style={{fontSize:9}}>倍</span>
                   </div>
-                  <div style={{fontSize:8,color:"#444",marginTop:2}}>{rmKg}kg</div>
+                  <div style={{fontSize:8,color:C.textDim,marginTop:2}}>{rmKg}kg</div>
                   <div style={{fontSize:8,fontWeight:800,color:grade.color,marginTop:3,lineHeight:1.3}}>{grade.label}</div>
                 </>
               ):(
-                <div style={{fontSize:10,color:"#333",marginTop:6}}>--</div>
+                <div style={{fontSize:10,color:C.textFaint,marginTop:6}}>--</div>
               )}
             </div>
           ))}
@@ -1016,18 +1059,18 @@ function VolumeBar({ muscleGroup, sets }) {
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:5}}>
         <div>
           <span style={{fontSize:11,fontWeight:800,color:"#f0f0f0"}}>{muscleGroup.label}</span>
-          <span style={{fontSize:9,color:"#444",marginLeft:4}}>{muscleGroup.en}</span>
+          <span style={{fontSize:9,color:C.textDim,marginLeft:4}}>{muscleGroup.en}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
           <span style={{fontSize:10,fontWeight:700,color,letterSpacing:0.3}}>{statusLabel}</span>
-          <span style={{fontSize:11,fontWeight:700,color}}>{sets}<span style={{fontSize:9,color:"#555",fontWeight:400}}>/20</span></span>
+          <span style={{fontSize:11,fontWeight:700,color}}>{sets}<span style={{fontSize:9,color:C.textMid,fontWeight:400}}>/20</span></span>
         </div>
       </div>
       {/* Progress bar with zone markers */}
-      <div style={{position:"relative",height:8,background:"#2a2a2a",borderRadius:4}}>
+      <div style={{position:"relative",height:8,background:C.borderDeep,borderRadius:4}}>
         {/* Zone markers: 10sets=50%, 15sets=75%, 18sets=90% */}
         {[50,75,90].map(p=>(
-          <div key={p} style={{position:"absolute",top:-2,left:`${p}%`,width:1,height:12,background:"#555",zIndex:1}}/>
+          <div key={p} style={{position:"absolute",top:-2,left:`${p}%`,width:1,height:12,background:C.textMid,zIndex:1}}/>
         ))}
         <div style={{
           position:"relative",zIndex:0,
@@ -1065,8 +1108,8 @@ function WeeklyVolumeSection({ sessions }) {
     <div style={{marginBottom:16}}>
       {/* Header */}
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-        <div style={{fontSize:9,color:"#555",letterSpacing:2,fontWeight:700}}>WEEKLY VOLUME</div>
-        <div style={{fontSize:9,color:"#333",fontWeight:600}}>{weekRange}</div>
+        <div style={{fontSize:9,color:C.textMid,letterSpacing:2,fontWeight:700}}>WEEKLY VOLUME</div>
+        <div style={{fontSize:9,color:C.textFaint,fontWeight:600}}>{weekRange}</div>
       </div>
 
       {/* Legend */}
@@ -1080,24 +1123,24 @@ function WeeklyVolumeSection({ sessions }) {
         ].map(({color,label})=>(
           <div key={label} style={{display:"flex",alignItems:"center",gap:4}}>
             <div style={{width:6,height:6,borderRadius:"50%",background:color,flexShrink:0}}/>
-            <span style={{fontSize:9,color:"#555",letterSpacing:0.3}}>{label}</span>
+            <span style={{fontSize:9,color:C.textMid,letterSpacing:0.3}}>{label}</span>
           </div>
         ))}
       </div>
 
-      <div style={{background:"#161616",borderRadius:14,padding:"14px 16px",border:"1px solid #1e1e1e"}}>
+      <div style={{background:C.card,borderRadius:14,padding:"14px 16px",border:C.bSub}}>
         {/* BIG3 primary */}
-        <div style={{fontSize:9,color:"#333",letterSpacing:1,fontWeight:700,marginBottom:10}}>BIG3 主要筋群</div>
+        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1,fontWeight:700,marginBottom:10}}>BIG3 主要筋群</div>
         {primary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0}/>)}
 
         {/* Secondary – collapsible */}
         <details>
           <summary style={{
-            fontSize:10,color:"#555",cursor:"pointer",userSelect:"none",
+            fontSize:10,color:C.textMid,cursor:"pointer",userSelect:"none",
             padding:"6px 0 0",listStyle:"none",display:"flex",alignItems:"center",gap:4,
           }}>
             <span>補助種目のボリューム</span>
-            <span style={{fontSize:8,color:"#333"}}>▼</span>
+            <span style={{fontSize:8,color:C.textFaint}}>▼</span>
           </summary>
           <div style={{marginTop:10}}>
             {secondary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0}/>)}
@@ -1114,9 +1157,9 @@ function WeeklyVolumeCompact({ sessions, onViewDetails }) {
   const groups = MUSCLE_GROUPS.filter(g=>primaryKeys.includes(g.key));
 
   return (
-    <div style={{background:"#111",borderRadius:12,padding:"12px 14px",border:"1px solid #1e1e1e",marginBottom:14}}>
+    <div style={{background:C.surface,borderRadius:12,padding:"12px 14px",border:C.bSub,marginBottom:14}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-        <div style={{fontSize:9,color:"#555",letterSpacing:2,fontWeight:700}}>WEEKLY VOLUME</div>
+        <div style={{fontSize:9,color:C.textMid,letterSpacing:2,fontWeight:700}}>WEEKLY VOLUME</div>
         <button onClick={onViewDetails}
           style={{background:"none",border:"none",fontSize:10,color:"#e63946",cursor:"pointer",fontWeight:700,padding:0}}>
           詳細 →
@@ -1132,10 +1175,10 @@ function WeeklyVolumeCompact({ sessions, onViewDetails }) {
               <span style={{fontSize:10,fontWeight:700,color:"#f0f0f0"}}>{label}</span>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <span style={{fontSize:9,fontWeight:700,color,letterSpacing:0.3}}>{statusLabel}</span>
-                <span style={{fontSize:10,fontWeight:700,color}}>{sets}<span style={{fontSize:8,color:"#555"}}>/20</span></span>
+                <span style={{fontSize:10,fontWeight:700,color}}>{sets}<span style={{fontSize:8,color:C.textMid}}>/20</span></span>
               </div>
             </div>
-            <div style={{height:5,background:"#2a2a2a",borderRadius:3}}>
+            <div style={{height:5,background:C.borderDeep,borderRadius:3}}>
               <div style={{height:"100%",borderRadius:3,width:`${pct}%`,background:color,transition:"width 0.4s ease"}}/>
             </div>
           </div>
@@ -1182,7 +1225,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
     }}>
       <div style={{
         width:"100%",maxWidth:400,
-        background:"#161616",borderRadius:20,
+        background:C.card,borderRadius:20,
         border:"2px solid #e63946",
         padding:"24px 20px",
         boxShadow:"0 0 60px rgba(230,57,70,0.25)",
@@ -1194,13 +1237,13 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:34,letterSpacing:3,color:"#f0f0f0",lineHeight:1}}>
             サイクル完了！
           </div>
-          <div style={{fontSize:12,color:"#555",marginTop:6,fontWeight:600}}>
+          <div style={{fontSize:12,color:C.textMid,marginTop:6,fontWeight:600}}>
             13週間お疲れ様でした
           </div>
         </div>
 
         {/* 新サイクル推奨1RM */}
-        <div style={{background:"#0d1a10",borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #1a3020"}}>
+        <div style={{background:C.legB.dim,borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #1a3020"}}>
           <div style={{fontSize:9,color:"#22c55e",letterSpacing:2,fontWeight:700,marginBottom:12}}>NEW CYCLE — 推奨1RM</div>
           {LIFTS.map(({key,label})=>{
             const start = cycleStartRm[key] || 0;
@@ -1208,11 +1251,11 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
             const next  = newRm[key] || 0;
             if (!next) return null;
             const diff  = next - start;
-            const color = diff > 0 ? "#22c55e" : "#444";
+            const color = diff > 0 ? "#22c55e" : C.textDim;
             return (
               <div key={key} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                <div style={{flex:1,fontSize:12,fontWeight:700,color:"#777"}}>{label}</div>
-                <div style={{fontSize:11,color:"#333"}}>{start>0?`${start}kg`:"–"} →</div>
+                <div style={{flex:1,fontSize:12,fontWeight:700,color:C.textSub}}>{label}</div>
+                <div style={{fontSize:11,color:C.textFaint}}>{start>0?`${start}kg`:"–"} →</div>
                 <div style={{fontSize:15,fontWeight:900,color:"#22c55e"}}>{next}kg</div>
                 {diff!==0&&<div style={{fontSize:11,fontWeight:800,color,minWidth:36,textAlign:"right"}}>
                   {diff>0?`+${diff}`:`${diff}`}kg
@@ -1237,15 +1280,15 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
         </button>
         <button onClick={()=>onNewCycle(null)}
           style={{
-            width:"100%",padding:"12px 0",background:"transparent",color:"#555",
-            border:"1px solid #222",borderRadius:12,fontSize:12,fontWeight:700,
+            width:"100%",padding:"12px 0",background:"transparent",color:C.textMid,
+            border:C.b,borderRadius:12,fontSize:12,fontWeight:700,
             cursor:"pointer",letterSpacing:0.5,marginBottom:8,
           }}>
           現在の1RMのまま開始
         </button>
         <button onClick={onContinue}
           style={{
-            width:"100%",padding:"10px 0",background:"transparent",color:"#333",
+            width:"100%",padding:"10px 0",background:"transparent",color:C.textFaint,
             border:"none",borderRadius:12,fontSize:11,fontWeight:600,
             cursor:"pointer",
           }}>
@@ -1270,9 +1313,9 @@ function SessionCompleteModal({ data, onShare, onClose }) {
       <style>{`@keyframes slideInUp{from{transform:translateY(100%)}to{transform:translateY(0)}}`}</style>
       <div style={{
         width:"100%",maxWidth:480,
-        background:"#161616",
+        background:C.card,
         borderRadius:"20px 20px 0 0",
-        border:"1px solid #222222",
+        border:C.b,
         padding:"28px 22px 36px",
         animation:"slideInUp 0.3s ease-out",
       }}>
@@ -1293,18 +1336,18 @@ function SessionCompleteModal({ data, onShare, onClose }) {
         </div>
 
         <div style={{marginBottom:20}}>
-          <div style={{fontSize:13,fontWeight:700,color:"#888",marginBottom:10}}>{dayLabel} 完了</div>
+          <div style={{fontSize:13,fontWeight:700,color:C.textSub,marginBottom:10}}>{dayLabel} 完了</div>
           <div style={{display:"flex",gap:10}}>
-            <div style={{flex:1,background:"#111",borderRadius:12,padding:"12px 14px",border:"1px solid #222"}}>
-              <div style={{fontSize:9,color:"#444",letterSpacing:2,fontWeight:700,marginBottom:4}}>VOLUME</div>
+            <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>VOLUME</div>
               <div style={{fontSize:20,fontWeight:800,color:"#f0f0f0"}}>
-                {totalVolume.toLocaleString()}<span style={{fontSize:12,color:"#666",marginLeft:3}}>kg</span>
+                {totalVolume.toLocaleString()}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>kg</span>
               </div>
             </div>
-            <div style={{flex:1,background:"#111",borderRadius:12,padding:"12px 14px",border:"1px solid #222"}}>
-              <div style={{fontSize:9,color:"#444",letterSpacing:2,fontWeight:700,marginBottom:4}}>SETS</div>
+            <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>SETS</div>
               <div style={{fontSize:20,fontWeight:800,color:"#f0f0f0"}}>
-                {totalSets}<span style={{fontSize:12,color:"#666",marginLeft:3}}>セット</span>
+                {totalSets}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>セット</span>
               </div>
             </div>
           </div>
@@ -1314,7 +1357,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
 
         <button onClick={onShare}
           style={{
-            width:"100%",padding:"15px 0",background:"#000000",color:"#fff",
+            width:"100%",padding:"15px 0",background:C.headerBg,color:"#fff",
             border:"1px solid #333333",borderRadius:12,fontSize:14,fontWeight:800,
             cursor:"pointer",letterSpacing:0.5,marginBottom:10,
           }}>
@@ -1322,7 +1365,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
         </button>
         <button onClick={onClose}
           style={{
-            width:"100%",padding:"13px 0",background:"transparent",color:"#444444",
+            width:"100%",padding:"13px 0",background:"transparent",color:C.textDim,
             border:"none",borderRadius:12,fontSize:13,fontWeight:700,
             cursor:"pointer",
           }}>
@@ -1339,7 +1382,7 @@ function IOSInstallBanner({ onDismiss }) {
     <div style={{
       position:"fixed", bottom:65, left:"50%", transform:"translateX(-50%)",
       width:"calc(100% - 24px)", maxWidth:456,
-      background:"#111", borderRadius:14, padding:"14px 16px",
+      background:C.surface, borderRadius:14, padding:"14px 16px",
       border:"1px solid #2a2a2a", zIndex:25,
       boxShadow:"0 -4px 32px rgba(0,0,0,0.7)",
       animation:"slideUp 0.3s ease",
@@ -1351,7 +1394,7 @@ function IOSInstallBanner({ onDismiss }) {
           <div style={{fontWeight:800, fontSize:13, color:"#f0f0f0", marginBottom:5}}>
             ホーム画面に追加するとアプリのように使えます
           </div>
-          <div style={{fontSize:11, color:"#555", lineHeight:1.7}}>
+          <div style={{fontSize:11, color:C.textMid, lineHeight:1.7}}>
             Safariの{" "}
             <span style={{color:"#e63946", fontWeight:700}}>共有ボタン ⬆</span>
             {" "}をタップ →{" "}
@@ -1359,7 +1402,7 @@ function IOSInstallBanner({ onDismiss }) {
           </div>
         </div>
         <button onClick={onDismiss}
-          style={{background:"transparent", border:"none", color:"#444", cursor:"pointer",
+          style={{background:"transparent", border:"none", color:C.textDim, cursor:"pointer",
             padding:"4px", fontSize:18, lineHeight:1, flexShrink:0, marginTop:-2}}>
           ✕
         </button>
@@ -1394,14 +1437,14 @@ function RestTimer({ state, onDismiss, onReset }) {
     <div style={{
       position:"fixed",bottom:76,left:"50%",transform:"translateX(-50%)",
       zIndex:500,width:"calc(100% - 24px)",maxWidth:440,
-      background:"#111",borderRadius:18,padding:"14px 18px",
+      background:C.surface,borderRadius:18,padding:"14px 18px",
       boxShadow:"0 12px 48px rgba(0,0,0,0.8)",
-      border:`1px solid ${done?"#22c55e33":remaining<=30?"#e6394633":"#2a2a2a"}`,
+      border:`1px solid ${done?"#22c55e33":remaining<=30?"#e6394633":C.borderDeep}`,
       display:"flex",alignItems:"center",gap:16,
     }}>
       <div style={{ position:"relative",flexShrink:0,width:76,height:76 }}>
         <svg width="76" height="76" viewBox="0 0 76 76">
-          <circle cx="38" cy="38" r={R} fill="none" stroke="#1e1e1e" strokeWidth="4"/>
+          <circle cx="38" cy="38" r={R} fill="none" stroke={C.borderSub} strokeWidth="4"/>
           <circle cx="38" cy="38" r={R} fill="none" stroke={strokeColor} strokeWidth="4"
             strokeDasharray={CIRC} strokeDashoffset={CIRC*(1-remaining/duration)}
             strokeLinecap="round" transform="rotate(-90 38 38)"
@@ -1411,15 +1454,15 @@ function RestTimer({ state, onDismiss, onReset }) {
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:done?12:20,color:strokeColor,lineHeight:1}}>
             {done?"DONE":`${mm}:${ss}`}
           </div>
-          {!done&&<div style={{fontSize:8,color:"#444",marginTop:1,letterSpacing:1}}>REST</div>}
+          {!done&&<div style={{fontSize:8,color:C.textDim,marginTop:1,letterSpacing:1}}>REST</div>}
         </div>
       </div>
       <div style={{flex:1,minWidth:0}}>
-        <div style={{fontSize:10,color:"#444",letterSpacing:1,marginBottom:2}}>INTERVAL</div>
+        <div style={{fontSize:10,color:C.textDim,letterSpacing:1,marginBottom:2}}>INTERVAL</div>
         <div style={{fontWeight:700,fontSize:13,color:C.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{exName}</div>
-        <div style={{fontSize:11,color:"#555",marginTop:2}}>{done?"次のセットへ！":`${Math.floor(duration/60)}分${duration%60>0?duration%60+"秒":""}インターバル`}</div>
+        <div style={{fontSize:11,color:C.textMid,marginTop:2}}>{done?"次のセットへ！":`${Math.floor(duration/60)}分${duration%60>0?duration%60+"秒":""}インターバル`}</div>
         <div style={{display:"flex",gap:6,marginTop:10}}>
-          <button onClick={onReset} style={{flex:1,padding:"6px 0",borderRadius:8,border:"1px solid #2a2a2a",background:"transparent",color:"#555",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+          <button onClick={onReset} style={{flex:1,padding:"6px 0",borderRadius:8,border:"1px solid #2a2a2a",background:"transparent",color:C.textMid,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
             <RotateCcw size={10}/> リセット
           </button>
           <button onClick={onDismiss} style={{flex:1,padding:"6px 0",borderRadius:8,border:"none",background:done?"#22c55e":"#e63946",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
@@ -1434,7 +1477,7 @@ function RestTimer({ state, onDismiss, onReset }) {
 // ─── MINI CHART ───────────────────────────────────────────
 function MiniChart({ data, color }) {
   if (data.length<2) return (
-    <div style={{padding:"20px 0",textAlign:"center",color:"#333",fontSize:11}}>
+    <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
       {data.length===1?`現在 ${data[0].rm}kg — 記録を増やすとグラフが表示されます`:"記録を追加するとグラフが表示されます"}
     </div>
   );
@@ -1458,8 +1501,8 @@ function MiniChart({ data, color }) {
       </svg>
       <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
         {data.map((d,i)=>(
-          <div key={i} style={{fontSize:9,color:"#444",textAlign:"center"}}>
-            <div style={{color:"#666"}}>{d.rm}kg</div>
+          <div key={i} style={{fontSize:9,color:C.textDim,textAlign:"center"}}>
+            <div style={{color:C.textSub}}>{d.rm}kg</div>
             <div>{d.date.split("/").slice(1).join("/")}</div>
           </div>
         ))}
@@ -1472,7 +1515,7 @@ function MiniChart({ data, color }) {
 function WeightChart({ data }) {
   const COLOR = "#06b6d4";
   if (data.length < 2) return (
-    <div style={{padding:"20px 0",textAlign:"center",color:"#333",fontSize:11}}>
+    <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
       記録を追加するとグラフが表示されます
     </div>
   );
@@ -1500,8 +1543,8 @@ function WeightChart({ data }) {
       </svg>
       <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
         {data.map((d,i) => (
-          <div key={i} style={{fontSize:9,color:"#444",textAlign:"center"}}>
-            <div style={{color:"#666"}}>{d.weight}kg</div>
+          <div key={i} style={{fontSize:9,color:C.textDim,textAlign:"center"}}>
+            <div style={{color:C.textSub}}>{d.weight}kg</div>
             <div>{d.date.split("/").slice(1).join("/")}</div>
           </div>
         ))}
@@ -1545,13 +1588,13 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
   },[value.rpe, isComplete, onRpeComplete]);
 
   // デフォルト値は薄く、実際に入力した値は明るく
-  const textColor  = isDefault ? "#555" : C.text;
+  const textColor  = isDefault ? C.textMid : C.text;
   const rpeColor   = rpeVal<=6?"#22c55e":rpeVal<=7?"#e07b39":rpeVal<=8?"#f59e0b":"#e63946";
   const done       = isComplete && (!isWarmup ? !!value.rpe : true);
 
   const baseInput = {
     display:"block", width:"100%", boxSizing:"border-box",
-    background:"#0d0d0d", border:`1px solid ${done&&!isWarmup?accent+"55":"#222"}`,
+    background:C.surface2, border:`1px solid ${done&&!isWarmup?accent+"55":C.border}`,
     borderRadius:8, color:textColor, outline:"none",
     fontWeight:700, textAlign:"center",
     padding:"8px 4px", fontSize:15,
@@ -1564,9 +1607,9 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
         width:30,height:30,flexShrink:0,borderRadius:7,
         display:"flex",alignItems:"center",justifyContent:"center",
         fontSize:10,fontWeight:800,letterSpacing:0.5,
-        background: isWarmup?"#161616": done?accent+"22":"#161616",
-        color: isWarmup?"#444": done?accent:"#444",
-        border:`1px solid ${isWarmup?"#222":done?accent+"55":"#222"}`,
+        background: isWarmup?C.card: done?accent+"22":C.card,
+        color: isWarmup?C.textDim: done?accent:C.textDim,
+        border:`1px solid ${isWarmup?C.border:done?accent+"55":C.border}`,
         transition:"all 0.2s",
       }}>
         {isWarmup ? value.label : done ? <Check size={12} strokeWidth={3}/> : `S${setIdx+1}`}
@@ -1583,7 +1626,7 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
             if(!isWarmup && v) onAdvance?.('w');
           }}
           style={{...baseInput,
-            background:value.weight&&!isDefault?"#0f0f0f":"#0a0a0a",
+            background:value.weight&&!isDefault?C.surface2:C.bg,
             color:textColor,
             appearance:"none", WebkitAppearance:"none",
             paddingRight:18, cursor:"pointer",
@@ -1596,10 +1639,10 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
         </select>
         <div style={{
           position:"absolute",right:6,top:"50%",transform:"translateY(-50%)",
-          pointerEvents:"none",fontSize:8,color:"#444",lineHeight:1,
+          pointerEvents:"none",fontSize:8,color:C.textDim,lineHeight:1,
         }}>▼</div>
       </div>
-      <div style={{fontSize:10,color:"#333",flexShrink:0}}>kg</div>
+      <div style={{fontSize:10,color:C.textFaint,flexShrink:0}}>kg</div>
 
       {/* Reps */}
       <div style={{flex:2,minWidth:0,position:"relative"}}>
@@ -1612,7 +1655,7 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
             if(!isWarmup && v) onAdvance?.('r');
           }}
           style={{...baseInput,
-            background:value.reps&&!isDefault?"#0f0f0f":"#0a0a0a",
+            background:value.reps&&!isDefault?C.surface2:C.bg,
             color:textColor,
             appearance:"none", WebkitAppearance:"none",
             paddingRight:14, cursor:"pointer",
@@ -1625,10 +1668,10 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
         </select>
         <div style={{
           position:"absolute",right:4,top:"50%",transform:"translateY(-50%)",
-          pointerEvents:"none",fontSize:8,color:"#444",lineHeight:1,
+          pointerEvents:"none",fontSize:8,color:C.textDim,lineHeight:1,
         }}>▼</div>
       </div>
-      <div style={{fontSize:10,color:"#333",flexShrink:0}}>rep</div>
+      <div style={{fontSize:10,color:C.textFaint,flexShrink:0}}>rep</div>
 
       {/* RPE（本番セットのみ） */}
       {!isWarmup && (
@@ -1643,9 +1686,9 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
                 if(v) onAdvance?.('rpe');
               }}
               style={{...baseInput,
-                color:value.rpe?rpeColor:"#333",
-                border:`1px solid ${value.rpe?rpeColor+"66":"#222"}`,
-                background:value.rpe?"#0f0f0f":"#0a0a0a",
+                color:value.rpe?rpeColor:C.textFaint,
+                border:`1px solid ${value.rpe?rpeColor+"66":C.border}`,
+                background:value.rpe?C.surface2:C.bg,
                 fontSize:13,
                 appearance:"none", WebkitAppearance:"none",
                 paddingRight:14, cursor:"pointer",
@@ -1658,16 +1701,16 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
             </select>
             <div style={{
               position:"absolute",right:4,top:"50%",transform:"translateY(-50%)",
-              pointerEvents:"none",fontSize:8,color:"#444",lineHeight:1,
+              pointerEvents:"none",fontSize:8,color:C.textDim,lineHeight:1,
             }}>▼</div>
           </div>
           <div style={{width:38,flexShrink:0,textAlign:"right"}}>
             {value.weight&&value.reps
               ? <div style={{fontSize:10,fontWeight:700,color:accent,lineHeight:1.3}}>
                   {calc1RM(parseFloat(value.weight),parseInt(value.reps))}<br/>
-                  <span style={{fontSize:8,color:"#444"}}>kg</span>
+                  <span style={{fontSize:8,color:C.textDim}}>kg</span>
                 </div>
-              : <div style={{fontSize:8,color:"#333"}}>1RM</div>}
+              : <div style={{fontSize:8,color:C.textFaint}}>1RM</div>}
           </div>
         </>
       )}
@@ -1704,15 +1747,15 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
   return (
     <div style={{
       borderRadius:12,marginBottom:8,overflow:"hidden",
-      border:`1px solid ${adjusted?"#b45309":isMain?accent+"44":"#1e1e1e"}`,
+      border:`1px solid ${adjusted?"#b45309":isMain?accent+"44":C.borderSub}`,
     }}>
       {/* Header */}
       <div style={{
         display:"flex",alignItems:"center",gap:10,padding:"10px 13px",
-        background:adjusted?"#1a1200":isMain?accent+"11":"#111",
+        background:adjusted?"#1a1200":isMain?accent+"11":C.surface,
       }}>
-        <div style={{fontSize:isMain?18:13,color:isMain?accent:"#333"}}>
-          {isMain ? <Target size={18} color={accent}/> : <Zap size={13} color="#444"/>}
+        <div style={{fontSize:isMain?18:13,color:isMain?accent:C.textFaint}}>
+          {isMain ? <Target size={18} color={accent}/> : <Zap size={13} color={C.textDim}/>}
         </div>
         <div style={{flex:1,minWidth:0}}>
           <div style={{fontWeight:700,fontSize:isMain?14:12,color:adjusted?"#e07b39":C.text,
@@ -1720,9 +1763,9 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             {ex.name}
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",marginTop:2,flexWrap:"wrap"}}>
-            <span style={{fontSize:10,color:"#444"}}>{ex.purpose}</span>
+            <span style={{fontSize:10,color:C.textDim}}>{ex.purpose}</span>
             {prevBest?.weight>0&&(
-              <span style={{fontSize:9,background:"#1a1a1a",border:"1px solid #252525",borderRadius:4,padding:"1px 6px",color:"#555",fontWeight:600}}>
+              <span style={{fontSize:9,background:C.borderFaint,border:"1px solid #252525",borderRadius:4,padding:"1px 6px",color:C.textMid,fontWeight:600}}>
                 前回 {prevBest.weight}kg×{prevBest.reps}
               </span>
             )}
@@ -1735,28 +1778,28 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
         </div>
         <div style={{textAlign:"right",flexShrink:0}}>
           {effectiveWeight>0
-            ? <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:isMain?20:14,color:adjusted?"#b45309":isMain?accent:"#444",lineHeight:1}}>
-                {adjusted&&<span style={{fontSize:10,textDecoration:"line-through",color:"#333",marginRight:3}}>{ex.weight}</span>}
-                {effectiveWeight}<span style={{fontSize:10,color:"#555"}}>kg</span>
+            ? <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:isMain?20:14,color:adjusted?"#b45309":isMain?accent:C.textDim,lineHeight:1}}>
+                {adjusted&&<span style={{fontSize:10,textDecoration:"line-through",color:C.textFaint,marginRight:3}}>{ex.weight}</span>}
+                {effectiveWeight}<span style={{fontSize:10,color:C.textMid}}>kg</span>
               </div>
-            : <div style={{fontSize:10,color:"#333",fontStyle:"italic"}}>{isMachine?"重量選択":"自重"}</div>}
-          <div style={{fontSize:10,color:"#444",marginTop:2}}>{ex.reps}rep × {ex.sets}</div>
+            : <div style={{fontSize:10,color:C.textFaint,fontStyle:"italic"}}>{isMachine?"重量選択":"自重"}</div>}
+          <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{ex.reps}rep × {ex.sets}</div>
         </div>
       </div>
 
       {/* Body */}
-      <div style={{padding:"10px 12px 10px",background:"#0d0d0d"}}>
+      <div style={{padding:"10px 12px 10px",background:C.surface2}}>
         {/* Warmup */}
         {warmups.length>0&&(
           <div style={{marginBottom:10}}>
             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
               <Flame size={10} color="#e07b39"/>
-              <span style={{fontSize:9,color:"#444",letterSpacing:1,fontWeight:700}}>WARM UP</span>
+              <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>WARM UP</span>
             </div>
             <div style={{display:"flex",marginBottom:4,paddingLeft:35,gap:5}}>
-              <div style={{flex:3,fontSize:8,color:"#2a2a2a",textAlign:"center"}}>重量</div>
+              <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>重量</div>
               <div style={{width:20}}/>
-              <div style={{flex:2,fontSize:8,color:"#2a2a2a",textAlign:"center"}}>回数</div>
+              <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>回数</div>
             </div>
             {warmups.map((wu,wi)=>{
               const wuInputs=setInputs[`wu_${exIdx}`]||{};
@@ -1770,18 +1813,18 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
                   weightOptions={wOpts}/>
               );
             })}
-            <div style={{borderTop:"1px solid #161616",margin:"8px 0"}}/>
+            <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
           </div>
         )}
 
         {/* Working sets header */}
         <div style={{display:"flex",alignItems:"center",marginBottom:5,paddingLeft:35,gap:5}}>
-          <div style={{flex:3,fontSize:8,color:"#2a2a2a",textAlign:"center"}}>重量</div>
+          <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>重量</div>
           <div style={{width:20}}/>
-          <div style={{flex:2,fontSize:8,color:"#2a2a2a",textAlign:"center"}}>回数</div>
+          <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>回数</div>
           <div style={{width:20}}/>
-          <div style={{flex:2,fontSize:8,color:"#2a2a2a",textAlign:"center"}}>RPE</div>
-          <div style={{width:38,fontSize:8,color:"#2a2a2a",textAlign:"right"}}>1RM</div>
+          <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>RPE</div>
+          <div style={{width:38,fontSize:8,color:C.textFaint,textAlign:"right"}}>1RM</div>
         </div>
 
         {sets.map((sv,si)=>(
@@ -1805,12 +1848,12 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             style={{
               flex:1,padding:"7px 0",background:"transparent",
               border:"1px dashed #2a2a2a",borderRadius:8,
-              color:"#555",fontSize:11,fontWeight:700,cursor:"pointer",
+              color:C.textMid,fontSize:11,fontWeight:700,cursor:"pointer",
               display:"flex",alignItems:"center",justifyContent:"center",gap:4,
               transition:"border-color 0.15s,color 0.15s",
             }}
             onMouseEnter={e=>{e.currentTarget.style.borderColor=accent;e.currentTarget.style.color=accent;}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor="#2a2a2a";e.currentTarget.style.color="#555";}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=C.borderDeep;e.currentTarget.style.color=C.textMid;}}
           >
             ＋ セット追加
           </button>
@@ -1819,12 +1862,12 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
               onClick={onRemoveSet}
               style={{
                 padding:"7px 12px",background:"transparent",
-                border:"1px solid #222",borderRadius:8,
-                color:"#444",fontSize:11,fontWeight:700,cursor:"pointer",
+                border:C.b,borderRadius:8,
+                color:C.textDim,fontSize:11,fontWeight:700,cursor:"pointer",
                 transition:"border-color 0.15s,color 0.15s",
               }}
               onMouseEnter={e=>{e.currentTarget.style.borderColor="#e63946";e.currentTarget.style.color="#e63946";}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor="#222";e.currentTarget.style.color="#444";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textDim;}}
             >
               － 削除
             </button>
@@ -1873,12 +1916,12 @@ function CalendarView({ sessions }) {
       {/* Month nav */}
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
         <button onClick={()=>setViewDate(new Date(year,month-1,1))}
-          style={{background:"#161616",border:"1px solid #222",borderRadius:8,padding:"6px 10px",color:C.textMid,cursor:"pointer"}}>
+          style={{background:C.card,border:C.b,borderRadius:8,padding:"6px 10px",color:C.textMid,cursor:"pointer"}}>
           <ChevronLeft size={14}/>
         </button>
         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:2,color:C.text}}>{monthStr}</div>
         <button onClick={()=>setViewDate(new Date(year,month+1,1))}
-          style={{background:"#161616",border:"1px solid #222",borderRadius:8,padding:"6px 10px",color:C.textMid,cursor:"pointer"}}>
+          style={{background:C.card,border:C.b,borderRadius:8,padding:"6px 10px",color:C.textMid,cursor:"pointer"}}>
           <ChevronRight size={14}/>
         </button>
       </div>
@@ -1887,7 +1930,7 @@ function CalendarView({ sessions }) {
       <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4,marginBottom:4}}>
         {dayLabels.map((d,i)=>(
           <div key={d} style={{textAlign:"center",fontSize:12,fontWeight:700,
-            color:i===0?"#e63946":i===6?"#3b82f6":"#333",padding:"6px 0"}}>
+            color:i===0?"#e63946":i===6?"#3b82f6":C.textFaint,padding:"6px 0"}}>
             {d}
           </div>
         ))}
@@ -1906,11 +1949,11 @@ function CalendarView({ sessions }) {
               minHeight:44,borderRadius:8,
               display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
               background:isToday?"#e6394611":hasSess?"#ffffff08":"transparent",
-              border:`1px solid ${isToday?"#e63946":hasSess?"#2a2a2a":"transparent"}`,
+              border:`1px solid ${isToday?"#e63946":hasSess?C.borderDeep:"transparent"}`,
               position:"relative",
             }}>
               <div style={{fontSize:14,fontWeight:isToday?800:hasSess?700:400,
-                color:isToday?"#e63946":hasSess?C.text:"#333"}}>
+                color:isToday?"#e63946":hasSess?C.text:C.textFaint}}>
                 {d}
               </div>
               {hasSess&&(
@@ -1928,15 +1971,15 @@ function CalendarView({ sessions }) {
 
       {/* Month summary */}
       {sessions.length>0&&(
-        <div style={{marginTop:16,padding:"12px 14px",background:"#111",borderRadius:12,border:"1px solid #1e1e1e"}}>
+        <div style={{marginTop:16,padding:"12px 14px",background:C.surface,borderRadius:12,border:C.bSub}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <div style={{fontSize:11,color:"#444",letterSpacing:1}}>今月のセッション</div>
+            <div style={{fontSize:11,color:C.textDim,letterSpacing:1}}>今月のセッション</div>
             <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:C.text}}>
               {sessions.filter(s=>{
                 const parts=s.date.split("/");
                 return parseInt(parts[0])===year&&parseInt(parts[1])===month+1;
               }).length}
-              <span style={{fontSize:12,color:"#444",marginLeft:2}}>回</span>
+              <span style={{fontSize:12,color:C.textDim,marginLeft:2}}>回</span>
             </div>
           </div>
         </div>
@@ -1980,16 +2023,16 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave }) {
       onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
       <div style={{
         position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",
-        width:"100%",maxWidth:480,background:"#111",
+        width:"100%",maxWidth:480,background:C.surface,
         borderRadius:"20px 20px 0 0",maxHeight:"82vh",
         display:"flex",flexDirection:"column",
-        border:"1px solid #222",borderBottom:"none",
+        border:C.b,borderBottom:"none",
       }}>
         {/* Header */}
-        <div style={{padding:"16px 18px 14px",borderBottom:"1px solid #1e1e1e",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+        <div style={{padding:"16px 18px 14px",borderBottom:C.bSub,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
           <div>
             <div style={{fontWeight:800,fontSize:15}}>補助種目を選択</div>
-            <div style={{fontSize:10,color:"#444",marginTop:2}}>バーベル・ダンベル・スミス・マシン対応</div>
+            <div style={{fontSize:10,color:C.textDim,marginTop:2}}>バーベル・ダンベル・スミス・マシン対応</div>
           </div>
           <button onClick={()=>onSave(local)}
             style={{background:"#e63946",color:"#fff",border:"none",borderRadius:10,padding:"10px 18px",fontWeight:800,fontSize:12,cursor:"pointer",letterSpacing:0.5}}>
@@ -2001,7 +2044,7 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave }) {
         <div style={{overflowY:"auto",flex:1,padding:"12px 14px 24px"}}>
           {categories.map(cat => (
             <div key={cat} style={{marginBottom:18}}>
-              <div style={{fontSize:9,color:"#333",letterSpacing:2,fontWeight:700,marginBottom:8,paddingLeft:2}}>
+              <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:8,paddingLeft:2}}>
                 {CAT_LABELS[cat]}
               </div>
               {catalog.filter(e=>e.cat===cat).map(ex => {
@@ -2012,14 +2055,14 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave }) {
                     style={{
                       display:"flex",alignItems:"center",gap:12,
                       padding:"11px 12px",marginBottom:4,borderRadius:10,
-                      background:sel?"#e6394611":"#0d0d0d",
-                      border:`1px solid ${sel?"#e6394644":"#1e1e1e"}`,
+                      background:sel?"#e6394611":C.surface2,
+                      border:`1px solid ${sel?"#e6394644":C.borderSub}`,
                       cursor:"pointer",transition:"all 0.15s",
                     }}>
                     <div style={{
                       width:22,height:22,borderRadius:6,flexShrink:0,
                       background:sel?"#e63946":"transparent",
-                      border:`2px solid ${sel?"#e63946":"#2a2a2a"}`,
+                      border:`2px solid ${sel?"#e63946":C.borderDeep}`,
                       display:"flex",alignItems:"center",justifyContent:"center",
                       transition:"all 0.15s",
                     }}>
@@ -2032,7 +2075,7 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave }) {
                           {EQ_LABELS[ex.eq]}
                         </span>
                       </div>
-                      <div style={{fontSize:10,color:"#444",marginTop:1}}>
+                      <div style={{fontSize:10,color:C.textDim,marginTop:1}}>
                         {ex.sets}セット × {ex.reps}回 · {ex.note}
                       </div>
                     </div>
@@ -2094,7 +2137,7 @@ function GeneratingScreen({ onComplete }) {
   return (
     <div style={{
       position:"fixed",inset:0,zIndex:900,
-      background:"#0D0D0D",
+      background:C.surface2,
       display:"flex",flexDirection:"column",
       alignItems:"center",justifyContent:"center",
       fontFamily:"system-ui,-apple-system,sans-serif",
@@ -2114,12 +2157,12 @@ function GeneratingScreen({ onComplete }) {
       {!showOk ? (
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:36}}>
           {/* Logo */}
-          <div style={{fontSize:12,letterSpacing:"0.3em",color:"#444",fontWeight:700}}>LIFTLOG</div>
+          <div style={{fontSize:12,letterSpacing:"0.3em",color:C.textDim,fontWeight:700}}>LIFTLOG</div>
 
           {/* Ring */}
           <div style={{position:"relative",width:140,height:140}}>
             <svg width="140" height="140" style={{transform:"rotate(-90deg)"}}>
-              <circle cx="70" cy="70" r={r} fill="none" stroke="#1a1a1a" strokeWidth="8"/>
+              <circle cx="70" cy="70" r={r} fill="none" stroke={C.borderFaint} strokeWidth="8"/>
               <circle cx="70" cy="70" r={r} fill="none"
                 stroke="url(#gGrad)" strokeWidth="8" strokeLinecap="round"
                 strokeDasharray={circ} strokeDashoffset={offset}
@@ -2162,7 +2205,7 @@ function GeneratingScreen({ onComplete }) {
           {/* Message */}
           <div style={{height:26,display:"flex",alignItems:"center"}}>
             <p style={{
-              margin:0,fontSize:14,color:"#777",letterSpacing:"0.04em",fontWeight:400,
+              margin:0,fontSize:14,color:C.textSub,letterSpacing:"0.04em",fontWeight:400,
               opacity:visible?1:0,
               transform:visible?"translateY(0)":"translateY(8px)",
               transition:"opacity 0.3s ease,transform 0.3s ease",
@@ -2174,7 +2217,7 @@ function GeneratingScreen({ onComplete }) {
             {GEN_MESSAGES.map((_,i)=>(
               <div key={i} style={{
                 width:i===msgIdx?18:6,height:6,borderRadius:3,
-                background:i<=msgIdx?"linear-gradient(90deg,#F5C842,#FF7A3D)":"#2a2a2a",
+                background:i<=msgIdx?"linear-gradient(90deg,#F5C842,#FF7A3D)":C.borderDeep,
                 transition:"all 0.4s ease",
               }}/>
             ))}
@@ -2192,7 +2235,7 @@ function GeneratingScreen({ onComplete }) {
           <div style={{fontSize:26,fontWeight:900,color:"#fff",letterSpacing:1,textAlign:"center",lineHeight:1.3}}>
             プログラムの準備が<br/>できました
           </div>
-          <p style={{margin:0,fontSize:12,color:"#555",letterSpacing:"0.1em"}}>YOUR 12-WEEK PROGRAM IS READY</p>
+          <p style={{margin:0,fontSize:12,color:C.textMid,letterSpacing:"0.1em"}}>YOUR 12-WEEK PROGRAM IS READY</p>
         </div>
       )}
     </div>
@@ -2233,6 +2276,17 @@ export default function App() {
   const [showCycleModal,setShowCycleModal] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
+  const [theme, setTheme] = useLocalStorage("liftlog_theme", "dark");
+
+  // テーマに応じて C を動的に決定
+  // eslint-disable-next-line no-shadow
+  const C = theme === "light" ? LIGHT : DARK;
+
+  // テーマ変更時に html/body 背景色を同期
+  useEffect(()=>{
+    document.documentElement.style.backgroundColor = C.bg;
+    document.body.style.backgroundColor = C.bg;
+  },[C.bg]);
 
   // 起動時にweek>9なら即モーダル（既存ユーザー対応）
   useEffect(()=>{
@@ -2498,7 +2552,7 @@ export default function App() {
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"/>
 
       {toast&&(
-        <div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",background:"#1a1a1a",color:C.text,padding:"10px 20px",borderRadius:999,zIndex:999,fontSize:12,fontWeight:700,border:"1px solid #2a2a2a",boxShadow:"0 8px 32px rgba(0,0,0,0.8)",letterSpacing:0.5,whiteSpace:"nowrap"}}>
+        <div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",background:C.borderFaint,color:C.text,padding:"10px 20px",borderRadius:999,zIndex:999,fontSize:12,fontWeight:700,border:"1px solid #2a2a2a",boxShadow:"0 8px 32px rgba(0,0,0,0.8)",letterSpacing:0.5,whiteSpace:"nowrap"}}>
           {toast}
         </div>
       )}
@@ -2533,12 +2587,12 @@ export default function App() {
       )}
 
       {/* Header */}
-      <div style={{background:"#000",padding:"18px 20px 14px",borderBottom:"1px solid #1a1a1a",position:"sticky",top:0,zIndex:10}}>
+      <div style={{background:C.headerBg,padding:"18px 20px 14px",borderBottom:C.bFaint,position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:8,height:8,borderRadius:"50%",background:"#e63946",flexShrink:0}}/>
           <div style={{fontFamily:"system-ui,-apple-system,sans-serif",fontWeight:900,fontSize:16,letterSpacing:1,color:C.text}}>LIFTLOG</div>
           <div style={{flex:1}}/>
-          {allSet&&<div style={{fontSize:10,color:"#333",letterSpacing:1}}>W{week} · {cy.phase}</div>}
+          {allSet&&<div style={{fontSize:10,color:C.textFaint,letterSpacing:1}}>W{week} · {cy.phase}</div>}
         </div>
       </div>
 
@@ -2547,9 +2601,34 @@ export default function App() {
         {/* ══ SETUP ════════════════════════════════════ */}
         {screen==="setup"&&(
           <div>
+            {/* APPEARANCE */}
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>APPEARANCE</div>
+              <div style={{background:C.surface,borderRadius:14,padding:"14px",border:C.bSub}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div>
+                    <div style={{fontWeight:800,fontSize:13}}>カラーテーマ</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{theme==="light"?"ライトモード（白基調）":"ダークモード（黒基調）"}</div>
+                  </div>
+                  <div style={{display:"flex",gap:6}}>
+                    {[{id:"dark",label:"Dark"},{id:"light",label:"Light"}].map(t=>(
+                      <button key={t.id} onClick={()=>setTheme(t.id)}
+                        style={{
+                          padding:"7px 14px",borderRadius:10,border:"none",cursor:"pointer",
+                          background:theme===t.id?"#e63946":C.surface2,
+                          color:theme===t.id?"#fff":C.textMid,
+                          fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
+                        }}>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
             {/* トレーニング目標 */}
             <div style={{marginBottom:18}}>
-              <div style={{fontSize:10,color:"#333",letterSpacing:2,fontWeight:700,marginBottom:10}}>TRAINING GOAL</div>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>TRAINING GOAL</div>
               <div style={{display:"flex",gap:8}}>
                 {[
                   {id:"strength",  label:"挙上重量向上", sub:"2〜6rep / 高重量", color:"#e63946"},
@@ -2558,75 +2637,75 @@ export default function App() {
                   <button key={g.id} onClick={()=>setGoal(g.id)}
                     style={{
                       flex:1,padding:"12px 8px",borderRadius:12,cursor:"pointer",
-                      background:goal===g.id?`${g.color}18`:"#111",
-                      border:`1.5px solid ${goal===g.id?g.color:"#1e1e1e"}`,
+                      background:goal===g.id?`${g.color}18`:C.surface,
+                      border:`1.5px solid ${goal===g.id?g.color:C.borderSub}`,
                       transition:"all 0.15s",textAlign:"center",
                     }}>
                     <div style={{fontWeight:800,fontSize:13,color:goal===g.id?g.color:C.text,marginBottom:3}}>{g.label}</div>
-                    <div style={{fontSize:10,color:goal===g.id?g.color+"99":"#444"}}>{g.sub}</div>
+                    <div style={{fontSize:10,color:goal===g.id?g.color+"99":C.textDim}}>{g.sub}</div>
                   </button>
                 ))}
               </div>
-              <div style={{marginTop:8,fontSize:10,color:"#333",background:"#0d0d0d",borderRadius:8,padding:"8px 12px",border:"1px solid #1a1a1a"}}>
+              <div style={{marginTop:8,fontSize:10,color:C.textFaint,background:C.surface2,borderRadius:8,padding:"8px 12px",border:C.bFaint}}>
                 12週プログラム — 蓄積（6週）→ 強化（4週）→ 現実化（2週）
               </div>
             </div>
 
             {/* Program mode toggles */}
             <div style={{marginBottom:18}}>
-              <div style={{fontSize:10,color:"#333",letterSpacing:2,fontWeight:700,marginBottom:10}}>PROGRAM MODE</div>
-              <div style={{background:"#111",borderRadius:14,padding:"14px",border:"1px solid #1e1e1e",marginBottom:8}}>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>PROGRAM MODE</div>
+              <div style={{background:C.surface,borderRadius:14,padding:"14px",border:C.bSub,marginBottom:8}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
                   <div>
                     <div style={{fontWeight:800,fontSize:13}}>ミリタリープレス</div>
-                    <div style={{fontSize:10,color:"#444",marginTop:2}}>肩・三頭筋の強化 / BIG5の5種目目</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>肩・三頭筋の強化 / BIG5の5種目目</div>
                   </div>
                   <div onClick={()=>setUseMil(v=>!v)}
-                    style={{width:48,height:26,borderRadius:13,background:useMil?"#e63946":"#1a1a1a",border:`1px solid ${useMil?"#e63946":"#333"}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
+                    style={{width:48,height:26,borderRadius:13,background:useMil?"#e63946":C.borderFaint,border:`1px solid ${useMil?"#e63946":C.borderHi}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
                     <div style={{position:"absolute",top:3,left:useMil?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
                   </div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div>
                     <div style={{fontWeight:800,fontSize:13}}>チンニング（加重）</div>
-                    <div style={{fontSize:10,color:"#444",marginTop:2}}>背中・上腕二頭筋の強化</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>背中・上腕二頭筋の強化</div>
                   </div>
                   <div onClick={()=>setUseChin(v=>!v)}
-                    style={{width:48,height:26,borderRadius:13,background:useChin?"#e63946":"#1a1a1a",border:`1px solid ${useChin?"#e63946":"#333"}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
+                    style={{width:48,height:26,borderRadius:13,background:useChin?"#e63946":C.borderFaint,border:`1px solid ${useChin?"#e63946":C.borderHi}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
                     <div style={{position:"absolute",top:3,left:useChin?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
                   </div>
                 </div>
               </div>
-              <div style={{background:(!useMil&&!useChin)?"#0d1a10":"#0d0d0d",borderRadius:10,padding:"10px 14px",border:`1px solid ${(!useMil&&!useChin)?"#1a3020":"#1a1a1a"}`,fontSize:11,color:(!useMil&&!useChin)?"#22c55e":"#333",fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>
+              <div style={{background:(!useMil&&!useChin)?C.legB.dim:C.surface2,borderRadius:10,padding:"10px 14px",border:`1px solid ${(!useMil&&!useChin)?C.legB.border:C.borderFaint}`,fontSize:11,color:(!useMil&&!useChin)?"#22c55e":C.textFaint,fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>
                 {(!useMil&&!useChin) ? "BIG3モード ― 週4日（ベンチ / スクワット / デッド / ベンチ）" : (useMil&&useChin) ? "BIG5モード ― 週5日" : "カスタムモード ― 週5日"}
               </div>
             </div>
 
             {/* Day overview */}
             <div style={{marginBottom:18}}>
-              <div style={{fontSize:10,color:"#333",letterSpacing:2,fontWeight:700,marginBottom:10}}>WEEKLY STRUCTURE</div>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>WEEKLY STRUCTURE</div>
               {activeDayMeta.map((dm,i)=>(
-                <div key={dm.key} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",marginBottom:4,borderRadius:10,background:"#111",border:"1px solid #1a1a1a"}}>
+                <div key={dm.key} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",marginBottom:4,borderRadius:10,background:C.surface,border:C.bFaint}}>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:13,color:dm.c.accent,letterSpacing:1,minWidth:28}}>D{i+1}</div>
                   <div style={{width:3,height:3,borderRadius:"50%",background:dm.c.accent,flexShrink:0}}/>
                   <div style={{flex:1}}>
                     <div style={{fontWeight:700,fontSize:13}}>{dm.label}</div>
-                    <div style={{fontSize:10,color:"#444",marginTop:1}}>{dm.sub}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{dm.sub}</div>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* 1RM inputs */}
-            <div style={{fontSize:10,color:"#333",letterSpacing:2,fontWeight:700,marginBottom:10}}>1RM SETTINGS</div>
+            <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>1RM SETTINGS</div>
             {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
               const c=C[dk];
               const estW=tmp[`estW_${key}`]||"";
               const estR=tmp[`estR_${key}`]||"";
               const estRM=(estW&&estR)?calc1RM(parseFloat(estW),parseInt(estR)):0;
-              const iStyle={display:"block",width:"100%",boxSizing:"border-box",background:"#0d0d0d",border:"1px solid #1e1e1e",borderRadius:10,color:C.text,outline:"none",fontWeight:700,padding:"12px",fontSize:18,textAlign:"center"};
+              const iStyle={display:"block",width:"100%",boxSizing:"border-box",background:C.surface2,border:C.bSub,borderRadius:10,color:C.text,outline:"none",fontWeight:700,padding:"12px",fontSize:18,textAlign:"center"};
               return (
-                <div key={key} style={{background:"#111",borderRadius:14,padding:"15px",marginBottom:10,border:`1px solid ${c.border}`}}>
+                <div key={key} style={{background:C.surface,borderRadius:14,padding:"15px",marginBottom:10,border:`1px solid ${c.border}`}}>
                   <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
                     <div style={{width:3,height:24,borderRadius:2,background:c.accent,flexShrink:0}}/>
                     <div style={{flex:1}}>
@@ -2635,26 +2714,26 @@ export default function App() {
                     {rm[key]>0&&<div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,color:c.accent}}>{rm[key]}<span style={{fontSize:11}}>kg</span></div>}
                   </div>
 
-                  <div style={{fontSize:9,color:"#333",letterSpacing:1.5,fontWeight:700,marginBottom:8}}>1RM直接入力</div>
+                  <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>1RM直接入力</div>
                   <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:14}}>
                     <input type="number" inputMode="decimal"
                       placeholder={key==="chin"?"加重量（自重=0）":"例: 100"} value={tmp[key]}
                       onChange={e=>setTmp(p=>({...p,[key]:e.target.value}))}
-                      style={{...iStyle,border:`1px solid ${tmp[key]?c.border:"#1e1e1e"}`,flex:1}}/>
-                    <span style={{fontSize:12,color:"#333",fontWeight:700}}>kg</span>
+                      style={{...iStyle,border:`1px solid ${tmp[key]?c.border:C.borderSub}`,flex:1}}/>
+                    <span style={{fontSize:12,color:C.textFaint,fontWeight:700}}>kg</span>
                   </div>
 
-                  <div style={{borderTop:"1px solid #1a1a1a",paddingTop:14}}>
-                    <div style={{fontSize:9,color:"#333",letterSpacing:1.5,fontWeight:700,marginBottom:8}}>推定1RM — 重量×回数から計算</div>
+                  <div style={{borderTop:C.bFaint,paddingTop:14}}>
+                    <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>推定1RM — 重量×回数から計算</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr auto 1fr auto",gap:6,alignItems:"center",marginBottom:8}}>
                       <input type="number" inputMode="decimal" placeholder="重量" value={estW}
                         onChange={e=>setTmp(p=>({...p,[`estW_${key}`]:e.target.value}))}
                         style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
-                      <span style={{fontSize:11,color:"#333",fontWeight:700,textAlign:"center"}}>kg ×</span>
+                      <span style={{fontSize:11,color:C.textFaint,fontWeight:700,textAlign:"center"}}>kg ×</span>
                       <input type="number" inputMode="numeric" placeholder="回数" value={estR}
                         onChange={e=>setTmp(p=>({...p,[`estR_${key}`]:e.target.value}))}
                         style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
-                      <span style={{fontSize:11,color:"#333",fontWeight:700}}>rep</span>
+                      <span style={{fontSize:11,color:C.textFaint,fontWeight:700}}>rep</span>
                     </div>
                     {estRM>0&&(
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",background:c.dim,borderRadius:10,padding:"12px 14px",border:`1px solid ${c.border}`}}>
@@ -2692,15 +2771,15 @@ export default function App() {
                   estW_squat:"",estR_squat:"",estW_mil:"",estR_mil:"",estW_chin:"",estR_chin:""});
                 showToast("データをリセットしました");
               }}
-                style={{width:"100%",padding:"12px 0",background:"transparent",color:"#333",border:"1px solid #222",borderRadius:14,fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:1,marginTop:8}}>
+                style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textFaint,border:C.b,borderRadius:14,fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:1,marginTop:8}}>
                 データをリセット
               </button>
             )}
 
             {/* フッターリンク */}
-            <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:28,paddingTop:20,borderTop:"1px solid #161616"}}>
+            <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:28,paddingTop:20,borderTop:C.bCard}}>
               {[["使い方ガイド","/guide"],["プライバシーポリシー","/privacy"],["お問い合わせ","/contact"]].map(([label,to])=>(
-                <Link key={to} to={to} style={{fontSize:11,color:"#444",textDecoration:"none",fontWeight:600,letterSpacing:0.3}}>
+                <Link key={to} to={to} style={{fontSize:11,color:C.textDim,textDecoration:"none",fontWeight:600,letterSpacing:0.3}}>
                   {label}
                 </Link>
               ))}
@@ -2712,16 +2791,16 @@ export default function App() {
         {screen==="plan"&&(
           <div>
             {!allSet?(
-              <div style={{textAlign:"center",padding:60,color:"#333"}}>
-                <Settings size={40} color="#222"/>
+              <div style={{textAlign:"center",padding:60,color:C.textFaint}}>
+                <Settings size={40} color={C.border}/>
                 <div style={{marginTop:14,fontWeight:700,fontSize:13}}>設定タブで1RMを入力してください</div>
               </div>
             ):(
               <>
                 {/* Week nav */}
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14,background:"#111",borderRadius:14,padding:"12px 16px",border:"1px solid #1e1e1e"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14,background:C.surface,borderRadius:14,padding:"12px 16px",border:C.bSub}}>
                   <button onClick={()=>setWeek(w=>Math.max(1,w-1))}
-                    style={{background:"#161616",border:"1px solid #222",borderRadius:8,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",color:C.textMid,cursor:"pointer"}}>
+                    style={{background:C.card,border:C.b,borderRadius:8,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",color:C.textMid,cursor:"pointer"}}>
                     <ChevronLeft size={16}/>
                   </button>
                   <div style={{textAlign:"center"}}>
@@ -2732,32 +2811,32 @@ export default function App() {
                     </div>
                   </div>
                   <button onClick={advanceWeek}
-                    style={{background:"#161616",border:"1px solid #222",borderRadius:8,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",color:C.textMid,cursor:"pointer"}}>
+                    style={{background:C.card,border:C.b,borderRadius:8,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",color:C.textMid,cursor:"pointer"}}>
                     <ChevronRight size={16}/>
                   </button>
                 </div>
 
                 {/* Block info banner */}
                 {!cy.isMaxWeek&&(
-                  <div style={{background:"#111",borderRadius:12,padding:"10px 14px",marginBottom:10,border:`1px solid ${cy.phaseColor}33`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                  <div style={{background:C.surface,borderRadius:12,padding:"10px 14px",marginBottom:10,border:`1px solid ${cy.phaseColor}33`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
                     <div style={{display:"flex",alignItems:"center",gap:6}}>
                       <div style={{width:8,height:8,borderRadius:"50%",background:cy.phaseColor,flexShrink:0}}/>
                       <span style={{fontSize:11,fontWeight:800,color:cy.phaseColor,letterSpacing:0.5}}>{cy.phase}</span>
                     </div>
-                    <div style={{width:1,height:14,background:"#222",flexShrink:0}}/>
-                    <span style={{fontSize:10,color:"#555"}}>合計{cy.totalSets}セット</span>
-                    <div style={{width:1,height:14,background:"#222",flexShrink:0}}/>
-                    <span style={{fontSize:10,color:"#555"}}>RPE {cy.rpeMin}〜{cy.rpeMax}</span>
-                    <div style={{width:1,height:14,background:"#222",flexShrink:0}}/>
-                    <span style={{fontSize:10,color:"#555"}}>{cy.repLabel}</span>
+                    <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
+                    <span style={{fontSize:10,color:C.textMid}}>合計{cy.totalSets}セット</span>
+                    <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
+                    <span style={{fontSize:10,color:C.textMid}}>RPE {cy.rpeMin}〜{cy.rpeMax}</span>
+                    <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
+                    <span style={{fontSize:10,color:C.textMid}}>{cy.repLabel}</span>
                   </div>
                 )}
 
                 {/* 12週プログレスバー */}
-                <div style={{background:"#111",borderRadius:10,padding:"8px 12px",marginBottom:10,border:"1px solid #1a1a1a"}}>
+                <div style={{background:C.surface,borderRadius:10,padding:"8px 12px",marginBottom:10,border:C.bFaint}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
-                    <span style={{fontSize:9,color:"#333",fontWeight:700,letterSpacing:1}}>12 WEEK CYCLE</span>
-                    <span style={{fontSize:9,color:"#333"}}>W{((week-1)%12)+1} / 12</span>
+                    <span style={{fontSize:9,color:C.textFaint,fontWeight:700,letterSpacing:1}}>12 WEEK CYCLE</span>
+                    <span style={{fontSize:9,color:C.textFaint}}>W{((week-1)%12)+1} / 12</span>
                   </div>
                   <div style={{display:"flex",gap:2}}>
                     {Array.from({length:12},(_,i)=>{
@@ -2768,7 +2847,7 @@ export default function App() {
                       return (
                         <div key={i} style={{
                           flex:1,height:4,borderRadius:2,
-                          background: isDone ? blkColor : isCurrentW ? blkColor : "#1e1e1e",
+                          background: isDone ? blkColor : isCurrentW ? blkColor : C.borderSub,
                           opacity: isCurrentW ? 1 : isDone ? 0.6 : 0.3,
                           outline: isCurrentW ? `1px solid ${blkColor}` : "none",
                         }}/>
@@ -2779,7 +2858,7 @@ export default function App() {
                     {[{label:"蓄積",w:6,c:"#22c55e"},{label:"強化",w:4,c:"#3b82f6"},{label:"現実化",w:2,c:"#f59e0b"}].map(b=>(
                       <div key={b.label} style={{display:"flex",alignItems:"center",gap:3,marginRight:6}}>
                         <div style={{width:6,height:6,borderRadius:1,background:b.c,opacity:0.6}}/>
-                        <span style={{fontSize:8,color:"#333"}}>{b.label}</span>
+                        <span style={{fontSize:8,color:C.textFaint}}>{b.label}</span>
                       </div>
                     ))}
                   </div>
@@ -2842,8 +2921,8 @@ export default function App() {
                   {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
                     const c=C[dk];
                     return (
-                      <div key={key} style={{flexShrink:0,background:"#111",borderRadius:10,padding:"8px 12px",textAlign:"center",border:`1px solid ${c.border}`,minWidth:72}}>
-                        <div style={{fontSize:9,color:"#444",marginBottom:2}}>{label.replace("ミリタリープレス","MIL").replace("ベンチプレス","BENCH").replace("デッドリフト","DEAD").replace("スクワット","SQUAT").replace("チンニング加重","CHIN")}</div>
+                      <div key={key} style={{flexShrink:0,background:C.surface,borderRadius:10,padding:"8px 12px",textAlign:"center",border:`1px solid ${c.border}`,minWidth:72}}>
+                        <div style={{fontSize:9,color:C.textDim,marginBottom:2}}>{label.replace("ミリタリープレス","MIL").replace("ベンチプレス","BENCH").replace("デッドリフト","DEAD").replace("スクワット","SQUAT").replace("チンニング加重","CHIN")}</div>
                         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,color:c.accent}}>{rm[key]||"–"}<span style={{fontSize:9}}>kg</span></div>
                       </div>
                     );
@@ -2860,29 +2939,29 @@ export default function App() {
                   const isMax=cy.isMaxWeek;
 
                   return (
-                    <div key={dm.key} style={{borderRadius:14,marginBottom:10,overflow:"hidden",border:`1px solid ${isMax?"#2d1a5a":dm.c.border}`,background:"#111"}}>
+                    <div key={dm.key} style={{borderRadius:14,marginBottom:10,overflow:"hidden",border:`1px solid ${isMax?"#2d1a5a":C[dm.key].border}`,background:C.surface}}>
                       {/* Card header */}
                       <div onClick={()=>{
                           if(!isOpen) trackStartSession({weekNumber:week,phase:cy.phase});
                           setExpandDay(isOpen?null:dm.key);
                         }}
-                        style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",cursor:"pointer",background:isMax?"#0d0818":dm.c.dim}}>
+                        style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",cursor:"pointer",background:isMax?"#0d0818":C[dm.key].dim}}>
                         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:10,color:isMax?C.ppC.accent:dm.c.accent,letterSpacing:1}}>DAY</div>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:isMax?C.ppC.accent:dm.c.accent,lineHeight:1}}>{di+1}</div>
                         </div>
-                        <div style={{width:1,height:36,background:"#1a1a1a",flexShrink:0}}/>
+                        <div style={{width:1,height:36,background:C.borderFaint,flexShrink:0}}/>
                         <div style={{flex:1,minWidth:0}}>
                           <div style={{fontWeight:800,fontSize:14,color:C.text}}>{dm.label}</div>
-                          <div style={{fontSize:10,color:"#444",marginTop:1}}>{isMax?"1RM挑戦":dm.sub}</div>
+                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{isMax?"1RM挑戦":dm.sub}</div>
                           <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
                             {mains.map((ex,mi)=>(
-                              <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"2px 8px",border:`1px solid ${dm.c.border}`}}>
+                              <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"2px 8px",border:`1px solid ${C[dm.key].border}`}}>
                                 {ex.name} {ex.weight>0?`${ex.weight}kg`:"BW"}
                               </div>
                             ))}
                           </div>
-                          {prevSess&&<div style={{fontSize:9,color:"#333",marginTop:4}}>前回: {prevSess.date}</div>}
+                          {prevSess&&<div style={{fontSize:9,color:C.textFaint,marginTop:4}}>前回: {prevSess.date}</div>}
                         </div>
                         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
                           {hasInput&&<div style={{width:6,height:6,borderRadius:"50%",background:"#e63946"}}/>}
@@ -2892,18 +2971,18 @@ export default function App() {
 
                       {/* Expanded */}
                       {isOpen&&(
-                        <div style={{padding:"14px 12px 16px",borderTop:"1px solid #1a1a1a",background:"#0d0d0d"}}>
+                        <div style={{padding:"14px 12px 16px",borderTop:C.bFaint,background:C.surface2}}>
                           {isMax?(
                             <div style={{background:"#0d0818",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:11,color:"#6d4dc8",border:"1px solid #2d1060",lineHeight:1.6}}>
                               ウォームアップ後、段階的に重量を上げて1RM挑戦。RPE入力でタイマーがスタートします。
                             </div>
                           ):(
-                            <div style={{background:"#111",borderRadius:10,padding:"8px 14px",marginBottom:14,fontSize:11,color:"#333",border:"1px solid #1a1a1a"}}>
+                            <div style={{background:C.surface,borderRadius:10,padding:"8px 14px",marginBottom:14,fontSize:11,color:C.textFaint,border:C.bFaint}}>
                               RPEを入力するとインターバルタイマーが自動でスタートします
                             </div>
                           )}
 
-                          <div style={{fontSize:9,color:"#333",letterSpacing:1.5,fontWeight:700,marginBottom:8}}>MAIN LIFTS</div>
+                          <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>MAIN LIFTS</div>
                           {exList.filter(e=>e.cat==="main").map(ex=>{
                             const absIdx=exList.indexOf(ex);
                             const deloadW=checkDeload(sessions,ex.name,ex.reps);
@@ -2921,14 +3000,14 @@ export default function App() {
                           })}
 
                           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:14,marginBottom:8}}>
-                            <div style={{fontSize:9,color:"#2a2a2a",letterSpacing:1.5,fontWeight:700}}>ACCESSORIES</div>
+                            <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700}}>ACCESSORIES</div>
                             <button onClick={()=>setPickerDay(dm.key)}
-                              style={{fontSize:10,color:"#555",background:"#161616",border:"1px solid #222",borderRadius:7,padding:"4px 10px",cursor:"pointer",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
+                              style={{fontSize:10,color:C.textMid,background:C.card,border:C.b,borderRadius:7,padding:"4px 10px",cursor:"pointer",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
                               ＋ 種目を編集
                             </button>
                           </div>
                           {exList.filter(e=>e.cat==="iso").length===0&&(
-                            <div style={{textAlign:"center",padding:"16px 0",color:"#333",fontSize:11}}>
+                            <div style={{textAlign:"center",padding:"16px 0",color:C.textFaint,fontSize:11}}>
                               「種目を編集」から補助種目を追加してください
                             </div>
                           )}
@@ -2966,17 +3045,17 @@ export default function App() {
             <BodyWeightSection weights={weights} onSave={handleSaveWeight}/>
 
             {/* Tab switcher */}
-            <div style={{display:"flex",background:"#111",borderRadius:12,padding:3,marginBottom:16,border:"1px solid #1e1e1e"}}>
+            <div style={{display:"flex",background:C.surface,borderRadius:12,padding:3,marginBottom:16,border:C.bSub}}>
               {[["calendar","カレンダー"],["list","セッション一覧"]].map(([id,label])=>(
                 <button key={id} onClick={()=>setLogTab(id)}
-                  style={{flex:1,padding:"8px 0",borderRadius:9,border:"none",background:logTab===id?"#1e1e1e":"transparent",color:logTab===id?C.text:"#444",fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
+                  style={{flex:1,padding:"8px 0",borderRadius:9,border:"none",background:logTab===id?C.borderSub:"transparent",color:logTab===id?C.text:C.textDim,fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
                   {label}
                 </button>
               ))}
             </div>
 
             {logTab==="calendar"&&(
-              <div style={{width:"100%",boxSizing:"border-box",background:"#111",borderRadius:14,padding:"16px 14px",border:"1px solid #1e1e1e"}}>
+              <div style={{width:"100%",boxSizing:"border-box",background:C.surface,borderRadius:14,padding:"16px 14px",border:C.bSub}}>
                 <CalendarView sessions={sessions}/>
               </div>
             )}
@@ -2984,8 +3063,8 @@ export default function App() {
             {logTab==="list"&&(
               <div>
                 {sessions.length===0?(
-                  <div style={{textAlign:"center",padding:60,color:"#333"}}>
-                    <ClipboardList size={40} color="#222"/>
+                  <div style={{textAlign:"center",padding:60,color:C.textFaint}}>
+                    <ClipboardList size={40} color={C.border}/>
                     <div style={{marginTop:14,fontWeight:700,fontSize:13}}>プランタブから記録を保存してください</div>
                   </div>
                 ):sessions.map(s=>{
@@ -2993,22 +3072,22 @@ export default function App() {
                   const isExp=expandLog===s.id;
                   const mainExs=s.exercises.filter(e=>e.cat==="main");
                   return (
-                    <div key={s.id} style={{background:"#111",borderRadius:14,marginBottom:8,overflow:"hidden",border:`1px solid ${dm.c.border}`}}>
+                    <div key={s.id} style={{background:C.surface,borderRadius:14,marginBottom:8,overflow:"hidden",border:`1px solid ${C[dm.key].border}`}}>
                       <div onClick={()=>setExpandLog(isExp?null:s.id)}
-                        style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",cursor:"pointer",background:dm.c.dim}}>
+                        style={{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",cursor:"pointer",background:C[dm.key].dim}}>
                         <div style={{textAlign:"center",flexShrink:0}}>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:10,color:dm.c.accent,letterSpacing:1}}>W{s.week}</div>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,color:dm.c.accent,lineHeight:1}}>{s.date.split("/").slice(1).join("/")}</div>
                         </div>
-                        <div style={{width:1,height:30,background:"#1a1a1a",flexShrink:0}}/>
+                        <div style={{width:1,height:30,background:C.borderFaint,flexShrink:0}}/>
                         <div style={{flex:1,minWidth:0}}>
                           <div style={{fontWeight:800,fontSize:13}}>{s.dayLabel}</div>
-                          <div style={{fontSize:10,color:"#444",marginTop:1}}>{s.phase}</div>
+                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{s.phase}</div>
                           <div style={{display:"flex",gap:4,marginTop:5,flexWrap:"wrap"}}>
                             {mainExs.map((ex,ei)=>{
                               const b=ex.sets.reduce((b,s)=>s.weight>b.weight?s:b,{weight:0,reps:0});
                               return b.weight>0?(
-                                <div key={ei} style={{fontSize:9,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"1px 7px",border:`1px solid ${dm.c.border}`}}>
+                                <div key={ei} style={{fontSize:9,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"1px 7px",border:`1px solid ${C[dm.key].border}`}}>
                                   {ex.name} {b.weight}×{b.reps}
                                 </div>
                               ):null;
@@ -3018,20 +3097,20 @@ export default function App() {
                         <ChevronRight size={14} color={dm.c.accent} style={{transition:"transform 0.2s",transform:isExp?"rotate(90deg)":"none",flexShrink:0}}/>
                       </div>
                       {isExp&&(
-                        <div style={{padding:"12px 16px 14px",borderTop:"1px solid #1a1a1a"}}>
+                        <div style={{padding:"12px 16px 14px",borderTop:C.bFaint}}>
                           {s.exercises.map((ex,ei)=>{
                             const filled=ex.sets.filter(s=>s.weight>0||s.reps>0);
                             if(!filled.length) return null;
                             return (
                               <div key={ei} style={{marginBottom:10}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}>
-                                  {ex.cat==="main"?<Target size={12} color={dm.c.accent}/>:<Zap size={11} color="#333"/>}
+                                  {ex.cat==="main"?<Target size={12} color={dm.c.accent}/>:<Zap size={11} color={C.textFaint}/>}
                                   <div style={{fontWeight:700,fontSize:12,color:ex.cat==="main"?C.text:"#555"}}>{ex.name}</div>
                                   {ex.best1RM>0&&<div style={{marginLeft:"auto",fontSize:10,fontWeight:700,color:dm.c.accent}}>1RM {ex.best1RM}kg</div>}
                                 </div>
                                 <div style={{display:"flex",gap:4,flexWrap:"wrap",paddingLeft:18}}>
                                   {filled.map((set,si)=>(
-                                    <div key={si} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:dm.c.dim,borderRadius:6,padding:"3px 8px",border:`1px solid ${dm.c.border}`}}>
+                                    <div key={si} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:C[dm.key].dim,borderRadius:6,padding:"3px 8px",border:`1px solid ${C[dm.key].border}`}}>
                                       {set.weight}kg×{set.reps}{set.rpe>0?` RPE${set.rpe}`:""}
                                     </div>
                                   ))}
@@ -3040,7 +3119,7 @@ export default function App() {
                             );
                           })}
                           <button onClick={()=>handleShareSession(s)}
-                            style={{marginTop:8,width:"100%",padding:"9px 0",background:"#111",border:"1px solid #2a2a2a",borderRadius:10,color:"#888",fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:0.5}}>
+                            style={{marginTop:8,width:"100%",padding:"9px 0",background:C.surface,border:"1px solid #2a2a2a",borderRadius:10,color:C.textSub,fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:0.5}}>
                             {canWebShare() ? "📸 Xにシェア" : "📸 画像を保存してシェア"}
                           </button>
                         </div>
@@ -3065,7 +3144,7 @@ export default function App() {
                 const active=progressLift===key;
                 return (
                   <button key={key} onClick={()=>setProgressLift(key)}
-                    style={{flexShrink:0,padding:"7px 14px",borderRadius:9,border:`1px solid ${active?c.accent:c.border}`,background:active?c.dim:"#111",color:active?c.accent:"#444",fontSize:10,fontWeight:800,cursor:"pointer",letterSpacing:0.5,transition:"all 0.15s"}}>
+                    style={{flexShrink:0,padding:"7px 14px",borderRadius:9,border:`1px solid ${active?c.accent:c.border}`,background:active?c.dim:C.surface,color:active?c.accent:C.textDim,fontSize:10,fontWeight:800,cursor:"pointer",letterSpacing:0.5,transition:"all 0.15s"}}>
                     {label.replace("ミリタリープレス","MIL.").replace("ベンチプレス","BENCH").replace("デッドリフト","DEAD").replace("スクワット","SQUAT").replace("チンニング加重","CHIN")}
                   </button>
                 );
@@ -3079,12 +3158,12 @@ export default function App() {
               const diff=data.length>1?cur-data[0].rm:0;
               return (
                 <div key={key}>
-                  <div style={{background:"#111",borderRadius:16,padding:18,marginBottom:12,border:`1px solid ${c.border}`}}>
+                  <div style={{background:C.surface,borderRadius:16,padding:18,marginBottom:12,border:`1px solid ${c.border}`}}>
                     <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
                       <TrendingUp size={20} color={c.accent}/>
                       <div style={{flex:1}}>
                         <div style={{fontWeight:800,fontSize:16}}>{label}</div>
-                        <div style={{fontSize:10,color:"#444",marginTop:1}}>推定1RM推移</div>
+                        <div style={{fontSize:10,color:C.textDim,marginTop:1}}>推定1RM推移</div>
                       </div>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:c.accent,lineHeight:1}}>{cur||"–"}<span style={{fontSize:14}}>kg</span></div>
@@ -3096,17 +3175,17 @@ export default function App() {
 
                   {data.length>0&&(
                     <div>
-                      <div style={{fontSize:9,color:"#2a2a2a",letterSpacing:2,fontWeight:700,marginBottom:8}}>SESSION HISTORY</div>
+                      <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:8}}>SESSION HISTORY</div>
                       {sessions.map(s=>{
                         const rel=s.exercises.find(e=>e.rmKey===key&&e.sets.some(st=>st.weight>0));
                         if(!rel) return null;
                         const dm=DAY_META.find(d=>d.key===s.dayKey)||DAY_META[0];
                         return (
-                          <div key={s.id} style={{background:"#111",borderRadius:12,padding:"12px 14px",marginBottom:6,border:"1px solid #1a1a1a"}}>
+                          <div key={s.id} style={{background:C.surface,borderRadius:12,padding:"12px 14px",marginBottom:6,border:C.bFaint}}>
                             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
                               <div>
                                 <span style={{fontWeight:700,fontSize:12}}>{s.date}</span>
-                                <span style={{fontSize:10,color:"#333",marginLeft:8}}>W{s.week} · {s.phase}</span>
+                                <span style={{fontSize:10,color:C.textFaint,marginLeft:8}}>W{s.week} · {s.phase}</span>
                               </div>
                               {rel.best1RM>0&&<div style={{fontSize:11,fontWeight:700,color:c.accent}}>1RM {rel.best1RM}kg</div>}
                             </div>
@@ -3127,19 +3206,19 @@ export default function App() {
             })}
 
             {sessions.length>0&&(
-              <div style={{background:"#111",borderRadius:16,padding:18,marginTop:8,border:"1px solid #1e1e1e"}}>
-                <div style={{fontSize:9,color:"#2a2a2a",letterSpacing:2,fontWeight:700,marginBottom:14}}>TOTAL STATS</div>
+              <div style={{background:C.surface,borderRadius:16,padding:18,marginTop:8,border:C.bSub}}>
+                <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:14}}>TOTAL STATS</div>
                 <div style={{display:"flex",justifyContent:"space-around"}}>
                   <div style={{textAlign:"center"}}>
                     <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,color:C.text}}>{sessions.length}</div>
-                    <div style={{fontSize:9,color:"#333",letterSpacing:1}}>SESSIONS</div>
+                    <div style={{fontSize:9,color:C.textFaint,letterSpacing:1}}>SESSIONS</div>
                   </div>
-                  <div style={{width:1,background:"#1a1a1a"}}/>
+                  <div style={{width:1,background:C.borderFaint}}/>
                   <div style={{textAlign:"center"}}>
                     <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,color:C.text}}>
                       {Math.round(sessions.reduce((t,s)=>t+s.exercises.reduce((et,ex)=>et+ex.sets.reduce((st,set)=>st+(set.weight||0)*(set.reps||0),0),0),0)/1000*10)/10}
                     </div>
-                    <div style={{fontSize:9,color:"#333",letterSpacing:1}}>TOTAL VOL (t)</div>
+                    <div style={{fontSize:9,color:C.textFaint,letterSpacing:1}}>TOTAL VOL (t)</div>
                   </div>
                 </div>
               </div>
@@ -3154,24 +3233,24 @@ export default function App() {
           {blogSlug==null?(
             /* ─── 記事一覧 ─── */
             <div>
-              <div style={{padding:"20px 16px 12px",borderBottom:"1px solid #1a1a1a"}}>
+              <div style={{padding:"20px 16px 12px",borderBottom:C.bFaint}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
                   <div style={{width:3,height:18,borderRadius:2,background:C.red,flexShrink:0}}/>
                   <div style={{fontWeight:900,fontSize:16,letterSpacing:0.5}}>トレーニング知識</div>
                 </div>
-                <div style={{fontSize:11,color:"#555",marginLeft:11}}>BIG3・ペリオダイゼーション・相対筋力などを解説</div>
+                <div style={{fontSize:11,color:C.textMid,marginLeft:11}}>BIG3・ペリオダイゼーション・相対筋力などを解説</div>
               </div>
               <div style={{padding:"12px 12px 0"}}>
                 {getAllPosts().map(post=>(
                   <button key={post.slug} onClick={()=>setBlogSlug(post.slug)}
-                    style={{width:"100%",textAlign:"left",background:C.card,border:"1px solid #1e1e1e",borderRadius:14,padding:"16px",marginBottom:10,cursor:"pointer",display:"block"}}>
+                    style={{width:"100%",textAlign:"left",background:C.card,border:C.bSub,borderRadius:14,padding:"16px",marginBottom:10,cursor:"pointer",display:"block"}}>
                     <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:8}}>
                       {post.tags.slice(0,3).map(tag=>(
                         <span key={tag} style={{fontSize:9,fontWeight:700,color:C.red,background:C.redDim,borderRadius:4,padding:"2px 7px",letterSpacing:0.3}}>{tag}</span>
                       ))}
                     </div>
                     <div style={{fontWeight:800,fontSize:14,color:C.text,lineHeight:1.5,marginBottom:6}}>{post.title}</div>
-                    <div style={{fontSize:12,color:"#666",lineHeight:1.6,marginBottom:10}}>{post.description}</div>
+                    <div style={{fontSize:12,color:C.textSub,lineHeight:1.6,marginBottom:10}}>{post.description}</div>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <time style={{fontSize:10,color:"#3a3a3a"}}>{post.date}</time>
                       <span style={{fontSize:11,color:C.red,fontWeight:700}}>続きを読む →</span>
@@ -3204,7 +3283,7 @@ export default function App() {
                   <style>{articleCss}</style>
                   {/* 戻るボタン */}
                   <button onClick={()=>setBlogSlug(null)}
-                    style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#555",fontSize:12,padding:"14px 16px",cursor:"pointer",width:"100%",textAlign:"left",borderBottom:"1px solid #1a1a1a"}}>
+                    style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:C.textMid,fontSize:12,padding:"14px 16px",cursor:"pointer",width:"100%",textAlign:"left",borderBottom:C.bFaint}}>
                     <ChevronLeft size={14}/> 記事一覧に戻る
                   </button>
                   <div style={{padding:"16px 16px 0"}}>
@@ -3216,13 +3295,13 @@ export default function App() {
                     </div>
                     {/* タイトル */}
                     <h1 style={{margin:"0 0 8px",fontSize:18,fontWeight:900,color:C.text,lineHeight:1.4,letterSpacing:0.3}}>{post.title}</h1>
-                    <time style={{fontSize:10,color:"#3a3a3a",display:"block",marginBottom:16,paddingBottom:14,borderBottom:"1px solid #1a1a1a"}}>{post.date}</time>
+                    <time style={{fontSize:10,color:"#3a3a3a",display:"block",marginBottom:16,paddingBottom:14,borderBottom:C.bFaint}}>{post.date}</time>
                     {/* 本文 */}
                     <div className="blog-content" dangerouslySetInnerHTML={{__html:post.contentHtml}}/>
                     {/* CTA */}
-                    <div style={{marginTop:32,padding:"20px",background:"#111",border:"1px solid #1e1e1e",borderRadius:14,textAlign:"center"}}>
+                    <div style={{marginTop:32,padding:"20px",background:C.surface,border:C.bSub,borderRadius:14,textAlign:"center"}}>
                       <div style={{fontWeight:800,fontSize:13,color:C.text,marginBottom:6}}>12週間プログラムを今すぐ作成</div>
-                      <div style={{fontSize:11,color:"#555",lineHeight:1.6,marginBottom:14}}>この記事の内容をすべて組み込んだ<br/>パーソナライズドプログラムを自動生成</div>
+                      <div style={{fontSize:11,color:C.textMid,lineHeight:1.6,marginBottom:14}}>この記事の内容をすべて組み込んだ<br/>パーソナライズドプログラムを自動生成</div>
                       <button onClick={()=>{setBlogSlug(null);setScreen("setup");}}
                         style={{background:C.red,color:"#fff",fontWeight:800,fontSize:12,padding:"10px 24px",borderRadius:8,border:"none",cursor:"pointer",letterSpacing:0.5}}>
                         プログラムを作る →
@@ -3237,8 +3316,8 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <div style={{textAlign:"center",padding:"8px 0 16px",borderTop:"1px solid #111"}}>
-        <Link to="/privacy" style={{fontSize:10,color:"#2a2a2a",textDecoration:"none",letterSpacing:0.5}}>
+      <div style={{textAlign:"center",padding:"8px 0 16px",borderTop:C.bSub}}>
+        <Link to="/privacy" style={{fontSize:10,color:C.textFaint,textDecoration:"none",letterSpacing:0.5}}>
           プライバシーポリシー
         </Link>
       </div>
@@ -3248,7 +3327,7 @@ export default function App() {
         position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",
         width:"100%",maxWidth:480,
         background:"rgba(0,0,0,0.96)",
-        borderTop:"1px solid #1f1f1f",
+        borderTop:C.bSub,
         display:"flex",zIndex:20,
         paddingBottom:"env(safe-area-inset-bottom, 0px)",
         backdropFilter:"blur(12px)",
