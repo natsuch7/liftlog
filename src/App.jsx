@@ -2277,6 +2277,7 @@ export default function App() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
   const [theme, setTheme] = useLocalStorage("liftlog_theme", "dark");
+  const [setupError, setSetupError] = useState(null);
 
   // テーマに応じて C を動的に決定
   // eslint-disable-next-line no-shadow
@@ -2415,7 +2416,12 @@ export default function App() {
   function handleSetup() {
     const v={};
     for (const k of ["bench","dead","squat","mil","chin"]) v[k]=parseFloat(tmp[k])||0;
-    if (!v.bench||!v.dead||!v.squat||(useMil&&!v.mil)){showToast(useMil?"BIG5: 4種目を入力してください":"BIG3: 3種目を入力してください");return;}
+    const missing=[];
+    if(!v.bench) missing.push("ベンチプレス");
+    if(!v.squat) missing.push("スクワット");
+    if(!v.dead)  missing.push("デッドリフト");
+    if(useMil&&!v.mil) missing.push("ミリタリープレス");
+    if(missing.length){setSetupError(missing);return;}
     setRm(v);
     setScreen("generating");
     const sorted=[...weights].sort((a,b)=>b.date.localeCompare(a.date));
@@ -2567,6 +2573,35 @@ export default function App() {
       )}
       {screen==="generating"&&(
         <GeneratingScreen onComplete={()=>{setScreen("plan");showToast("プラン生成完了");}}/>
+      )}
+      {setupError&&(
+        <div style={{position:"fixed",inset:0,zIndex:900,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center",padding:"0 20px"}}
+          onClick={()=>setSetupError(null)}>
+          <div style={{width:"100%",maxWidth:340,background:C.card,borderRadius:20,border:C.b,padding:"24px 20px",boxShadow:"0 0 40px rgba(230,57,70,0.2)"}}
+            onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+              <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(230,57,70,0.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <span style={{fontSize:16}}>⚠️</span>
+              </div>
+              <div style={{fontWeight:800,fontSize:15,color:C.text}}>入力が必要な項目があります</div>
+            </div>
+            <div style={{fontSize:12,color:C.textSub,marginBottom:14,lineHeight:1.6}}>
+              以下の1RMを入力してからプランを生成してください：
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+              {setupError.map(label=>(
+                <div key={label} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:C.surface,borderRadius:10,border:"1px solid #e63946"}}>
+                  <div style={{width:6,height:6,borderRadius:"50%",background:"#e63946",flexShrink:0}}/>
+                  <div style={{fontWeight:700,fontSize:13,color:C.text}}>{label}</div>
+                </div>
+              ))}
+            </div>
+            <button onClick={()=>setSetupError(null)}
+              style={{width:"100%",padding:"14px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:12,fontSize:14,fontWeight:800,cursor:"pointer",letterSpacing:1}}>
+              入力する
+            </button>
+          </div>
+        </div>
       )}
       {showCycleModal&&(
         <CycleCompleteModal
