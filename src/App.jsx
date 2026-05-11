@@ -2247,7 +2247,7 @@ export default function App() {
   const { trackGenerateProgram, trackStartSession, trackCompleteSession, trackExitPoint } = useAnalytics();
   const navigate = useNavigate();
   const location = useLocation();
-  const [screen,setScreen]   = useState("setup");
+  const [screen,setScreen]   = useState("plan");
 
   // 永続化する状態（LocalStorage）
   const [rm,setRm]           = useLocalStorage("big5_rm", {bench:0,dead:0,squat:0,mil:0,chin:0});
@@ -2278,6 +2278,8 @@ export default function App() {
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
   const [theme, setTheme] = useLocalStorage("liftlog_theme", "dark");
   const [setupError, setSetupError] = useState(null);
+  const [onboardingDone, setOnboardingDone] = useLocalStorage("liftlog_onboarding_done", false);
+  const [onboardingStep, setOnboardingStep] = useState(null);
 
   // テーマに応じて C を動的に決定
   // eslint-disable-next-line no-shadow
@@ -2315,15 +2317,15 @@ export default function App() {
     setShowInstallBanner(false);
   }
 
-  // 設定済みなら直接プラン画面へ（URLクエリで画面指定がある場合はそちらを優先）
+  // URLクエリで画面指定がある場合はそちらを優先、初回ユーザーはオンボーディングへ
   useEffect(()=>{
     const params = new URLSearchParams(location.search);
     const target = params.get("screen");
     const valid = ["setup","plan","log","progress","blog"];
     if (target && valid.includes(target)) {
       setScreen(target);
-    } else if (rm.bench&&rm.dead&&rm.squat&&(!useMil||rm.mil>0)) {
-      setScreen("plan");
+    } else if (!(rm.bench&&rm.dead&&rm.squat&&(!useMil||rm.mil>0)) && !onboardingDone) {
+      setOnboardingStep(0);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
@@ -2423,6 +2425,28 @@ export default function App() {
     if(useMil&&!v.mil) missing.push("ミリタリープレス");
     if(missing.length){setSetupError(missing);return;}
     setRm(v);
+    setScreen("generating");
+    const sorted=[...weights].sort((a,b)=>b.date.localeCompare(a.date));
+    trackGenerateProgram({
+      bodyWeight: sorted[0]?.weight||0,
+      bench1rm: v.bench,
+      squat1rm: v.squat,
+      deadlift1rm: v.dead,
+    });
+  }
+
+  function handleOnboardingGenerate() {
+    const v={};
+    for (const k of ["bench","dead","squat","mil","chin"]) v[k]=parseFloat(tmp[k])||0;
+    const missing=[];
+    if(!v.bench) missing.push("ベンチプレス");
+    if(!v.squat) missing.push("スクワット");
+    if(!v.dead)  missing.push("デッドリフト");
+    if(useMil&&!v.mil) missing.push("ミリタリープレス");
+    if(missing.length){setSetupError(missing);return;}
+    setRm(v);
+    setOnboardingDone(true);
+    setOnboardingStep(null);
     setScreen("generating");
     const sorted=[...weights].sort((a,b)=>b.date.localeCompare(a.date));
     trackGenerateProgram({
@@ -3397,6 +3421,166 @@ export default function App() {
         })}
       </div>
       <InstallBanner />
+
+      {/* ══ ONBOARDING OVERLAY ════════════════════════════════════════════════ */}
+      {onboardingStep !== null && (
+        <div style={{position:"fixed",inset:0,zIndex:1000,background:C.bg,overflowY:"auto",fontFamily:"system-ui,-apple-system,sans-serif",color:C.text}}>
+          <div style={{maxWidth:480,margin:"0 auto",padding:"40px 20px 120px"}}>
+
+            {/* ─── Step 0: Welcome ─────────────────────────────────────────── */}
+            {onboardingStep===0&&(
+              <div>
+                <div style={{textAlign:"center",marginBottom:40}}>
+                  <div style={{display:"inline-flex",alignItems:"center",gap:8,marginBottom:36}}>
+                    <div style={{width:10,height:10,borderRadius:"50%",background:"#e63946"}}/>
+                    <span style={{fontWeight:900,fontSize:20,letterSpacing:2,color:C.text}}>LIFTLOG</span>
+                  </div>
+                  <div style={{fontSize:24,fontWeight:900,color:C.text,lineHeight:1.35,marginBottom:14}}>
+                    科学的な筋力プログラムを<br/>自動で作成します
+                  </div>
+                  <div style={{fontSize:13,color:C.textMid,lineHeight:1.8}}>
+                    BIG3／BIG5の1RMを入力するだけで、<br/>
+                    12週間のブロック周期プログラムを生成します。
+                  </div>
+                </div>
+
+                <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:36}}>
+                  {[
+                    {icon:"📊",title:"12週間の自動プログラム",desc:"蓄積・強化・現実化の3フェーズで効率的に強くなる"},
+                    {icon:"📝",title:"セッション記録",desc:"毎回のトレーニングを記録してボリュームを管理"},
+                    {icon:"📈",title:"進捗グラフ",desc:"1RMの推移を可視化して成長を確認"},
+                  ].map(({icon,title,desc})=>(
+                    <div key={title} style={{background:C.surface,borderRadius:12,padding:"14px 16px",border:C.bSub,display:"flex",gap:14,alignItems:"flex-start"}}>
+                      <span style={{fontSize:20,flexShrink:0}}>{icon}</span>
+                      <div>
+                        <div style={{fontWeight:800,fontSize:13,color:C.text,marginBottom:3}}>{title}</div>
+                        <div style={{fontSize:11,color:C.textMid,lineHeight:1.6}}>{desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button onClick={()=>setOnboardingStep(1)}
+                  style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:15,fontWeight:800,cursor:"pointer",letterSpacing:1,marginBottom:14}}>
+                  はじめる →
+                </button>
+                <button onClick={()=>{setOnboardingDone(true);setOnboardingStep(null);}}
+                  style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textFaint,border:"none",fontSize:12,cursor:"pointer"}}>
+                  スキップして後で設定する
+                </button>
+              </div>
+            )}
+
+            {/* ─── Step 1: Mode selection ──────────────────────────────────── */}
+            {onboardingStep===1&&(
+              <div>
+                <button onClick={()=>setOnboardingStep(0)}
+                  style={{background:"none",border:"none",color:C.textMid,fontSize:13,cursor:"pointer",marginBottom:28,padding:0,display:"flex",alignItems:"center",gap:4}}>
+                  ← 戻る
+                </button>
+                <div style={{marginBottom:32}}>
+                  <div style={{fontSize:11,color:"#e63946",fontWeight:700,letterSpacing:2,marginBottom:8}}>STEP 1 / 2</div>
+                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>トレーニングモードを選択</div>
+                  <div style={{fontSize:13,color:C.textMid,marginTop:10,lineHeight:1.7}}>ミリタリープレス・チンニングを行う場合はBIG5を選択してください</div>
+                </div>
+
+                <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:36}}>
+                  {[
+                    {id:"big3",label:"BIG3モード",sub:"週4日 — ベンチプレス・スクワット・デッドリフト",active:!useMil&&!useChin,onClick:()=>{setUseMil(false);setUseChin(false);}},
+                    {id:"big5",label:"BIG5モード",sub:"週5日 — BIG3＋ミリタリープレス＋チンニング（加重）",active:useMil&&useChin,onClick:()=>{setUseMil(true);setUseChin(true);}},
+                  ].map(({id,label,sub,active,onClick})=>(
+                    <button key={id} onClick={onClick}
+                      style={{width:"100%",textAlign:"left",padding:"18px 20px",borderRadius:14,border:`2px solid ${active?"#e63946":C.borderSub}`,background:active?"rgba(230,57,70,0.08)":C.surface,cursor:"pointer",transition:"all 0.15s"}}>
+                      <div style={{fontWeight:800,fontSize:15,color:active?"#e63946":C.text,marginBottom:4}}>{label}</div>
+                      <div style={{fontSize:12,color:active?"#e6394499":C.textMid,lineHeight:1.5}}>{sub}</div>
+                      {active&&<div style={{fontSize:11,color:"#e63946",fontWeight:700,marginTop:8}}>✓ 選択中</div>}
+                    </button>
+                  ))}
+                </div>
+
+                <button onClick={()=>setOnboardingStep(2)}
+                  style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:15,fontWeight:800,cursor:"pointer",letterSpacing:1}}>
+                  次へ →
+                </button>
+              </div>
+            )}
+
+            {/* ─── Step 2: 1RM input ────────────────────────────────────────── */}
+            {onboardingStep===2&&(
+              <div>
+                <button onClick={()=>setOnboardingStep(1)}
+                  style={{background:"none",border:"none",color:C.textMid,fontSize:13,cursor:"pointer",marginBottom:28,padding:0,display:"flex",alignItems:"center",gap:4}}>
+                  ← 戻る
+                </button>
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,color:"#e63946",fontWeight:700,letterSpacing:2,marginBottom:8}}>STEP 2 / 2</div>
+                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>1RMを入力してください</div>
+                  <div style={{fontSize:13,color:C.textMid,marginTop:10,lineHeight:1.7}}>
+                    1回だけ持ち上げられる最大重量です。わからない場合は推定1RM計算機を使ってください。
+                  </div>
+                </div>
+
+                {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
+                  const c=C[dk];
+                  const estW=tmp[`estW_${key}`]||"";
+                  const estR=tmp[`estR_${key}`]||"";
+                  const estRM=(estW&&estR)?calc1RM(parseFloat(estW),parseInt(estR)):0;
+                  const iStyle={display:"block",width:"100%",boxSizing:"border-box",background:C.surface2,border:C.bSub,borderRadius:10,color:C.text,outline:"none",fontWeight:700,padding:"12px",fontSize:18,textAlign:"center"};
+                  return (
+                    <div key={key} style={{background:C.surface,borderRadius:14,padding:"15px",marginBottom:10,border:`1px solid ${c.border}`}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+                        <div style={{width:3,height:24,borderRadius:2,background:c.accent,flexShrink:0}}/>
+                        <div style={{fontWeight:800,fontSize:14,letterSpacing:0.3}}>{label}</div>
+                      </div>
+
+                      <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>1RM直接入力</div>
+                      <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:14}}>
+                        <input type="number" inputMode="decimal"
+                          placeholder={key==="chin"?"加重量（自重=0）":"例: 100"} value={tmp[key]}
+                          onChange={e=>setTmp(p=>({...p,[key]:e.target.value}))}
+                          style={{...iStyle,border:`1px solid ${tmp[key]?c.border:C.borderSub}`,flex:1}}/>
+                        <span style={{fontSize:12,color:C.textFaint,fontWeight:700}}>kg</span>
+                      </div>
+
+                      <div style={{borderTop:C.bFaint,paddingTop:14}}>
+                        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>推定1RM — 重量×回数から計算</div>
+                        <div style={{display:"grid",gridTemplateColumns:"1fr auto 1fr auto",gap:6,alignItems:"center",marginBottom:8}}>
+                          <input type="number" inputMode="decimal" placeholder="重量" value={estW}
+                            onChange={e=>setTmp(p=>({...p,[`estW_${key}`]:e.target.value}))}
+                            style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
+                          <span style={{fontSize:11,color:C.textFaint,fontWeight:700,textAlign:"center"}}>kg ×</span>
+                          <input type="number" inputMode="numeric" placeholder="回数" value={estR}
+                            onChange={e=>setTmp(p=>({...p,[`estR_${key}`]:e.target.value}))}
+                            style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
+                          <span style={{fontSize:11,color:C.textFaint,fontWeight:700}}>rep</span>
+                        </div>
+                        {estRM>0&&(
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",background:c.dim,borderRadius:10,padding:"12px 14px",border:`1px solid ${c.border}`}}>
+                            <div>
+                              <div style={{fontSize:9,color:c.accent,fontWeight:700,letterSpacing:1}}>ESTIMATED 1RM</div>
+                              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,color:c.accent,lineHeight:1}}>{estRM}<span style={{fontSize:14}}>kg</span></div>
+                            </div>
+                            <button onClick={()=>setTmp(p=>({...p,[key]:String(estRM)}))}
+                              style={{padding:"10px 16px",background:c.accent,color:"#fff",border:"none",borderRadius:10,fontSize:11,fontWeight:800,cursor:"pointer",letterSpacing:0.5}}>
+                              この値を使う
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <button onClick={handleOnboardingGenerate}
+                  style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:14,fontWeight:800,cursor:"pointer",letterSpacing:2,marginTop:4}}>
+                  GENERATE PLAN →
+                </button>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
