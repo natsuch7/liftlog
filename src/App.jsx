@@ -555,7 +555,7 @@ function checkDeload(sessions, exName, plannedReps) {
 }
 
 // ─── BODY WEIGHT SECTION（ログタブ）─────────────────────────
-function BodyWeightSection({ weights, onSave }) {
+function BodyWeightSection({ weights, onSave, C }) {
   const COLOR = "#06b6d4";
   const todayStr = new Date().toLocaleDateString("ja-JP");
   const todayRec = weights.find(w => w.date === todayStr);
@@ -613,7 +613,7 @@ function BodyWeightSection({ weights, onSave }) {
         </div>
 
         {/* グラフ */}
-        <WeightChart data={recent14}/>
+        <WeightChart data={recent14} C={C}/>
 
         {/* 統計 */}
         {avgThis&&(
@@ -968,7 +968,7 @@ async function doShareCanvas(canvas, filename, text, onFallbackToast) {
 }
 
 // ─── BODY STATS SECTION（進捗タブ）───────────────────────────
-function BodyStatsSection({ weights, rm, onToast }) {
+function BodyStatsSection({ weights, rm, onToast, C }) {
   const sorted = [...weights].sort((a,b)=>b.date.localeCompare(a.date));
   const latest = sorted[0];
   if (!latest) return null;
@@ -1051,14 +1051,14 @@ function getVolumeStatus(sets) {
   return             { color:"#ef4444", label:"過多注意", isExcess:true };
 }
 
-function VolumeBar({ muscleGroup, sets }) {
+function VolumeBar({ muscleGroup, sets, C }) {
   const { color, label: statusLabel, isExcess } = getVolumeStatus(sets);
   const pct = Math.min(sets / 20 * 100, 100);
   return (
     <div style={{marginBottom:12}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:5}}>
         <div>
-          <span style={{fontSize:11,fontWeight:800,color:"#f0f0f0"}}>{muscleGroup.label}</span>
+          <span style={{fontSize:11,fontWeight:800,color:C.text}}>{muscleGroup.label}</span>
           <span style={{fontSize:9,color:C.textDim,marginLeft:4}}>{muscleGroup.en}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -1090,7 +1090,7 @@ function VolumeBar({ muscleGroup, sets }) {
   );
 }
 
-function WeeklyVolumeSection({ sessions }) {
+function WeeklyVolumeSection({ sessions, C }) {
   const vol = calcWeeklyVolume(sessions);
 
   const weekStart = getWeekStart();
@@ -1131,7 +1131,7 @@ function WeeklyVolumeSection({ sessions }) {
       <div style={{background:C.card,borderRadius:14,padding:"14px 16px",border:C.bSub}}>
         {/* BIG3 primary */}
         <div style={{fontSize:9,color:C.textFaint,letterSpacing:1,fontWeight:700,marginBottom:10}}>BIG3 主要筋群</div>
-        {primary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0}/>)}
+        {primary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0} C={C}/>)}
 
         {/* Secondary – collapsible */}
         <details>
@@ -1143,7 +1143,7 @@ function WeeklyVolumeSection({ sessions }) {
             <span style={{fontSize:8,color:C.textFaint}}>▼</span>
           </summary>
           <div style={{marginTop:10}}>
-            {secondary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0}/>)}
+            {secondary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0} C={C}/>)}
           </div>
         </details>
       </div>
@@ -1151,7 +1151,7 @@ function WeeklyVolumeSection({ sessions }) {
   );
 }
 
-function WeeklyVolumeCompact({ sessions, onViewDetails }) {
+function WeeklyVolumeCompact({ sessions, onViewDetails, C }) {
   const vol = calcWeeklyVolume(sessions);
   const primaryKeys = ["chest","back","quad"];
   const groups = MUSCLE_GROUPS.filter(g=>primaryKeys.includes(g.key));
@@ -1172,7 +1172,7 @@ function WeeklyVolumeCompact({ sessions, onViewDetails }) {
         return (
           <div key={key} style={{marginBottom:8}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
-              <span style={{fontSize:10,fontWeight:700,color:"#f0f0f0"}}>{label}</span>
+              <span style={{fontSize:10,fontWeight:700,color:C.text}}>{label}</span>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <span style={{fontSize:9,fontWeight:700,color,letterSpacing:0.3}}>{statusLabel}</span>
                 <span style={{fontSize:10,fontWeight:700,color}}>{sets}<span style={{fontSize:8,color:C.textMid}}>/20</span></span>
@@ -1475,7 +1475,7 @@ function RestTimer({ state, onDismiss, onReset }) {
 }
 
 // ─── MINI CHART ───────────────────────────────────────────
-function MiniChart({ data, color }) {
+function MiniChart({ data, color, C }) {
   if (data.length<2) return (
     <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
       {data.length===1?`現在 ${data[0].rm}kg — 記録を増やすとグラフが表示されます`:"記録を追加するとグラフが表示されます"}
@@ -1512,7 +1512,7 @@ function MiniChart({ data, color }) {
 }
 
 // ─── WEIGHT CHART ─────────────────────────────────────────
-function WeightChart({ data }) {
+function WeightChart({ data, C }) {
   const COLOR = "#06b6d4";
   if (data.length < 2) return (
     <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
@@ -2901,7 +2901,7 @@ export default function App() {
 
                 {/* Weekly volume compact */}
                 {sessions.length>0&&(
-                  <WeeklyVolumeCompact sessions={sessions} onViewDetails={()=>setScreen("progress")}/>
+                  <WeeklyVolumeCompact sessions={sessions} onViewDetails={()=>setScreen("progress")} C={C}/>
                 )}
 
                 {/* Tapering week banner */}
@@ -3077,7 +3077,7 @@ export default function App() {
         {/* ══ LOG ══════════════════════════════════════ */}
         {screen==="log"&&(
           <div>
-            <BodyWeightSection weights={weights} onSave={handleSaveWeight}/>
+            <BodyWeightSection weights={weights} onSave={handleSaveWeight} C={C}/>
 
             {/* Tab switcher */}
             <div style={{display:"flex",background:C.surface,borderRadius:12,padding:3,marginBottom:16,border:C.bSub}}>
@@ -3170,8 +3170,8 @@ export default function App() {
         {/* ══ PROGRESS ═════════════════════════════════ */}
         {screen==="progress"&&(
           <div>
-            <BodyStatsSection weights={weights} rm={rm} onToast={showToast}/>
-            <WeeklyVolumeSection sessions={sessions}/>
+            <BodyStatsSection weights={weights} rm={rm} onToast={showToast} C={C}/>
+            <WeeklyVolumeSection sessions={sessions} C={C}/>
 
             <div style={{display:"flex",gap:5,marginBottom:16,overflowX:"auto",paddingBottom:2}}>
               {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
@@ -3205,7 +3205,7 @@ export default function App() {
                         {data.length>1&&<div style={{fontSize:11,fontWeight:700,color:diff>=0?"#22c55e":"#e63946",marginTop:2}}>{diff>=0?"↑":"↓"} {Math.abs(diff)}kg</div>}
                       </div>
                     </div>
-                    <MiniChart data={data} color={c.accent}/>
+                    <MiniChart data={data} color={c.accent} C={C}/>
                   </div>
 
                   {data.length>0&&(
