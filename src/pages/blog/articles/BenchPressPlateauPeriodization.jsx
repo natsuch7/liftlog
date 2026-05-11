@@ -1,12 +1,23 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 import BenchPeriodizationChart from '../../../components/charts/BenchPeriodizationChart'
 
-const C = { text: '#f0f0f0', textSub: '#888', red: '#e63946', border: '#222', card: '#161616' }
-const h2Style = { fontSize: 20, fontWeight: 800, color: C.text, margin: '40px 0 16px', paddingBottom: 10, borderBottom: `1px solid ${C.border}` }
-const pStyle = { fontSize: 15, color: '#ccc', lineHeight: 1.9, margin: '0 0 18px' }
-const strongStyle = { color: C.text, fontWeight: 700 }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
 export default function BenchPressPlateauPeriodization() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const h2Style = h2
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
+  const pStyle = p
+  const strong = { color:C.text, fontWeight:700 }
+  const strongStyle = strong
   return (
     <BlogLayout
       title="ベンチプレスが伸びない原因はプログラムにある｜ピリオダイゼーションで停滞を打破する方法"

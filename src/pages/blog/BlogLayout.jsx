@@ -1,14 +1,23 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import BlogBottomNav from '../../components/BlogBottomNav'
 
-const C = {
-  bg: '#0a0a0a', surface: '#111111', card: '#161616',
-  border: '#222222', text: '#f0f0f0', textSub: '#888888',
-  textMid: '#555555', red: '#e63946', redDim: '#3d1012',
-}
+const DARK = { bg:'#0a0a0a', surface:'#111111', card:'#161616', border:'#222222', text:'#f0f0f0', textSub:'#888888', textMid:'#555555', red:'#e63946' }
+const LIGHT = { bg:'#f2f2f2', surface:'#ffffff', card:'#f0f0f0', border:'#e0e0e0', text:'#111111', textSub:'#888888', textMid:'#555555', red:'#e63946' }
 
 export default function BlogLayout({ title, description, url, date, readTime, children }) {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  const C = theme === 'light' ? LIGHT : DARK
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.documentElement.style.backgroundColor = C.bg
+    document.body.style.backgroundColor = C.bg
+  }, [C.bg])
+
   return (
     <>
       <Helmet>
@@ -63,7 +72,7 @@ export default function BlogLayout({ title, description, url, date, readTime, ch
             <Link to="/privacy" style={{ fontSize: 12, color: C.textSub, textDecoration: 'none' }}>プライバシーポリシー</Link>
             <Link to="/" style={{ fontSize: 12, color: C.textSub, textDecoration: 'none' }}>アプリを使う</Link>
           </div>
-          <p style={{ margin: 0, fontSize: 11, color: '#333' }}>© 2025 LIFTLOG</p>
+          <p style={{ margin: 0, fontSize: 11, color: C.textSub }}>© 2025 LIFTLOG</p>
         </footer>
       </div>
       <BlogBottomNav />

@@ -1,13 +1,14 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 import TrainingPyramidChart from '../../../components/charts/TrainingPyramidChart'
 
-const C = { text: '#f0f0f0', red: '#e63946', border: '#222', card: '#161616' }
-const h2 = { fontSize: 20, fontWeight: 800, color: C.text, margin: '40px 0 16px', paddingBottom: 10, borderBottom: `1px solid ${C.border}` }
-const h3 = { fontSize: 16, fontWeight: 800, color: C.text, margin: '28px 0 10px' }
-const p = { fontSize: 15, color: '#ccc', lineHeight: 1.9, margin: '0 0 18px' }
-const point = { fontSize: 14, color: C.text, fontWeight: 700, background: 'rgba(230,57,70,0.06)', border: `1px solid ${C.red}33`, borderLeft: `3px solid ${C.red}`, borderRadius: 6, padding: '10px 16px', margin: '0 0 24px' }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
-function LevelCard({ num, title, children, pointText }) {
+function LevelCard({ num, title, children, pointText , C}) {
+  const p = { fontSize:15, color:C===DARK?'#cccccc':'#444444', lineHeight:1.9, margin:'0 0 18px' }
+  const pStyle = p
   return (
     <div style={{ background: C.card, borderRadius: 12, padding: '20px 22px', border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.red}`, marginBottom: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -32,6 +33,15 @@ const TABLE_ROWS = [
 ]
 
 export default function PeriodizationTrainingGuide() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const h3 = { fontSize:16, fontWeight:800, color:C.text, margin:'28px 0 10px' }
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
+  const point = { fontSize:14, color:theme==='light'?'#333333':'#f0f0f0', fontWeight:700, background:'rgba(230,57,70,0.06)', border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:6, padding:'10px 16px', margin:'0 0 24px' }
   return (
     <BlogLayout
       title="ピリオダイゼーションとは？BIG3を長期的に伸ばすための「計画術」"
@@ -63,27 +73,27 @@ export default function PeriodizationTrainingGuide() {
 
       <h2 style={h2}>6つのレベル詳細</h2>
 
-      <LevelCard num="1" title="継続すること（最重要）" pointText="完璧より継続。続けられる仕組みを最優先に考える。">
+      <LevelCard C={C} num="1" title="継続すること（最重要）" pointText="完璧より継続。続けられる仕組みを最優先に考える。">
         どれだけ完璧なプログラムでも、続けられなければ意味がありません。まず自分が長く続けられる条件を整えることが、すべての土台になります。週3回が理想でも、週2回しかできないなら週2回で続けられるプログラムの方が優れています。
       </LevelCard>
 
-      <LevelCard num="2" title="トレーニング量・強度・頻度" pointText="3つをバランスよく調整する。1つだけ極端に増やすと他が崩れる。">
+      <LevelCard C={C} num="2" title="トレーニング量・強度・頻度" pointText="3つをバランスよく調整する。1つだけ極端に増やすと他が崩れる。">
         この3つは切り離して考えることができません。すべてが影響し合っています。量（ボリューム）・強度（%1RM）・頻度（週何回か）の組み合わせをどう設計するかが、プログラムの性格を決めます。経験レベル・目標・生活スタイルに合わせて調整することが重要です。
       </LevelCard>
 
-      <LevelCard num="3" title="記録の伸ばし方" pointText="記録が止まったらプログラムを見直すタイミング。">
+      <LevelCard C={C} num="3" title="記録の伸ばし方" pointText="記録が止まったらプログラムを見直すタイミング。">
         筋力・筋量を伸ばし続けるには、<span style={{ color: C.text, fontWeight: 700 }}>少しずつ刺激を強くしていく（漸進性過負荷の原則）</span>必要があります。初心者のうちは毎回重量が上がりますが、中級者以降は「強度が高い週」と「ボリュームが多い週」を交互に組み合わせるなど、より計画的なアプローチが必要になります。
       </LevelCard>
 
-      <LevelCard num="4" title="種目の選び方" pointText="万人共通の正解はない。身体の構造と目的に合わせて選ぶ。">
+      <LevelCard C={C} num="4" title="種目の選び方" pointText="万人共通の正解はない。身体の構造と目的に合わせて選ぶ。">
         目的によって最適な種目は変わります。パワーリフターはスクワット・ベンチ・デッドを軸に、弱点を補う補助種目を加えます。筋肥大が目的の場合は、自分の身体の構造に合った種目を選ぶことで効率が上がります。
       </LevelCard>
 
-      <LevelCard num="5" title="セット間の休憩" pointText="BIG3のセット間は最低3分。妥協しない。">
+      <LevelCard C={C} num="5" title="セット間の休憩" pointText="BIG3のセット間は最低3分。妥協しない。">
         セット間の休憩は、次のセットのパフォーマンスに直結します。研究では<span style={{ color: C.text, fontWeight: 700 }}>3〜5分の休憩が筋力・筋肥大の両方に有効</span>とされています。「追い込むために短くすべき」という考えは誤解です。短すぎる休憩は次のセットの質を下げるだけです。
       </LevelCard>
 
-      <LevelCard num="6" title="挙上速度" pointText="上げるのは素早く、下げるのはゆっくりコントロール。">
+      <LevelCard C={C} num="6" title="挙上速度" pointText="上げるのは素早く、下げるのはゆっくりコントロール。">
         バーベルを上げる速さも、トレーニングの質に影響します。基本的には<span style={{ color: C.text, fontWeight: 700 }}>コンセントリック（上げる動作）は力強く、エキセントリック（下げる動作）はコントロールして</span>が原則です。ただし初心者のうちは速度より正しいフォームを優先してください。
       </LevelCard>
 

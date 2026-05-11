@@ -1,11 +1,11 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 
-const C = { text:'#f0f0f0', red:'#e63946', border:'#222', card:'#161616' }
-const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
-const p = { fontSize:15, color:'#ccc', lineHeight:1.9, margin:'0 0 18px' }
-const li = { fontSize:15, color:'#ccc', lineHeight:1.8, marginBottom:8 }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
-function FrequencyRow({ lift, freq, note }) {
+function FrequencyRow({ lift, freq, note , C}) {
   return (
     <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', background:C.card, borderRadius:10, border:`1px solid ${C.border}`, marginBottom:8 }}>
       <div style={{ fontWeight:800, fontSize:14, color:C.text, minWidth:130 }}>{lift}</div>
@@ -16,6 +16,14 @@ function FrequencyRow({ lift, freq, note }) {
 }
 
 export default function Big3TrainingFrequency() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
+  const li = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.8, marginBottom:8 }
   return (
     <BlogLayout
       title="BIG3の最適なトレーニング頻度｜週何回やるべきか研究から考える"
@@ -37,9 +45,9 @@ export default function Big3TrainingFrequency() {
       </div>
 
       <h2 style={h2}>種目別の推奨頻度</h2>
-      <FrequencyRow lift="スクワット" freq="週2回" note="脚・体幹への疲労が大きいため、週3回以上は回復が追いつかないことが多い。強度が高い週は1回でも可。" />
-      <FrequencyRow lift="ベンチプレス" freq="週2〜3回" note="肩・肘への負担が比較的少なく回復が早い。ただし両日とも高強度は避ける。" />
-      <FrequencyRow lift="デッドリフト" freq="週1〜2回" note="BIG3の中で最も神経系への負荷が大きい。週2回行う場合は1回をライト、もう1回をヘビーに。" />
+      <FrequencyRow C={C} lift="スクワット" freq="週2回" note="脚・体幹への疲労が大きいため、週3回以上は回復が追いつかないことが多い。強度が高い週は1回でも可。" />
+      <FrequencyRow C={C} lift="ベンチプレス" freq="週2〜3回" note="肩・肘への負担が比較的少なく回復が早い。ただし両日とも高強度は避ける。" />
+      <FrequencyRow C={C} lift="デッドリフト" freq="週1〜2回" note="BIG3の中で最も神経系への負荷が大きい。週2回行う場合は1回をライト、もう1回をヘビーに。" />
 
       <h2 style={h2}>頻度より重要なこと</h2>
       <p style={p}>頻度よりも<span style={{ color:C.text, fontWeight:700 }}>週間の総ボリューム（セット数×回数×重量）</span>の方が筋肥大には重要という研究結果があります。</p>

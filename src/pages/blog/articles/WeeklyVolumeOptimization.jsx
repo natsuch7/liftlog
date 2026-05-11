@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 import VolumeOptimizationChart from '../../../components/charts/VolumeOptimizationChart'
 
-const C = { text: '#f0f0f0', textSub: '#888', red: '#e63946', border: '#222', card: '#161616' }
-const h2Style = { fontSize: 20, fontWeight: 800, color: C.text, margin: '40px 0 16px', paddingBottom: 10, borderBottom: `1px solid ${C.border}` }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 const pStyle  = { fontSize: 15, color: '#ccc', lineHeight: 1.9, margin: '0 0 18px' }
-const strongStyle = { color: C.text, fontWeight: 700 }
 
 const tableStyle = {
   width: '100%', borderCollapse: 'collapse', margin: '0 0 24px', fontSize: 13,
@@ -13,10 +14,19 @@ const thStyle = {
   background: '#161616', color: '#888', fontWeight: 700, padding: '10px 14px',
   border: '1px solid #222', textAlign: 'left', letterSpacing: 0.5,
 }
-const tdStyle = { padding: '10px 14px', border: '1px solid #1e1e1e', color: '#ccc', lineHeight: 1.6 }
-const tdHighlight = { ...tdStyle, color: '#22c55e', fontWeight: 700, background: 'rgba(34,197,94,0.07)' }
 
 export default function WeeklyVolumeOptimization() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const h2Style = h2
+  const strong = { color:C.text, fontWeight:700 }
+  const strongStyle = strong
+  const tdStyle = { padding:'10px 14px', border:`1px solid ${C.border}`, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.6 }
+  const tdHighlight = { ...tdStyle, color:'#22c55e', fontWeight:700, background:'rgba(34,197,94,0.07)' }
   return (
     <BlogLayout
       title="筋トレはやればやるほど良い？週セット数に「スイートスポット」が存在する理由"

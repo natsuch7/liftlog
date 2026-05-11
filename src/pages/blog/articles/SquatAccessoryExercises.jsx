@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 
-const C = { text:'#f0f0f0', red:'#e63946', border:'#222', card:'#161616' }
-const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
-const p = { fontSize:15, color:'#ccc', lineHeight:1.9, margin:'0 0 18px' }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
-function ExerciseCard({ num, name, frequency, children }) {
+function ExerciseCard({ num, name, frequency, children , C}) {
+  const p = { fontSize:15, color:C===DARK?'#cccccc':'#444444', lineHeight:1.9, margin:'0 0 18px' }
+  const pStyle = p
   return (
     <div style={{ background:C.card, borderRadius:14, padding:'20px 22px', border:`1px solid ${C.border}`, marginBottom:12 }}>
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
@@ -20,6 +23,13 @@ function ExerciseCard({ num, name, frequency, children }) {
 }
 
 export default function SquatAccessoryExercises() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
   return (
     <BlogLayout
       title="スクワットが伸びないときに試すべき補助種目5選"
@@ -51,19 +61,19 @@ export default function SquatAccessoryExercises() {
       </div>
 
       <h2 style={h2}>補助種目5選</h2>
-      <ExerciseCard num="1" name="ブルガリアンスプリットスクワット" frequency="週2回・3セット×8〜10回">
+      <ExerciseCard C={C} num="1" name="ブルガリアンスプリットスクワット" frequency="週2回・3セット×8〜10回">
         片脚でのスクワット動作で、中臀筋と大殿筋を集中的に鍛えられます。スクワット中に膝が内側に入ってしまう人に特に有効です。
       </ExerciseCard>
-      <ExerciseCard num="2" name="ルーマニアンデッドリフト" frequency="週1〜2回・3セット×8〜10回">
+      <ExerciseCard C={C} num="2" name="ルーマニアンデッドリフト" frequency="週1〜2回・3セット×8〜10回">
         ハムストリングスをストレッチしながら鍛える種目。スクワットのボトムから立ち上がる力を補強します。
       </ExerciseCard>
-      <ExerciseCard num="3" name="コペンハーゲンプランク" frequency="週2回・3セット×10〜15秒">
+      <ExerciseCard C={C} num="3" name="コペンハーゲンプランク" frequency="週2回・3セット×10〜15秒">
         内転筋を強化する種目。深いスクワットで力が逃げてしまう人に有効です。
       </ExerciseCard>
-      <ExerciseCard num="4" name="パーシャルスクワット（ボックススクワット）" frequency="週1回・3セット×3〜5回">
+      <ExerciseCard C={C} num="4" name="パーシャルスクワット（ボックススクワット）" frequency="週1回・3セット×3〜5回">
         スティッキングポイント付近の動作を集中的に強化できます。高重量を短い可動域で扱うことで、弱い角度への適応を促します。
       </ExerciseCard>
-      <ExerciseCard num="5" name="フロントスクワット" frequency="週1回・3〜4セット×5〜6回">
+      <ExerciseCard C={C} num="5" name="フロントスクワット" frequency="週1回・3〜4セット×5〜6回">
         バックスクワットより体幹・大腿四頭筋への要求が高い種目。バックスクワットが停滞したときに取り入れると、刺激の変化が得られます。
       </ExerciseCard>
 

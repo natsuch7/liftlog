@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 
-const C = { text:'#f0f0f0', red:'#e63946', border:'#222', card:'#161616' }
-const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
-const p = { fontSize:15, color:'#ccc', lineHeight:1.9, margin:'0 0 18px' }
-const li = { fontSize:15, color:'#ccc', lineHeight:1.8, marginBottom:8 }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
-function MethodCard({ title, children }) {
+function MethodCard({ title, children , C}) {
+  const p = { fontSize:15, color:C===DARK?'#cccccc':'#444444', lineHeight:1.9, margin:'0 0 18px' }
+  const pStyle = p
   return (
     <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}`, marginBottom:12 }}>
       <div style={{ fontWeight:800, fontSize:14, color:C.red, marginBottom:8 }}>{title}</div>
@@ -15,6 +17,14 @@ function MethodCard({ title, children }) {
 }
 
 export default function DeloadSigns() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
+  const li = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.8, marginBottom:8 }
   return (
     <BlogLayout
       title="デロードのサインと正しいやり方｜疲労を抜いて記録を更新する方法"
@@ -46,9 +56,9 @@ export default function DeloadSigns() {
       <p style={p}>これらは神経系や内分泌系が限界に近づいているサインです。</p>
 
       <h2 style={h2}>デロードのやり方</h2>
-      <MethodCard title="方法1：強度を落とす（推奨）">通常の60〜70%の重量で同じセット数・回数をこなす。フォームの確認にもなるため最も推奨される方法。</MethodCard>
-      <MethodCard title="方法2：ボリュームを落とす">重量はそのまま、セット数を通常の半分に減らす。</MethodCard>
-      <MethodCard title="方法3：頻度を落とす">週のトレーニング日数を半分にする。</MethodCard>
+      <MethodCard C={C} title="方法1：強度を落とす（推奨）">通常の60〜70%の重量で同じセット数・回数をこなす。フォームの確認にもなるため最も推奨される方法。</MethodCard>
+      <MethodCard C={C} title="方法2：ボリュームを落とす">重量はそのまま、セット数を通常の半分に減らす。</MethodCard>
+      <MethodCard C={C} title="方法3：頻度を落とす">週のトレーニング日数を半分にする。</MethodCard>
       <p style={p}>最もシンプルで効果的なのは方法1です。</p>
 
       <h2 style={h2}>デロードの頻度</h2>

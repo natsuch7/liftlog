@@ -1,13 +1,21 @@
+import { useState } from 'react'
 import BlogLayout from '../BlogLayout'
 import SquatDepthChart from '../../../components/charts/SquatDepthChart'
 
-const C = { text:'#f0f0f0', red:'#e63946', border:'#222', card:'#161616' }
-const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
-const p = { fontSize:15, color:'#ccc', lineHeight:1.9, margin:'0 0 18px' }
-const strong = { color:C.text, fontWeight:700 }
-const li = { fontSize:15, color:'#ccc', lineHeight:1.8, marginBottom:8 }
+const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
+const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
+const C = DARK
 
 export default function SquatDepthHypertrophy() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  // eslint-disable-next-line no-shadow
+  const C = theme === 'light' ? LIGHT : DARK
+  const h2 = { fontSize:20, fontWeight:800, color:C.text, margin:'40px 0 16px', paddingBottom:10, borderBottom:`1px solid ${C.border}` }
+  const p = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.9, margin:'0 0 18px' }
+  const li = { fontSize:15, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.8, marginBottom:8 }
+  const strong = { color:C.text, fontWeight:700 }
   return (
     <BlogLayout
       title="スクワットの深さと筋肥大の関係｜研究が示すフルスクワットの優位性"

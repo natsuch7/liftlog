@@ -1,13 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import BlogBottomNav from '../../components/BlogBottomNav'
 
-const C = {
-  bg: '#0a0a0a', surface: '#111111', card: '#161616',
-  border: '#222222', text: '#f0f0f0', textSub: '#888888',
-  red: '#e63946',
-}
+const DARK = { bg:'#0a0a0a', surface:'#111111', card:'#161616', border:'#222222', text:'#f0f0f0', textSub:'#888888', red:'#e63946' }
+const LIGHT = { bg:'#f2f2f2', surface:'#ffffff', card:'#f0f0f0', border:'#e0e0e0', text:'#111111', textSub:'#888888', red:'#e63946' }
 
 const CATEGORIES = [
   { id: 'all',      label: 'すべて',       color: '#f0f0f0' },
@@ -117,7 +114,7 @@ const ARTICLES = [
   },
 ]
 
-function CategoryBar({ active, onSelect }) {
+function CategoryBar({ active, onSelect, C }) {
   const counts = {}
   CATEGORIES.slice(1).forEach(c => {
     counts[c.id] = ARTICLES.filter(a => a.category === c.id).length
@@ -149,8 +146,8 @@ function CategoryBar({ active, onSelect }) {
             {cat.label}
             <span style={{
               fontSize: 11, fontWeight: 700,
-              background: isActive ? `${cat.color}33` : '#2a2a2a',
-              color: isActive ? cat.color : '#555',
+              background: isActive ? `${cat.color}33` : C.border,
+              color: isActive ? cat.color : C.textSub,
               borderRadius: 100, padding: '1px 7px',
               lineHeight: 1.6,
             }}>{count}</span>
@@ -161,7 +158,7 @@ function CategoryBar({ active, onSelect }) {
   )
 }
 
-function ArticleCard({ article }) {
+function ArticleCard({ article, C }) {
   const cat = CATEGORIES.find(c => c.id === article.category)
   const color = cat ? cat.color : C.red
 
@@ -190,7 +187,7 @@ function ArticleCard({ article }) {
             background: `${color}22`, borderRadius: 4,
             padding: '3px 8px', letterSpacing: 0.5,
           }}>{article.category}</span>
-          <span style={{ fontSize: 11, color: '#444' }}>{article.readTime}</span>
+          <span style={{ fontSize: 11, color: C.textSub }}>{article.readTime}</span>
         </div>
 
         {/* Title */}
@@ -201,7 +198,7 @@ function ArticleCard({ article }) {
 
         {/* Description */}
         <p style={{
-          margin: '0 0 16px', fontSize: 12, color: '#666', lineHeight: 1.75,
+          margin: '0 0 16px', fontSize: 12, color: C.textSub, lineHeight: 1.75,
           display: '-webkit-box', WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical', overflow: 'hidden',
         }}>{article.description}</p>
@@ -217,6 +214,10 @@ function ArticleCard({ article }) {
 
 export default function BlogIndex() {
   const [activeCategory, setActiveCategory] = useState('all')
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  const C = theme === 'light' ? LIGHT : DARK
 
   const filtered = activeCategory === 'all'
     ? ARTICLES
@@ -247,13 +248,13 @@ export default function BlogIndex() {
           <h1 style={{ margin: '0 0 10px', fontSize: 28, fontWeight: 900, color: C.text, lineHeight: 1.3 }}>
             トレーニングガイド
           </h1>
-          <p style={{ margin: 0, fontSize: 14, color: '#777', lineHeight: 1.7 }}>
+          <p style={{ margin: 0, fontSize: 14, color: C.textSub, lineHeight: 1.7 }}>
             BIG3の科学的な知識を解説。停滞打破・ピリオダイゼーション・デロードまで。
           </p>
         </div>
 
         {/* Category Filter */}
-        <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
+        <CategoryBar active={activeCategory} onSelect={setActiveCategory} C={C} />
 
         {/* Articles Grid */}
         <main style={{ maxWidth: 1000, margin: '0 auto', padding: '0 20px 80px' }}>
@@ -263,7 +264,7 @@ export default function BlogIndex() {
             <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>
               {activeCategory === 'all' ? 'すべての記事' : activeCategory}
             </span>
-            <span style={{ fontSize: 12, color: '#444' }}>{filtered.length}件</span>
+            <span style={{ fontSize: 12, color: C.textSub }}>{filtered.length}件</span>
           </div>
 
           <div style={{
@@ -272,7 +273,7 @@ export default function BlogIndex() {
             gap: 14,
           }}>
             {filtered.map(article => (
-              <ArticleCard key={article.slug} article={article} />
+              <ArticleCard key={article.slug} article={article} C={C} />
             ))}
           </div>
 
@@ -280,7 +281,7 @@ export default function BlogIndex() {
           <div style={{ marginTop: 64, padding: '40px 24px', background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 10 }}>LIFTLOG</div>
             <p style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 900, color: C.text }}>9週間プログラムを自動生成</p>
-            <p style={{ margin: '0 0 24px', fontSize: 14, color: '#888', lineHeight: 1.7 }}>
+            <p style={{ margin: '0 0 24px', fontSize: 14, color: C.textSub, lineHeight: 1.7 }}>
               1RMを入力するだけで、ブロックピリオダイゼーションに基づいた<br />
               パーソナライズドプログラムが自動で完成します。
             </p>
@@ -297,7 +298,7 @@ export default function BlogIndex() {
             <Link to="/privacy" style={{ fontSize: 12, color: C.textSub, textDecoration: 'none' }}>プライバシーポリシー</Link>
             <Link to="/" style={{ fontSize: 12, color: C.textSub, textDecoration: 'none' }}>アプリを使う</Link>
           </div>
-          <p style={{ margin: 0, fontSize: 11, color: '#333' }}>© 2025 LIFTLOG</p>
+          <p style={{ margin: 0, fontSize: 11, color: C.textSub }}>© 2025 LIFTLOG</p>
         </footer>
       </div>
       <BlogBottomNav />
