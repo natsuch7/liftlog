@@ -94,7 +94,9 @@ function QA({ C, q, children }) {
 }
 
 export default function Guide() {
-  const [theme] = useState(() => localStorage.getItem("liftlog_theme") || "dark");
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("liftlog_theme")) || "dark"; } catch { return "dark"; }
+  });
   const C = theme === "light" ? LIGHT : DARK;
 
   useEffect(() => {
