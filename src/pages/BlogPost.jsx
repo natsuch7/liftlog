@@ -1,39 +1,53 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getPostBySlug } from '../lib/blog'
 
-const C = {
-  bg: '#0a0a0a',
+const DARK = {
+  bg:      '#0a0a0a',
   surface: '#111111',
-  card: '#161616',
-  border: '#222222',
-  borderHi: '#333333',
-  text: '#f0f0f0',
+  card:    '#161616',
+  border:  '#222222',
+  borderHi:'#333333',
+  text:    '#f0f0f0',
   textSub: '#666666',
   textMid: '#999999',
-  red: '#e63946',
-  redDim: '#3d1012',
+  red:     '#e63946',
+  redDim:  '#3d1012',
 }
 
-const articleStyles = `
+const LIGHT = {
+  bg:      '#f2f2f2',
+  surface: '#ffffff',
+  card:    '#f0f0f0',
+  border:  '#e0e0e0',
+  borderHi:'#cccccc',
+  text:    '#111111',
+  textSub: '#888888',
+  textMid: '#555555',
+  red:     '#e63946',
+  redDim:  '#fff0f1',
+}
+
+function makeArticleStyles(C) {
+  return `
   .blog-content {
     font-size: 14px;
     line-height: 1.9;
-    color: #cccccc;
+    color: ${C === LIGHT ? '#444444' : '#cccccc'};
   }
   .blog-content h2 {
     font-size: 17px;
     font-weight: 800;
-    color: #f0f0f0;
+    color: ${C.text};
     margin: 36px 0 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #222222;
+    border-bottom: 1px solid ${C.border};
     letter-spacing: 0.3px;
   }
   .blog-content h3 {
     font-size: 14px;
     font-weight: 800;
-    color: #e63946;
+    color: ${C.red};
     margin: 24px 0 8px;
     letter-spacing: 0.3px;
   }
@@ -48,12 +62,12 @@ const articleStyles = `
     margin-bottom: 6px;
   }
   .blog-content strong {
-    color: #f0f0f0;
+    color: ${C.text};
     font-weight: 700;
   }
   .blog-content hr {
     border: none;
-    border-top: 1px solid #222222;
+    border-top: 1px solid ${C.border};
     margin: 32px 0;
   }
   .blog-content table {
@@ -63,58 +77,68 @@ const articleStyles = `
     font-size: 13px;
   }
   .blog-content th {
-    background: #161616;
-    color: #f0f0f0;
+    background: ${C.card};
+    color: ${C.text};
     font-weight: 700;
     padding: 8px 12px;
-    border: 1px solid #222222;
+    border: 1px solid ${C.border};
     text-align: left;
   }
   .blog-content td {
     padding: 8px 12px;
-    border: 1px solid #1e1e1e;
-    color: #aaaaaa;
+    border: 1px solid ${C.border};
+    color: ${C.textMid};
   }
   .blog-content tr:nth-child(even) td {
-    background: #111111;
+    background: ${C.surface};
   }
   .blog-content blockquote {
     margin: 0 0 16px;
     padding: 12px 16px;
-    border-left: 3px solid #e63946;
-    background: #111111;
-    color: #999999;
+    border-left: 3px solid ${C.red};
+    background: ${C.surface};
+    color: ${C.textMid};
   }
   .blog-content code {
-    background: #1a1a1a;
-    border: 1px solid #222222;
+    background: ${C === LIGHT ? '#f0f0f0' : '#1a1a1a'};
+    border: 1px solid ${C.border};
     border-radius: 4px;
     padding: 1px 6px;
     font-size: 13px;
     font-family: ui-monospace, Consolas, monospace;
-    color: #e63946;
+    color: ${C.red};
   }
 `
+}
 
 export default function BlogPost() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const post = getPostBySlug(slug)
 
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  const C = theme === 'light' ? LIGHT : DARK
+
   useEffect(() => {
     if (!post) {
       navigate('/blog', { replace: true })
+      return
     }
-  }, [post, navigate])
+    window.scrollTo(0, 0)
+    document.documentElement.style.backgroundColor = C.bg
+    document.body.style.backgroundColor = C.bg
+  }, [post, navigate, C.bg])
 
   if (!post) return null
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', fontFamily: 'system-ui,-apple-system,sans-serif', color: C.text }}>
-      <style>{articleStyles}</style>
+      <style>{makeArticleStyles(C)}</style>
 
       {/* Header */}
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: '0 20px' }}>
+      <div style={{ borderBottom: `1px solid ${C.border}`, padding: '0 20px', background: C.bg }}>
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.red }} />

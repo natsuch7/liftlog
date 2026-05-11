@@ -1,26 +1,51 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllPosts } from '../lib/blog'
 
-const C = {
-  bg: '#0a0a0a',
+const DARK = {
+  bg:      '#0a0a0a',
   surface: '#111111',
-  card: '#161616',
-  border: '#222222',
-  borderHi: '#333333',
-  text: '#f0f0f0',
+  card:    '#161616',
+  border:  '#222222',
+  borderHi:'#333333',
+  text:    '#f0f0f0',
   textSub: '#666666',
   textMid: '#999999',
-  red: '#e63946',
-  redDim: '#3d1012',
+  red:     '#e63946',
+  redDim:  '#3d1012',
+}
+
+const LIGHT = {
+  bg:      '#f2f2f2',
+  surface: '#ffffff',
+  card:    '#f0f0f0',
+  border:  '#e0e0e0',
+  borderHi:'#cccccc',
+  text:    '#111111',
+  textSub: '#888888',
+  textMid: '#555555',
+  red:     '#e63946',
+  redDim:  '#fff0f1',
 }
 
 export default function Blog() {
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+  })
+  const C = theme === 'light' ? LIGHT : DARK
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.documentElement.style.backgroundColor = C.bg
+    document.body.style.backgroundColor = C.bg
+  }, [C.bg])
+
   const posts = getAllPosts()
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', fontFamily: 'system-ui,-apple-system,sans-serif', color: C.text }}>
       {/* Header */}
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: '0 20px' }}>
+      <div style={{ borderBottom: `1px solid ${C.border}`, padding: '0 20px', background: C.bg }}>
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.red }} />
