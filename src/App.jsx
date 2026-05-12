@@ -624,20 +624,20 @@ function BodyWeightSection({ weights, onSave, C }) {
         {avgThis&&(
           <div style={{display:"flex",gap:8,marginTop:14,flexWrap:"wrap"}}>
             <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
-              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>7日間平均</div>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>{T.bodyWeight.sevenDayAvg}</div>
               <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:COLOR,lineHeight:1}}>{avgThis}<span style={{fontSize:12}}>kg</span></div>
             </div>
             {diff!==null&&(
               <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
-                <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>先週比</div>
+                <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>{T.bodyWeight.weekDiff}</div>
                 <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:parseFloat(diff)>0?"#e63946":"#22c55e",lineHeight:1}}>
                   {parseFloat(diff)>0?"+":""}{diff}<span style={{fontSize:12}}>kg</span>
                 </div>
               </div>
             )}
             <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
-              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>記録日数</div>
-              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#f0f0f0",lineHeight:1}}>{weights.length}<span style={{fontSize:12}}>日</span></div>
+              <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>{T.bodyWeight.logDays}</div>
+              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#f0f0f0",lineHeight:1}}>{weights.length}<span style={{fontSize:12}}>{T.bodyWeight.daysUnit}</span></div>
             </div>
           </div>
         )}
@@ -1386,6 +1386,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
 
 // ─── IOS INSTALL BANNER ───────────────────────────────────
 function IOSInstallBanner({ onDismiss }) {
+  const T = useT();
   return (
     <div style={{
       position:"fixed", bottom:65, left:"50%", transform:"translateX(-50%)",
@@ -1400,13 +1401,13 @@ function IOSInstallBanner({ onDismiss }) {
         <div style={{fontSize:22, lineHeight:1, flexShrink:0, marginTop:1}}>📲</div>
         <div style={{flex:1, minWidth:0}}>
           <div style={{fontWeight:800, fontSize:13, color:"#f0f0f0", marginBottom:5}}>
-            ホーム画面に追加するとアプリのように使えます
+            {T.install.title}
           </div>
           <div style={{fontSize:11, color:C.textMid, lineHeight:1.7}}>
-            Safariの{" "}
-            <span style={{color:"#e63946", fontWeight:700}}>共有ボタン ⬆</span>
-            {" "}をタップ →{" "}
-            <span style={{color:"#e63946", fontWeight:700}}>「ホーム画面に追加」</span>
+            {T.install.safariPrefix}
+            <span style={{color:"#e63946", fontWeight:700}}>{T.install.shareBtn}</span>
+            {T.install.tapTo}{" "}
+            <span style={{color:"#e63946", fontWeight:700}}>{T.install.addToHome}</span>
           </div>
         </div>
         <button onClick={onDismiss}
@@ -1426,6 +1427,7 @@ function getRestDuration(exName) {
 }
 
 function RestTimer({ state, onDismiss, onReset, onComplete }) {
+  const T = useT();
   const { active, exName, duration, startedAt } = state;
   const [elapsed, setElapsed] = useState(0);
   const firedRef = useRef(false);
@@ -1478,13 +1480,13 @@ function RestTimer({ state, onDismiss, onReset, onComplete }) {
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:10,color:C.textDim,letterSpacing:1,marginBottom:2}}>INTERVAL</div>
         <div style={{fontWeight:700,fontSize:13,color:C.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{exName}</div>
-        <div style={{fontSize:11,color:C.textMid,marginTop:2}}>{done?"次のセットへ！":`${Math.floor(duration/60)}分${duration%60>0?duration%60+"秒":""}インターバル`}</div>
+        <div style={{fontSize:11,color:C.textMid,marginTop:2}}>{done ? T.timer.nextSet : T.timer.interval(Math.floor(duration/60), duration%60)}</div>
         <div style={{display:"flex",gap:6,marginTop:10}}>
           <button onClick={onReset} style={{flex:1,padding:"6px 0",borderRadius:8,border:"1px solid #2a2a2a",background:"transparent",color:C.textMid,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-            <RotateCcw size={10}/> リセット
+            <RotateCcw size={10}/> {T.timer.reset}
           </button>
           <button onClick={onDismiss} style={{flex:1,padding:"6px 0",borderRadius:8,border:"none",background:done?"#22c55e":"#e63946",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-            {done?<><Check size={10}/> 閉じる</>:<><X size={10}/> スキップ</>}
+            {done?<><Check size={10}/> {T.timer.close}</>:<><X size={10}/> {T.timer.skip}</>}
           </button>
         </div>
       </div>
@@ -1494,9 +1496,10 @@ function RestTimer({ state, onDismiss, onReset, onComplete }) {
 
 // ─── MINI CHART ───────────────────────────────────────────
 function MiniChart({ data, color, C }) {
+  const T = useT();
   if (data.length<2) return (
     <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
-      {data.length===1?`現在 ${data[0].rm}kg — 記録を増やすとグラフが表示されます`:"記録を追加するとグラフが表示されます"}
+      {data.length===1 ? T.chart.oneEntry(data[0].rm) : T.chart.noData}
     </div>
   );
   const vals=data.map(d=>d.rm);
@@ -1531,10 +1534,11 @@ function MiniChart({ data, color, C }) {
 
 // ─── WEIGHT CHART ─────────────────────────────────────────
 function WeightChart({ data, C }) {
+  const T = useT();
   const COLOR = "#06b6d4";
   if (data.length < 2) return (
     <div style={{padding:"20px 0",textAlign:"center",color:C.textFaint,fontSize:11}}>
-      記録を追加するとグラフが表示されます
+      {T.chart.noData}
     </div>
   );
   const vals = data.map(d => d.weight);
@@ -2515,10 +2519,10 @@ export default function App() {
     const v={};
     for (const k of ["bench","dead","squat","mil","chin"]) v[k]=parseFloat(tmp[k])||0;
     const missing=[];
-    if(!v.bench) missing.push("ベンチプレス");
-    if(!v.squat) missing.push("スクワット");
-    if(!v.dead)  missing.push("デッドリフト");
-    if(useMil&&!v.mil) missing.push("ミリタリープレス");
+    if(!v.bench) missing.push(T.lifts.bench);
+    if(!v.squat) missing.push(T.lifts.squat);
+    if(!v.dead)  missing.push(T.lifts.dead);
+    if(useMil&&!v.mil) missing.push(T.lifts.mil);
     if(missing.length){setSetupError(missing);return;}
     setRm(v);
     setScreen("generating");
@@ -2535,10 +2539,10 @@ export default function App() {
     const v={};
     for (const k of ["bench","dead","squat","mil","chin"]) v[k]=parseFloat(tmp[k])||0;
     const missing=[];
-    if(!v.bench) missing.push("ベンチプレス");
-    if(!v.squat) missing.push("スクワット");
-    if(!v.dead)  missing.push("デッドリフト");
-    if(useMil&&!v.mil) missing.push("ミリタリープレス");
+    if(!v.bench) missing.push(T.lifts.bench);
+    if(!v.squat) missing.push(T.lifts.squat);
+    if(!v.dead)  missing.push(T.lifts.dead);
+    if(useMil&&!v.mil) missing.push(T.lifts.mil);
     if(missing.length){setSetupError(missing);return;}
     setRm(v);
     setOnboardingDone(true);
@@ -2719,10 +2723,10 @@ export default function App() {
               <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(230,57,70,0.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 <span style={{fontSize:16}}>⚠️</span>
               </div>
-              <div style={{fontWeight:800,fontSize:15,color:C.text}}>入力が必要な項目があります</div>
+              <div style={{fontWeight:800,fontSize:15,color:C.text}}>{T.setup.rmMissing}</div>
             </div>
             <div style={{fontSize:12,color:C.textSub,marginBottom:14,lineHeight:1.6}}>
-              以下の1RMを入力してからプランを生成してください：
+              {T.setup.rmMissingDesc}
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
               {setupError.map(label=>(
@@ -2734,7 +2738,7 @@ export default function App() {
             </div>
             <button onClick={()=>setSetupError(null)}
               style={{width:"100%",padding:"14px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:12,fontSize:14,fontWeight:800,cursor:"pointer",letterSpacing:1}}>
-              入力する
+              {T.setup.rmMissingBtn}
             </button>
           </div>
         </div>
@@ -3110,13 +3114,8 @@ export default function App() {
                       <Award size={18} color="#06b6d4"/>
                       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:2,color:"#06b6d4"}}>RM ESTIMATION TEST</div>
                     </div>
-                    <div style={{fontSize:11,color:"#0891b2",lineHeight:1.7}}>
-                      1RMの直接挑戦ではなく、<strong style={{color:"#06b6d4"}}>90%×5rep</strong>（下半身は92.5%）を行い、エプリー式で推定1RMを算出します。<br/>
-                      セット入力後に表示される「推定1RM」が新しい基準値です。
-                    </div>
-                    <div style={{marginTop:10,padding:"8px 12px",background:"#ffffff06",borderRadius:8,border:"1px solid #0e4a5a",fontSize:11,color:"#0891b2"}}>
-                      例）100kgが1RMなら → <span style={{color:"#06b6d4",fontWeight:700}}>90kg × 5rep</span> → 推定1RM <span style={{color:"#06b6d4",fontWeight:700}}>105kg</span>
-                    </div>
+                    <div style={{fontSize:11,color:"#0891b2",lineHeight:1.7}} dangerouslySetInnerHTML={{__html:T.plan.rmTestDesc}}/>
+                    <div style={{marginTop:10,padding:"8px 12px",background:"#ffffff06",borderRadius:8,border:"1px solid #0e4a5a",fontSize:11,color:"#0891b2"}} dangerouslySetInnerHTML={{__html:T.plan.rmTestExample}}/>
                     <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
                       {["40%×8","60%×5","75%×3","87%×1","93%×1","90%×5rep!"].map(s=>(
                         <div key={s} style={{background:"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:"#0891b2",border:"1px solid #0e4a5a"}}>{s}</div>
@@ -3645,10 +3644,24 @@ export default function App() {
             {onboardingStep===0&&(
               <div>
                 <div style={{textAlign:"center",marginBottom:40}}>
-                  <div style={{display:"inline-flex",alignItems:"center",gap:8,marginBottom:36}}>
+                  <div style={{display:"inline-flex",alignItems:"center",gap:8,marginBottom:20}}>
                     <div style={{width:10,height:10,borderRadius:"50%",background:"#e63946"}}/>
                     <span style={{fontWeight:900,fontSize:20,letterSpacing:2,color:C.text}}>LIFTLOG</span>
                   </div>
+
+                  {/* Language selector */}
+                  <div style={{marginBottom:32}}>
+                    <div style={{fontSize:10,color:C.textFaint,letterSpacing:1,marginBottom:8}}>{T.onboarding.langSelect}</div>
+                    <div style={{display:"flex",gap:8,justifyContent:"center"}}>
+                      {[{id:"ja",label:"日本語"},{id:"en",label:"English"}].map(l=>(
+                        <button key={l.id} onClick={()=>setLang(l.id)}
+                          style={{flex:1,maxWidth:140,padding:"10px 0",borderRadius:10,border:`2px solid ${lang===l.id?"#e63946":C.borderSub}`,background:lang===l.id?"rgba(230,57,70,0.10)":C.surface,color:lang===l.id?"#e63946":C.textMid,fontSize:13,fontWeight:800,cursor:"pointer",transition:"all 0.15s"}}>
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <div style={{fontSize:24,fontWeight:900,color:C.text,lineHeight:1.35,marginBottom:14}}>
                     {T.onboarding.headline.split('\n').map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}
                   </div>

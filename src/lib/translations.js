@@ -80,6 +80,9 @@ export const TRANSLATIONS = {
       guideLink: '使い方ガイド',
       privacyLink: 'プライバシーポリシー',
       contactLink: 'お問い合わせ',
+      rmMissing: '入力が必要な項目があります',
+      rmMissingDesc: '以下の1RMを入力してからプランを生成してください：',
+      rmMissingBtn: '入力する',
     },
 
     // ── Plan screen ─────────────────────────────────────────
@@ -122,6 +125,34 @@ export const TRANSLATIONS = {
       record: '記録する',
       recorded: '体重を記録しました',
       latestWeight: '最新体重',
+      sevenDayAvg: '7日間平均',
+      weekDiff: '先週比',
+      logDays: '記録日数',
+      daysUnit: '日',
+    },
+
+    // ── Install banner ───────────────────────────────────────
+    install: {
+      title: 'ホーム画面に追加するとアプリのように使えます',
+      safariPrefix: 'Safariの',
+      shareBtn: '共有ボタン ⬆',
+      tapTo: 'をタップ →',
+      addToHome: '「ホーム画面に追加」',
+    },
+
+    // ── Rest timer ───────────────────────────────────────────
+    timer: {
+      nextSet: '次のセットへ！',
+      interval: (m, s) => `${m}分${s > 0 ? s + '秒' : ''}インターバル`,
+      reset: 'リセット',
+      close: '閉じる',
+      skip: 'スキップ',
+    },
+
+    // ── Chart empty states ───────────────────────────────────
+    chart: {
+      noData: '記録を追加するとグラフが表示されます',
+      oneEntry: rm => `現在 ${rm}kg — 記録を増やすとグラフが表示されます`,
     },
 
     // ── Weekly volume ───────────────────────────────────────
@@ -235,6 +266,7 @@ export const TRANSLATIONS = {
       selected: '✓ 選択中',
       step2Title: '1RMを入力してください',
       step2Sub: '1回だけ持ち上げられる最大重量です。わからない場合は推定1RM計算機を使ってください。',
+      langSelect: '言語を選択 / Select Language',
     },
 
     // ── Blog in app ──────────────────────────────────────────
@@ -341,6 +373,9 @@ export const TRANSLATIONS = {
       guideLink: 'User Guide',
       privacyLink: 'Privacy Policy',
       contactLink: 'Contact',
+      rmMissing: 'Required fields missing',
+      rmMissingDesc: 'Please enter the following 1RM values before generating a plan:',
+      rmMissingBtn: 'Enter Values',
     },
 
     // ── Plan screen ──────────────────────────────────────────
@@ -383,6 +418,34 @@ export const TRANSLATIONS = {
       record: 'Record',
       recorded: 'Weight recorded',
       latestWeight: 'Latest Weight',
+      sevenDayAvg: '7-Day Avg',
+      weekDiff: 'vs Last Week',
+      logDays: 'Days Logged',
+      daysUnit: 'd',
+    },
+
+    // ── Install banner ────────────────────────────────────────
+    install: {
+      title: 'Add to Home Screen for an app-like experience',
+      safariPrefix: 'Tap ',
+      shareBtn: 'Share ⬆',
+      tapTo: ' in Safari →',
+      addToHome: '"Add to Home Screen"',
+    },
+
+    // ── Rest timer ────────────────────────────────────────────
+    timer: {
+      nextSet: 'Next Set!',
+      interval: (m, s) => s > 0 ? `${m}m ${s}s rest` : `${m}m rest`,
+      reset: 'Reset',
+      close: 'Close',
+      skip: 'Skip',
+    },
+
+    // ── Chart empty states ────────────────────────────────────
+    chart: {
+      noData: 'Add records to display the chart',
+      oneEntry: rm => `Current: ${rm}kg — Add more data to display the chart`,
     },
 
     // ── Weekly volume ────────────────────────────────────────
@@ -496,6 +559,7 @@ export const TRANSLATIONS = {
       selected: '✓ Selected',
       step2Title: 'Enter Your 1RM',
       step2Sub: 'Your maximum weight for one rep. Use the estimated 1RM calculator if unsure.',
+      langSelect: '言語を選択 / Select Language',
     },
 
     // ── Blog in app ───────────────────────────────────────────
