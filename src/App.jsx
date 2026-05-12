@@ -1417,17 +1417,27 @@ function getRestDuration(exName) {
   return 3*60+30;
 }
 
-function RestTimer({ state, onDismiss, onReset }) {
+function RestTimer({ state, onDismiss, onReset, onComplete }) {
   const { active, exName, duration, startedAt } = state;
   const [elapsed, setElapsed] = useState(0);
+  const firedRef = useRef(false);
+
   useEffect(()=>{
-    if (!active) return;
+    if (!active) { firedRef.current = false; return; }
     setElapsed(0);
+    firedRef.current = false;
     const id=setInterval(()=>setElapsed(Math.floor((Date.now()-startedAt)/1000)),250);
     return ()=>clearInterval(id);
   },[active,startedAt]);
+
   if (!active) return null;
   const remaining=Math.max(0,duration-elapsed);
+
+  // タイマーが0になった瞬間に1回だけonCompleteを呼ぶ
+  if (remaining===0 && !firedRef.current) {
+    firedRef.current = true;
+    if (onComplete) onComplete();
+  }
   const done=remaining===0;
   const mm=String(Math.floor(remaining/60)).padStart(2,"0");
   const ss=String(remaining%60).padStart(2,"0");
@@ -2670,7 +2680,7 @@ export default function App() {
           {toast}
         </div>
       )}
-      <RestTimer state={timerState} onDismiss={dismissTimer} onReset={resetTimer}/>
+      <RestTimer state={timerState} onDismiss={dismissTimer} onReset={resetTimer} onComplete={triggerNativeAd}/>
       {showInstallBanner&&<IOSInstallBanner onDismiss={dismissInstallBanner}/>}
       {sessionCompleteData&&(
         <SessionCompleteModal
