@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Dumbbell, Calendar, BarChart2, BookOpen, Settings } from 'lucide-react'
 
@@ -11,13 +12,20 @@ const NAV = [
 
 export default function BlogBottomNav() {
   const navigate = useNavigate()
+  const [theme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'light' } catch { return 'light' }
+  })
+
+  const bg           = theme === 'light' ? 'rgba(255,255,255,0.96)' : 'rgba(0,0,0,0.96)'
+  const borderColor  = theme === 'light' ? '#e0e0e0' : '#1f1f1f'
+  const inactiveColor = theme === 'light' ? '#555555' : '#999999'
 
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
       width: '100%', maxWidth: 480,
-      background: 'rgba(0,0,0,0.96)',
-      borderTop: '1px solid #1f1f1f',
+      background: bg,
+      borderTop: `1px solid ${borderColor}`,
       display: 'flex', zIndex: 20,
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       backdropFilter: 'blur(12px)',
@@ -42,8 +50,8 @@ export default function BlogBottomNav() {
                 width: 24, height: 2, borderRadius: 1, background: '#e63946',
               }}/>
             )}
-            <Icon size={20} color={isActive ? '#e63946' : '#555'} strokeWidth={isActive ? 2.5 : 1.5} />
-            <span style={{ fontSize: 9, fontWeight: 700, color: isActive ? '#e63946' : '#555', letterSpacing: 0.5 }}>
+            <Icon size={20} color={isActive ? '#e63946' : inactiveColor} strokeWidth={isActive ? 2.5 : 1.5} />
+            <span style={{ fontSize: 9, fontWeight: 700, color: isActive ? '#e63946' : inactiveColor, letterSpacing: 0.5 }}>
               {label}
             </span>
           </button>

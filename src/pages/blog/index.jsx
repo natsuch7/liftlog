@@ -215,7 +215,7 @@ function ArticleCard({ article, C }) {
 export default function BlogIndex() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [theme] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'light' } catch { return 'light' }
   })
   const C = theme === 'light' ? LIGHT : DARK
 
