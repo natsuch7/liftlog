@@ -1572,7 +1572,7 @@ const RPE_OPTIONS       = [6,7,8,9,10];                            // RPE 6〜10
 
 // ─── SET INPUT ROW ────────────────────────────────────────
 // タイマーはRPE入力後に起動
-function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onChange, accent, onRpeComplete, wRef, rRef, rpeRef, onAdvance, weightOptions }) {
+function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onChange, accent, onRpeComplete, wRef, rRef, rpeRef, onAdvance, weightOptions, C }) {
   const prevHadRpe = useRef(false);
   // デフォルト値（自動入力）かつRPE未入力 → まだ実施していない状態
   const isDefault  = value.isDefault && !value.rpe;
@@ -1729,7 +1729,7 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
 }
 
 // ─── EXERCISE BLOCK ───────────────────────────────────────
-function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek }) {
+function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
   const isMain     = ex.cat==="main";
   const isMachine  = ex.eq==="mc";
   const isDumbbell = ex.eq==="db";
@@ -1820,7 +1820,8 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
                   value={{...wuVal,label:wu.label}}
                   onChange={val=>onSetChange(`wu_${exIdx}`,wi,val)}
                   accent={accent}
-                  weightOptions={wOpts}/>
+                  weightOptions={wOpts}
+                  C={C}/>
               );
             })}
             <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
@@ -1848,7 +1849,8 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             rRef={setRef(`${si}_r`)}
             rpeRef={setRef(`${si}_rpe`)}
             onAdvance={(field)=>handleAdvance(si,field)}
-            weightOptions={wOpts}/>
+            weightOptions={wOpts}
+            C={C}/>
         ))}
 
         {/* セット追加 / 削除 */}
@@ -1857,7 +1859,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             onClick={onAddSet}
             style={{
               flex:1,padding:"7px 0",background:"transparent",
-              border:"1px dashed #2a2a2a",borderRadius:8,
+              border:`1px dashed ${C.borderDeep}`,borderRadius:8,
               color:C.textMid,fontSize:11,fontWeight:700,cursor:"pointer",
               display:"flex",alignItems:"center",justifyContent:"center",gap:4,
               transition:"border-color 0.15s,color 0.15s",
@@ -1889,7 +1891,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
 }
 
 // ─── CALENDAR ─────────────────────────────────────────────
-function CalendarView({ sessions }) {
+function CalendarView({ sessions, C }) {
   const today = new Date();
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
@@ -2019,7 +2021,7 @@ function useLocalStorage(key, initialValue) {
 }
 
 // ─── ACCESSORY PICKER ────────────────────────────────────
-function AccessoryPicker({ dayKey, selected, onClose, onSave }) {
+function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
   const [local, setLocal] = useState([...selected]);
   const allowedCats = DAY_CATS[dayKey] || Object.keys(CAT_LABELS);
   const catalog = EXERCISE_CATALOG.filter(e => allowedCats.includes(e.cat));
@@ -2109,7 +2111,7 @@ const GEN_MESSAGES = [
   "最終調整を行っています…",
 ];
 
-function GeneratingScreen({ onComplete }) {
+function GeneratingScreen({ onComplete, C }) {
   const [msgIdx,  setMsgIdx]  = useState(0);
   const [visible, setVisible] = useState(true);
   const [progress,setProgress]= useState(20);
@@ -2242,7 +2244,7 @@ function GeneratingScreen({ onComplete }) {
             display:"flex",alignItems:"center",justifyContent:"center",
             fontSize:36,animation:"checkIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards",
           }}>✓</div>
-          <div style={{fontSize:26,fontWeight:900,color:"#fff",letterSpacing:1,textAlign:"center",lineHeight:1.3}}>
+          <div style={{fontSize:26,fontWeight:900,color:C.text,letterSpacing:1,textAlign:"center",lineHeight:1.3}}>
             プログラムの準備が<br/>できました
           </div>
           <p style={{margin:0,fontSize:12,color:C.textMid,letterSpacing:"0.1em"}}>YOUR 12-WEEK PROGRAM IS READY</p>
@@ -2286,7 +2288,7 @@ export default function App() {
   const [showCycleModal,setShowCycleModal] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
-  const [theme, setTheme] = useLocalStorage("liftlog_theme", "dark");
+  const [theme, setTheme] = useLocalStorage("liftlog_theme", "light");
   const [setupError, setSetupError] = useState(null);
   const [onboardingDone, setOnboardingDone] = useLocalStorage("liftlog_onboarding_done", false);
   const [onboardingStep, setOnboardingStep] = useState(null);
@@ -2690,7 +2692,7 @@ export default function App() {
         />
       )}
       {screen==="generating"&&(
-        <GeneratingScreen onComplete={()=>{setScreen("plan");showToast("プラン生成完了");}}/>
+        <GeneratingScreen onComplete={()=>{setScreen("plan");showToast("プラン生成完了");}} C={C}/>
       )}
       {setupError&&(
         <div style={{position:"fixed",inset:0,zIndex:900,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center",padding:"0 20px"}}
@@ -2736,6 +2738,7 @@ export default function App() {
           selected={accessories[pickerDay]??DEFAULT_ACCESSORIES[pickerDay]??[]}
           onClose={()=>setPickerDay(null)}
           onSave={sel=>{setAccessories(prev=>({...prev,[pickerDay]:sel}));setPickerDay(null);}}
+          C={C}
         />
       )}
 
@@ -3122,7 +3125,7 @@ export default function App() {
                           <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{isMax?"1RM挑戦":dm.sub}</div>
                           <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
                             {mains.map((ex,mi)=>(
-                              <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"2px 8px",border:`1px solid ${C[dm.key].border}`}}>
+                              <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:C.surface2,borderRadius:5,padding:"2px 8px",border:`1px solid ${C[dm.key].border}`}}>
                                 {ex.name} {ex.weight>0?`${ex.weight}kg`:"BW"}
                               </div>
                             ))}
@@ -3161,7 +3164,8 @@ export default function App() {
                                 accent={isMax?C.ppC.accent:dm.c.accent}
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={deloadW}
-                                isMaxWeek={!!cy.isMaxWeek}/>
+                                isMaxWeek={!!cy.isMaxWeek}
+                                C={C}/>
                             );
                           })}
 
@@ -3187,7 +3191,8 @@ export default function App() {
                                 onRemoveSet={()=>handleRemoveSet(dm.key,absIdx)}
                                 accent={dm.c.accent}
                                 onStartTimer={startTimer}
-                                prevSession={prevSess} deloadWeight={null}/>
+                                prevSession={prevSess} deloadWeight={null}
+                                C={C}/>
                             );
                           })}
 
@@ -3222,7 +3227,7 @@ export default function App() {
 
             {logTab==="calendar"&&(
               <div style={{width:"100%",boxSizing:"border-box",background:C.surface,borderRadius:14,padding:"16px 14px",border:C.bSub}}>
-                <CalendarView sessions={sessions}/>
+                <CalendarView sessions={sessions} C={C}/>
               </div>
             )}
 
@@ -3253,7 +3258,7 @@ export default function App() {
                             {mainExs.map((ex,ei)=>{
                               const b=ex.sets.reduce((b,s)=>s.weight>b.weight?s:b,{weight:0,reps:0});
                               return b.weight>0?(
-                                <div key={ei} style={{fontSize:9,fontWeight:700,color:dm.c.accent,background:"#ffffff08",borderRadius:5,padding:"1px 7px",border:`1px solid ${C[dm.key].border}`}}>
+                                <div key={ei} style={{fontSize:9,fontWeight:700,color:dm.c.accent,background:C.surface2,borderRadius:5,padding:"1px 7px",border:`1px solid ${C[dm.key].border}`}}>
                                   {ex.name} {b.weight}×{b.reps}
                                 </div>
                               ):null;
@@ -3492,7 +3497,7 @@ export default function App() {
       <div style={{
         position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",
         width:"100%",maxWidth:480,
-        background:"rgba(0,0,0,0.96)",
+        background:theme==="light"?"rgba(255,255,255,0.96)":"rgba(0,0,0,0.96)",
         borderTop:C.bSub,
         display:"flex",zIndex:20,
         paddingBottom:"env(safe-area-inset-bottom, 0px)",
@@ -3519,8 +3524,8 @@ export default function App() {
                   width:24,height:2,borderRadius:1,background:"#e63946",
                 }}/>
               )}
-              <Icon size={20} color={isActive?"#e63946":"#555"} strokeWidth={isActive?2.5:1.5}/>
-              <span style={{fontSize:9,fontWeight:700,color:isActive?"#e63946":"#555",letterSpacing:0.5}}>
+              <Icon size={20} color={isActive?"#e63946":C.textMid} strokeWidth={isActive?2.5:1.5}/>
+              <span style={{fontSize:9,fontWeight:700,color:isActive?"#e63946":C.textMid,letterSpacing:0.5}}>
                 {label}
               </span>
             </button>
