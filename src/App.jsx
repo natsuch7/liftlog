@@ -2604,6 +2604,21 @@ export default function App() {
     trackCompleteSession({ weekNumber: week, completed: true });
     setSessionInputs(prev=>{const n={...prev};delete n[dayKey];return n;});
     setExpandDay(null);
+    // Android TWA: セッション保存後に広告をトリガー
+    triggerNativeAd();
+  }
+
+  function triggerNativeAd() {
+    // Android TWA専用: liftlogad:// スキームでネイティブ広告をトリガー
+    // ブラウザ/iOS では何も起こらない（エラーは無視）
+    try {
+      const a = document.createElement('a');
+      a.href = 'liftlogad://show-ad';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { if (document.body.contains(a)) document.body.removeChild(a); }, 200);
+    } catch (_) {}
   }
 
   function handleShareSession(s) {
