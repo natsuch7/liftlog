@@ -4,6 +4,7 @@ import { useAnalytics } from "./hooks/useAnalytics";
 import { Dumbbell, Flame, Zap, Target, BarChart2, Settings, ClipboardList, Calendar, ChevronRight, ChevronLeft, Check, RotateCcw, X, TrendingUp, Award, Clock, BookOpen } from "lucide-react";
 import { getAllPosts, getPostBySlug } from "./lib/blog";
 import InstallBanner from "./components/InstallBanner";
+import AdBanner from "./components/AdBanner";
 
 // ─── DESIGN SYSTEM ────────────────────────────────────────
 const DARK = {
@@ -2280,6 +2281,10 @@ export default function App() {
   const [setupError, setSetupError] = useState(null);
   const [onboardingDone, setOnboardingDone] = useLocalStorage("liftlog_onboarding_done", false);
   const [onboardingStep, setOnboardingStep] = useState(null);
+  const [premium, setPremium] = useLocalStorage("liftlog_premium", false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
 
   // テーマに応じて C を動的に決定
   // eslint-disable-next-line no-shadow
@@ -2329,6 +2334,71 @@ export default function App() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
+
+  // 起動時にPlay BillingでPremium購入済みか確認
+  useEffect(()=>{
+    if (premium) return;
+    async function checkPremium() {
+      if (!("getDigitalGoodsService" in window)) return;
+      try {
+        const service = await window.getDigitalGoodsService("https://play.google.com/billing");
+        const purchases = await service.listPurchases();
+        if (purchases.some(p => p.itemId === "liftlog_premium_monthly")) {
+          setPremium(true);
+        }
+      } catch {}
+    }
+    checkPremium();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
+  async function handlePurchasePremium() {
+    setPurchaseLoading(true);
+    try {
+      if (!("getDigitalGoodsService" in window)) {
+        showToast("Google PlayアプリのLIFTLOGからご購入ください");
+        return;
+      }
+      const paymentRequest = new PaymentRequest(
+        [{ supportedMethods: "https://play.google.com/billing", data: { sku: "liftlog_premium_monthly" } }],
+        { total: { label: "合計", amount: { currency: "JPY", value: "0" } } }
+      );
+      const canPay = await paymentRequest.canMakePayment();
+      if (!canPay) { showToast("現在購入できません。Googleアカウントを確認してください。"); return; }
+      const response = await paymentRequest.show();
+      await response.complete("success");
+      setPremium(true);
+      setShowPremiumModal(false);
+      showToast("🎉 プレミアムプランへようこそ！広告が非表示になりました");
+    } catch (err) {
+      if (err.name !== "AbortError") showToast("購入に失敗しました。もう一度お試しください。");
+    } finally {
+      setPurchaseLoading(false);
+    }
+  }
+
+  async function handleRestorePurchases() {
+    setRestoreLoading(true);
+    try {
+      if (!("getDigitalGoodsService" in window)) {
+        showToast("Google PlayアプリのLIFTLOGで操作してください");
+        return;
+      }
+      const service = await window.getDigitalGoodsService("https://play.google.com/billing");
+      const purchases = await service.listPurchases();
+      if (purchases.some(p => p.itemId === "liftlog_premium_monthly")) {
+        setPremium(true);
+        setShowPremiumModal(false);
+        showToast("購入を復元しました");
+      } else {
+        showToast("有効なサブスクリプションが見つかりませんでした");
+      }
+    } catch {
+      showToast("復元に失敗しました");
+    } finally {
+      setRestoreLoading(false);
+    }
+  }
 
   const startTimer   = useCallback(n=>setTimerState({active:true,exName:n,duration:getRestDuration(n),startedAt:Date.now()}),[]);
   const dismissTimer = useCallback(()=>setTimerState(t=>({...t,active:false})),[]);
@@ -3093,6 +3163,7 @@ export default function App() {
                     </div>
                   );
                 })}
+                <AdBanner premium={premium} onUpgrade={()=>setShowPremiumModal(true)} C={C} />
               </>
             )}
           </div>
@@ -3195,6 +3266,7 @@ export default function App() {
         {screen==="progress"&&(
           <div>
             <BodyStatsSection weights={weights} rm={rm} onToast={showToast} C={C}/>
+            <AdBanner premium={premium} onUpgrade={()=>setShowPremiumModal(true)} C={C} />
             <WeeklyVolumeSection sessions={sessions} C={C}/>
 
             <div style={{display:"flex",gap:5,marginBottom:16,overflowX:"auto",paddingBottom:2}}>
@@ -3421,6 +3493,72 @@ export default function App() {
         })}
       </div>
       <InstallBanner />
+
+      {/* ══ PREMIUM MODAL ═════════════════════════════════════════════════════ */}
+      {showPremiumModal&&(
+        <div style={{position:"fixed",inset:0,zIndex:950,background:"rgba(0,0,0,0.88)",display:"flex",alignItems:"flex-end",justifyContent:"center",padding:"0 0 env(safe-area-inset-bottom,0)"}}
+          onClick={()=>setShowPremiumModal(false)}>
+          <div style={{width:"100%",maxWidth:480,background:C.card,borderRadius:"24px 24px 0 0",border:C.bSub,padding:"28px 20px 36px"}}
+            onClick={e=>e.stopPropagation()}>
+
+            {/* Handle */}
+            <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"0 auto 24px"}}/>
+
+            {/* Header */}
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+              <div style={{width:36,height:36,borderRadius:12,background:"rgba(230,57,70,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>✨</div>
+              <div>
+                <div style={{fontWeight:900,fontSize:17,color:C.text}}>LIFTLOGプレミアム</div>
+                <div style={{fontSize:12,color:"#e63946",fontWeight:700}}>¥300/月 · いつでもキャンセル可能</div>
+              </div>
+            </div>
+
+            {/* Benefits */}
+            <div style={{background:C.surface,borderRadius:14,padding:"14px 16px",margin:"20px 0",border:C.bSub}}>
+              {[
+                ["🚫","全広告を完全に非表示"],
+                ["⚡","クリーンなトレーニング体験"],
+                ["🔄","サブスクはいつでもキャンセル可能"],
+              ].map(([icon,text])=>(
+                <div key={text} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:`1px solid ${C.borderFaint}`}}>
+                  <span style={{fontSize:16}}>{icon}</span>
+                  <div style={{fontWeight:700,fontSize:13,color:C.text}}>{text}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* TWA context: Play Billing / Web context: install CTA */}
+            {"getDigitalGoodsService" in window ? (
+              <>
+                <button onClick={handlePurchasePremium} disabled={purchaseLoading}
+                  style={{width:"100%",padding:"16px 0",background:purchaseLoading?"#555":"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:14,fontWeight:800,cursor:purchaseLoading?"not-allowed":"pointer",letterSpacing:1,marginBottom:10}}>
+                  {purchaseLoading?"処理中...":"Google Playで購入する（¥300/月）"}
+                </button>
+                <button onClick={handleRestorePurchases} disabled={restoreLoading}
+                  style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textMid,border:`1px solid ${C.borderSub}`,borderRadius:12,fontSize:12,fontWeight:700,cursor:restoreLoading?"not-allowed":"pointer",marginBottom:10}}>
+                  {restoreLoading?"確認中...":"購入を復元する"}
+                </button>
+              </>
+            ):(
+              <div style={{background:C.surface,borderRadius:12,padding:"14px 16px",marginBottom:10,textAlign:"center"}}>
+                <div style={{fontSize:12,color:C.textMid,lineHeight:1.7,marginBottom:12}}>
+                  プレミアムプランはGoogle PlayのAndroidアプリからご購入いただけます
+                </div>
+                <a href="https://play.google.com/store/apps/details?id=com.liftlog.big3planner"
+                  target="_blank" rel="noopener noreferrer"
+                  style={{display:"inline-block",padding:"10px 24px",background:"#e63946",color:"#fff",borderRadius:10,fontSize:12,fontWeight:800,textDecoration:"none",letterSpacing:0.5}}>
+                  Google Playでダウンロード →
+                </a>
+              </div>
+            )}
+
+            <button onClick={()=>setShowPremiumModal(false)}
+              style={{width:"100%",padding:"12px 0",background:"transparent",border:"none",color:C.textFaint,fontSize:12,cursor:"pointer"}}>
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ══ ONBOARDING OVERLAY ════════════════════════════════════════════════ */}
       {onboardingStep !== null && (
