@@ -2680,7 +2680,7 @@ export default function App() {
           {toast}
         </div>
       )}
-      <RestTimer state={timerState} onDismiss={dismissTimer} onReset={resetTimer} onComplete={triggerNativeAd}/>
+      <RestTimer state={timerState} onDismiss={dismissTimer} onReset={resetTimer}/>
       {showInstallBanner&&<IOSInstallBanner onDismiss={dismissInstallBanner}/>}
       {sessionCompleteData&&(
         <SessionCompleteModal
