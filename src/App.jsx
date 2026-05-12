@@ -4,7 +4,6 @@ import { useAnalytics } from "./hooks/useAnalytics";
 import { Dumbbell, Flame, Zap, Target, BarChart2, Settings, ClipboardList, Calendar, ChevronRight, ChevronLeft, Check, RotateCcw, X, TrendingUp, Award, Clock, BookOpen } from "lucide-react";
 import { getAllPosts, getPostBySlug } from "./lib/blog";
 import InstallBanner from "./components/InstallBanner";
-import AdBanner from "./components/AdBanner";
 
 // ─── DESIGN SYSTEM ────────────────────────────────────────
 const DARK = {
@@ -2886,6 +2885,19 @@ export default function App() {
               GENERATE PLAN →
             </button>
 
+            {/* Premium CTA */}
+            {!premium&&(
+              <button onClick={()=>setShowPremiumModal(true)}
+                style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textDim,border:`1px solid ${C.borderSub}`,borderRadius:14,fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:0.5,marginTop:8}}>
+                ✨ 広告を非表示にする — プレミアム（¥300/月）
+              </button>
+            )}
+            {premium&&(
+              <div style={{padding:"10px 0",textAlign:"center",fontSize:11,color:"#22c55e",fontWeight:700,letterSpacing:0.5,marginTop:8}}>
+                ✓ プレミアム有効 — 広告なし
+              </div>
+            )}
+
             {/* データリセット */}
             {(rm.bench>0||sessions.length>0)&&(
               <button onClick={()=>{
@@ -3163,7 +3175,6 @@ export default function App() {
                     </div>
                   );
                 })}
-                <AdBanner premium={premium} onUpgrade={()=>setShowPremiumModal(true)} C={C} />
               </>
             )}
           </div>
@@ -3266,7 +3277,6 @@ export default function App() {
         {screen==="progress"&&(
           <div>
             <BodyStatsSection weights={weights} rm={rm} onToast={showToast} C={C}/>
-            <AdBanner premium={premium} onUpgrade={()=>setShowPremiumModal(true)} C={C} />
             <WeeklyVolumeSection sessions={sessions} C={C}/>
 
             <div style={{display:"flex",gap:5,marginBottom:16,overflowX:"auto",paddingBottom:2}}>
