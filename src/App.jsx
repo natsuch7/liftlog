@@ -1,9 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { Dumbbell, Flame, Zap, Target, BarChart2, Settings, ClipboardList, Calendar, ChevronRight, ChevronLeft, Check, RotateCcw, X, TrendingUp, Award, Clock, BookOpen } from "lucide-react";
 import { getAllPosts, getPostBySlug } from "./lib/blog";
 import InstallBanner from "./components/InstallBanner";
+import { TRANSLATIONS } from "./lib/translations";
+
+const LangCtx = createContext("ja");
+const useT = () => TRANSLATIONS[useContext(LangCtx)];
 
 // ─── DESIGN SYSTEM ────────────────────────────────────────
 const DARK = {
@@ -556,6 +560,7 @@ function checkDeload(sessions, exName, plannedReps) {
 
 // ─── BODY WEIGHT SECTION（ログタブ）─────────────────────────
 function BodyWeightSection({ weights, onSave, C }) {
+  const T = useT();
   const COLOR = "#06b6d4";
   const todayStr = new Date().toLocaleDateString("ja-JP");
   const todayRec = weights.find(w => w.date === todayStr);
@@ -589,7 +594,7 @@ function BodyWeightSection({ weights, onSave, C }) {
       <div style={{background:C.card,borderRadius:14,padding:"16px",border:C.bSub}}>
 
         {/* 入力 */}
-        <div style={{fontSize:10,color:C.textDim,fontWeight:700,marginBottom:8}}>今日の体重</div>
+        <div style={{fontSize:10,color:C.textDim,fontWeight:700,marginBottom:8}}>{T.bodyWeight.todayWeight}</div>
         <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,width:"100%",boxSizing:"border-box",overflowX:"hidden"}}>
           <input
             type="number" inputMode="decimal" placeholder="72.5" step="0.1"
@@ -609,7 +614,7 @@ function BodyWeightSection({ weights, onSave, C }) {
               borderRadius:10,fontSize:12,fontWeight:800,cursor:"pointer",letterSpacing:0.5,
               whiteSpace:"nowrap",flexShrink:0,
             }}
-          >記録する</button>
+          >{T.bodyWeight.record}</button>
         </div>
 
         {/* グラフ */}
@@ -642,29 +647,29 @@ function BodyWeightSection({ weights, onSave, C }) {
 }
 
 // ─── BODY STATS GRADE HELPERS ────────────────────────────────
-function getBenchGrade(r) {
-  if(!r) return {label:"未設定",color:C.textDim};
-  if(r<1.0) return {label:"初心者レベル",color:C.textSub};
-  if(r<1.5) return {label:"初中級者レベル",color:"#e07b39"};
-  if(r<2.0) return {label:"中級者レベル",color:"#22c55e"};
-  if(r<2.5) return {label:"上級者レベル",color:"#3b82f6"};
-  return {label:"エリートレベル💪",color:"#e63946"};
+function getBenchGrade(r, C) {
+  if(!r) return {key:"notSet",color:C.textDim};
+  if(r<1.0) return {key:"beginner",color:C.textSub};
+  if(r<1.5) return {key:"novice",color:"#e07b39"};
+  if(r<2.0) return {key:"intermediate",color:"#22c55e"};
+  if(r<2.5) return {key:"advanced",color:"#3b82f6"};
+  return {key:"elite",color:"#e63946"};
 }
-function getSquatGrade(r) {
-  if(!r) return {label:"未設定",color:C.textDim};
-  if(r<1.2) return {label:"初心者レベル",color:C.textSub};
-  if(r<1.7) return {label:"初中級者レベル",color:"#e07b39"};
-  if(r<2.2) return {label:"中級者レベル",color:"#22c55e"};
-  if(r<2.8) return {label:"上級者レベル",color:"#3b82f6"};
-  return {label:"エリートレベル💪",color:"#e63946"};
+function getSquatGrade(r, C) {
+  if(!r) return {key:"notSet",color:C.textDim};
+  if(r<1.2) return {key:"beginner",color:C.textSub};
+  if(r<1.7) return {key:"novice",color:"#e07b39"};
+  if(r<2.2) return {key:"intermediate",color:"#22c55e"};
+  if(r<2.8) return {key:"advanced",color:"#3b82f6"};
+  return {key:"elite",color:"#e63946"};
 }
-function getDeadGrade(r) {
-  if(!r) return {label:"未設定",color:C.textDim};
-  if(r<1.5) return {label:"初心者レベル",color:C.textSub};
-  if(r<2.0) return {label:"初中級者レベル",color:"#e07b39"};
-  if(r<2.5) return {label:"中級者レベル",color:"#22c55e"};
-  if(r<3.0) return {label:"上級者レベル",color:"#3b82f6"};
-  return {label:"エリートレベル💪",color:"#e63946"};
+function getDeadGrade(r, C) {
+  if(!r) return {key:"notSet",color:C.textDim};
+  if(r<1.5) return {key:"beginner",color:C.textSub};
+  if(r<2.0) return {key:"novice",color:"#e07b39"};
+  if(r<2.5) return {key:"intermediate",color:"#22c55e"};
+  if(r<3.0) return {key:"advanced",color:"#3b82f6"};
+  return {key:"elite",color:"#e63946"};
 }
 
 function rrect(ctx,x,y,w,h,r){
@@ -969,6 +974,7 @@ async function doShareCanvas(canvas, filename, text, onFallbackToast) {
 
 // ─── BODY STATS SECTION（進捗タブ）───────────────────────────
 function BodyStatsSection({ weights, rm, onToast, C }) {
+  const T = useT();
   const sorted = [...weights].sort((a,b)=>b.date.localeCompare(a.date));
   const latest = sorted[0];
   if (!latest) return null;
@@ -977,9 +983,9 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
   const benchR  = rm.bench>0 ? rm.bench/bw : null;
   const squatR  = rm.squat>0 ? rm.squat/bw : null;
   const deadR   = rm.dead >0 ? rm.dead /bw : null;
-  const benchG  = getBenchGrade(benchR);
-  const squatG  = getSquatGrade(squatR);
-  const deadG   = getDeadGrade(deadR);
+  const benchG  = getBenchGrade(benchR, C);
+  const squatG  = getSquatGrade(squatR, C);
+  const deadG   = getDeadGrade(deadR, C);
 
   const LIFTS = [
     {label:"BENCH", ratio:benchR, grade:benchG, rmKg:rm.bench, color:"#06b6d4"},
@@ -993,7 +999,7 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
     const bR = benchR ? benchR.toFixed(2) : "--";
     const sR = squatR ? squatR.toFixed(2) : "--";
     const dR = deadR  ? deadR.toFixed(2)  : "--";
-    const text = `BIG3 相対強度チェック💪\nベンチ ${bR}倍・スクワット ${sR}倍・デッド ${dR}倍\n体重 ${bw}kg\n\n#LIFTLOG #筋トレ #BIG3`;
+    const text = T.shareText(bR, sR, dR, bw);
     doShareCanvas(createStatsCanvas(bw, rm), "liftlog_stats.png", text, onToast);
   }
 
@@ -1004,21 +1010,21 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
         <button onClick={handleShare}
           style={{background:C.surface,border:"1px solid #2a2a2a",borderRadius:8,padding:"5px 12px",
                   fontSize:10,color:C.textSub,cursor:"pointer",fontWeight:700,letterSpacing:0.5}}>
-          {isWebShare ? "📸 Xにシェア" : "📸 画像を保存してシェア"}
+          {isWebShare ? T.shareX : T.saveShare}
         </button>
       </div>
       <div style={{background:C.card,borderRadius:14,padding:"14px",border:C.bSub}}>
-        {/* 最新体重 */}
+        {/* Latest weight */}
         <div style={{background:C.surface,borderRadius:10,padding:"12px 14px",border:C.b,marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{fontSize:9,color:C.textDim,letterSpacing:1}}>最新体重</div>
+            <div style={{fontSize:9,color:C.textDim,letterSpacing:1}}>{T.bodyWeight.latestWeight}</div>
             <div style={{fontSize:9,color:C.textFaint}}>{latest.date}</div>
           </div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#06b6d4",lineHeight:1,marginTop:4}}>
             {bw}<span style={{fontSize:13}}>kg</span>
           </div>
         </div>
-        {/* BIG3 相対強度 3列 */}
+        {/* BIG3 relative strength */}
         <div style={{display:"flex",gap:6}}>
           {LIFTS.map(({label,ratio,grade,rmKg})=>(
             <div key={label} style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 8px",border:C.b,minWidth:0}}>
@@ -1026,10 +1032,10 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
               {ratio!==null?(
                 <>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:grade.color,lineHeight:1}}>
-                    {ratio.toFixed(2)}<span style={{fontSize:9}}>倍</span>
+                    {ratio.toFixed(2)}<span style={{fontSize:9}}>x</span>
                   </div>
                   <div style={{fontSize:8,color:C.textDim,marginTop:2}}>{rmKg}kg</div>
-                  <div style={{fontSize:8,fontWeight:800,color:grade.color,marginTop:3,lineHeight:1.3}}>{grade.label}</div>
+                  <div style={{fontSize:8,fontWeight:800,color:grade.color,marginTop:3,lineHeight:1.3}}>{T.grades[grade.key]}</div>
                 </>
               ):(
                 <div style={{fontSize:10,color:C.textFaint,marginTop:6}}>--</div>
@@ -1044,21 +1050,23 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
 
 // ─── WEEKLY VOLUME SECTION ────────────────────────────────
 function getVolumeStatus(sets) {
-  if (sets <= 9)  return { color:"#ef4444", label:"不足",     isExcess:false };
-  if (sets <= 14) return { color:"#f97316", label:"やや不足", isExcess:false };
-  if (sets <= 18) return { color:"#22c55e", label:"最適",     isExcess:false };
-  if (sets <= 20) return { color:"#3b82f6", label:"上限付近", isExcess:false };
-  return             { color:"#ef4444", label:"過多注意", isExcess:true };
+  if (sets <= 9)  return { color:"#ef4444", key:"low",        isExcess:false };
+  if (sets <= 14) return { color:"#f97316", key:"slightlyLow",isExcess:false };
+  if (sets <= 18) return { color:"#22c55e", key:"optimal",    isExcess:false };
+  if (sets <= 20) return { color:"#3b82f6", key:"nearMax",    isExcess:false };
+  return             { color:"#ef4444", key:"tooMuch",    isExcess:true };
 }
 
 function VolumeBar({ muscleGroup, sets, C }) {
-  const { color, label: statusLabel, isExcess } = getVolumeStatus(sets);
+  const T = useT();
+  const { color, key: statusKey, isExcess } = getVolumeStatus(sets);
+  const statusLabel = T.volStatus[statusKey];
   const pct = Math.min(sets / 20 * 100, 100);
   return (
     <div style={{marginBottom:12}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:5}}>
         <div>
-          <span style={{fontSize:11,fontWeight:800,color:C.text}}>{muscleGroup.label}</span>
+          <span style={{fontSize:11,fontWeight:800,color:C.text}}>{T.muscleLabels[muscleGroup.key]??muscleGroup.label}</span>
           <span style={{fontSize:9,color:C.textDim,marginLeft:4}}>{muscleGroup.en}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -1083,7 +1091,7 @@ function VolumeBar({ muscleGroup, sets, C }) {
       </div>
       {isExcess&&(
         <div style={{fontSize:9,color:"#f97316",marginTop:4,letterSpacing:0.3}}>
-          今週はボリュームが多め。回復を優先しましょう 💪
+          {T.volExcessNote}
         </div>
       )}
     </div>
@@ -1091,6 +1099,7 @@ function VolumeBar({ muscleGroup, sets, C }) {
 }
 
 function WeeklyVolumeSection({ sessions, C }) {
+  const T = useT();
   const vol = calcWeeklyVolume(sessions);
 
   const weekStart = getWeekStart();
@@ -1114,13 +1123,7 @@ function WeeklyVolumeSection({ sessions, C }) {
 
       {/* Legend */}
       <div style={{display:"flex",flexWrap:"wrap",gap:"4px 10px",marginBottom:10}}>
-        {[
-          {color:"#ef4444",label:"不足 (〜9)"},
-          {color:"#f97316",label:"やや不足 (10〜14)"},
-          {color:"#22c55e",label:"最適 (15〜18)"},
-          {color:"#3b82f6",label:"上限付近 (19〜20)"},
-          {color:"#ef4444",label:"過多注意 (21+)"},
-        ].map(({color,label})=>(
+        {T.weeklyVol.legend.map(({color,label})=>(
           <div key={label} style={{display:"flex",alignItems:"center",gap:4}}>
             <div style={{width:6,height:6,borderRadius:"50%",background:color,flexShrink:0}}/>
             <span style={{fontSize:9,color:C.textMid,letterSpacing:0.3}}>{label}</span>
@@ -1130,7 +1133,7 @@ function WeeklyVolumeSection({ sessions, C }) {
 
       <div style={{background:C.card,borderRadius:14,padding:"14px 16px",border:C.bSub}}>
         {/* BIG3 primary */}
-        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1,fontWeight:700,marginBottom:10}}>BIG3 主要筋群</div>
+        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1,fontWeight:700,marginBottom:10}}>{T.weeklyVol.big3Primary}</div>
         {primary.map(g=><VolumeBar key={g.key} muscleGroup={g} sets={vol[g.key]||0} C={C}/>)}
 
         {/* Secondary – collapsible */}
@@ -1139,7 +1142,7 @@ function WeeklyVolumeSection({ sessions, C }) {
             fontSize:10,color:C.textMid,cursor:"pointer",userSelect:"none",
             padding:"6px 0 0",listStyle:"none",display:"flex",alignItems:"center",gap:4,
           }}>
-            <span>補助種目のボリューム</span>
+            <span>{T.weeklyVol.accessoryVol}</span>
             <span style={{fontSize:8,color:C.textFaint}}>▼</span>
           </summary>
           <div style={{marginTop:10}}>
@@ -1152,6 +1155,7 @@ function WeeklyVolumeSection({ sessions, C }) {
 }
 
 function WeeklyVolumeCompact({ sessions, onViewDetails, C }) {
+  const T = useT();
   const vol = calcWeeklyVolume(sessions);
   const primaryKeys = ["chest","back","quad"];
   const groups = MUSCLE_GROUPS.filter(g=>primaryKeys.includes(g.key));
@@ -1162,12 +1166,14 @@ function WeeklyVolumeCompact({ sessions, onViewDetails, C }) {
         <div style={{fontSize:9,color:C.textMid,letterSpacing:2,fontWeight:700}}>WEEKLY VOLUME</div>
         <button onClick={onViewDetails}
           style={{background:"none",border:"none",fontSize:10,color:"#e63946",cursor:"pointer",fontWeight:700,padding:0}}>
-          詳細 →
+          {T.weeklyVol.details}
         </button>
       </div>
-      {groups.map(({key,label})=>{
+      {groups.map(({key})=>{
         const sets = vol[key]||0;
-        const {color,label:statusLabel} = getVolumeStatus(sets);
+        const {color,key:statusKey} = getVolumeStatus(sets);
+        const statusLabel = T.volStatus[statusKey];
+        const label = T.muscleLabels[key] ?? key;
         const pct = Math.min(sets/20*100,100);
         return (
           <div key={key} style={{marginBottom:8}}>
@@ -1190,11 +1196,12 @@ function WeeklyVolumeCompact({ sessions, onViewDetails, C }) {
 
 // ─── CYCLE COMPLETE MODAL ─────────────────────────────────
 function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue }) {
+  const T = useT();
   const LIFTS = [
-    { key:"bench", label:"ベンチプレス" },
-    { key:"squat", label:"スクワット" },
-    { key:"dead",  label:"デッドリフト" },
-    { key:"mil",   label:"ミリタリープレス" },
+    { key:"bench", label:T.lifts.bench },
+    { key:"squat", label:T.lifts.squat },
+    { key:"dead",  label:T.lifts.dead  },
+    { key:"mil",   label:T.lifts.mil   },
   ];
 
   // セッション記録から各種目の最高推定1RMを集計
@@ -1235,16 +1242,16 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
         <div style={{textAlign:"center",marginBottom:18}}>
           <div style={{fontSize:36,lineHeight:1,marginBottom:6}}>🎉</div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:34,letterSpacing:3,color:"#f0f0f0",lineHeight:1}}>
-            サイクル完了！
+            {T.cycle.title}
           </div>
           <div style={{fontSize:12,color:C.textMid,marginTop:6,fontWeight:600}}>
-            13週間お疲れ様でした
+            {T.cycle.subtitle}
           </div>
         </div>
 
         {/* 新サイクル推奨1RM */}
         <div style={{background:C.legB.dim,borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #1a3020"}}>
-          <div style={{fontSize:9,color:"#22c55e",letterSpacing:2,fontWeight:700,marginBottom:12}}>NEW CYCLE — 推奨1RM</div>
+          <div style={{fontSize:9,color:"#22c55e",letterSpacing:2,fontWeight:700,marginBottom:12}}>{T.cycle.newCycleRm}</div>
           {LIFTS.map(({key,label})=>{
             const start = cycleStartRm[key] || 0;
             const best  = bestFromSessions[key] || 0;
@@ -1261,7 +1268,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
                   {diff>0?`+${diff}`:`${diff}`}kg
                 </div>}
                 {best>0&&best>=(rm[key]||0)&&(
-                  <div style={{fontSize:9,color:"#22c55e44",background:"#22c55e11",borderRadius:4,padding:"1px 5px"}}>記録</div>
+                  <div style={{fontSize:9,color:"#22c55e44",background:"#22c55e11",borderRadius:4,padding:"1px 5px"}}>{T.cycle.pr}</div>
                 )}
               </div>
             );
@@ -1276,7 +1283,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
             color:"#fff",border:"none",borderRadius:12,
             fontSize:14,fontWeight:800,cursor:"pointer",letterSpacing:0.5,marginBottom:8,
           }}>
-          この重量で新サイクル開始 🔥
+          {T.cycle.startNew}
         </button>
         <button onClick={()=>onNewCycle(null)}
           style={{
@@ -1284,7 +1291,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
             border:C.b,borderRadius:12,fontSize:12,fontWeight:700,
             cursor:"pointer",letterSpacing:0.5,marginBottom:8,
           }}>
-          現在の1RMのまま開始
+          {T.cycle.keepRm}
         </button>
         <button onClick={onContinue}
           style={{
@@ -1292,7 +1299,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
             border:"none",borderRadius:12,fontSize:11,fontWeight:600,
             cursor:"pointer",
           }}>
-          デロード週を続ける
+          {T.cycle.continueDeload}
         </button>
       </div>
     </div>
@@ -1301,6 +1308,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
 
 // ─── SESSION COMPLETE MODAL ───────────────────────────────
 function SessionCompleteModal({ data, onShare, onClose }) {
+  const T = useT();
   const { dayLabel, totalVolume, totalSets, rmUpdates } = data;
   const hasRmUpdate = rmUpdates.length > 0;
   const firstUpdate = rmUpdates[0];
@@ -1325,18 +1333,18 @@ function SessionCompleteModal({ data, onShare, onClose }) {
           </div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,letterSpacing:3,
             color:hasRmUpdate?"#e63946":"#f0f0f0",lineHeight:1}}>
-            {hasRmUpdate ? "1RM更新！" : "WELL DONE"}
+            {hasRmUpdate ? T.sessionComplete.newPr : T.sessionComplete.wellDone}
           </div>
           <div style={{fontSize:16,marginTop:8,fontWeight:600,
             color:hasRmUpdate?"#22c55e":"#666666"}}>
             {hasRmUpdate
               ? `${firstUpdate.name} ${firstUpdate.oldRm}kg → ${firstUpdate.newRm}kg`
-              : "トレーニングお疲れ様でした"}
+              : T.sessionComplete.goodWork}
           </div>
         </div>
 
         <div style={{marginBottom:20}}>
-          <div style={{fontSize:13,fontWeight:700,color:C.textSub,marginBottom:10}}>{dayLabel} 完了</div>
+          <div style={{fontSize:13,fontWeight:700,color:C.textSub,marginBottom:10}}>{T.sessionComplete.complete(dayLabel)}</div>
           <div style={{display:"flex",gap:10}}>
             <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
               <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>VOLUME</div>
@@ -1347,7 +1355,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
             <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
               <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>SETS</div>
               <div style={{fontSize:20,fontWeight:800,color:"#f0f0f0"}}>
-                {totalSets}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>セット</span>
+                {totalSets}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>sets</span>
               </div>
             </div>
           </div>
@@ -1730,6 +1738,7 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
 
 // ─── EXERCISE BLOCK ───────────────────────────────────────
 function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
+  const T = useT();
   const isMain     = ex.cat==="main";
   const isMachine  = ex.eq==="mc";
   const isDumbbell = ex.eq==="db";
@@ -1776,12 +1785,12 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             <span style={{fontSize:10,color:C.textDim}}>{ex.purpose}</span>
             {prevBest?.weight>0&&(
               <span style={{fontSize:9,background:C.borderFaint,border:"1px solid #252525",borderRadius:4,padding:"1px 6px",color:C.textMid,fontWeight:600}}>
-                前回 {prevBest.weight}kg×{prevBest.reps}
+                {T.exercise.prevBest(prevBest.weight, prevBest.reps)}
               </span>
             )}
             {adjusted&&(
               <span style={{fontSize:9,background:"#1f1000",border:"1px solid #3d2000",borderRadius:4,padding:"1px 6px",color:"#e07b39",fontWeight:700}}>
-                ↓ 自動調整済み
+                {T.exercise.autoAdjusted}
               </span>
             )}
           </div>
@@ -1792,7 +1801,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
                 {adjusted&&<span style={{fontSize:10,textDecoration:"line-through",color:C.textFaint,marginRight:3}}>{ex.weight}</span>}
                 {effectiveWeight}<span style={{fontSize:10,color:C.textMid}}>kg</span>
               </div>
-            : <div style={{fontSize:10,color:C.textFaint,fontStyle:"italic"}}>{isMachine?"重量選択":"自重"}</div>}
+            : <div style={{fontSize:10,color:C.textFaint,fontStyle:"italic"}}>{isMachine?T.exercise.selectWeight:T.exercise.bodyweight}</div>}
           <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{ex.reps}rep × {ex.sets}</div>
         </div>
       </div>
@@ -1807,9 +1816,9 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
               <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>WARM UP</span>
             </div>
             <div style={{display:"flex",marginBottom:4,paddingLeft:35,gap:5}}>
-              <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>重量</div>
+              <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.weightCol}</div>
               <div style={{width:20}}/>
-              <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>回数</div>
+              <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.repsCol}</div>
             </div>
             {warmups.map((wu,wi)=>{
               const wuInputs=setInputs[`wu_${exIdx}`]||{};
@@ -1830,9 +1839,9 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
 
         {/* Working sets header */}
         <div style={{display:"flex",alignItems:"center",marginBottom:5,paddingLeft:35,gap:5}}>
-          <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>重量</div>
+          <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.weightCol}</div>
           <div style={{width:20}}/>
-          <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>回数</div>
+          <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.repsCol}</div>
           <div style={{width:20}}/>
           <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>RPE</div>
           <div style={{width:38,fontSize:8,color:C.textFaint,textAlign:"right"}}>1RM</div>
@@ -1867,7 +1876,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             onMouseEnter={e=>{e.currentTarget.style.borderColor=accent;e.currentTarget.style.color=accent;}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor=C.borderDeep;e.currentTarget.style.color=C.textMid;}}
           >
-            ＋ セット追加
+            {T.exercise.addSet}
           </button>
           {sets.length > 1 && (
             <button
@@ -1881,7 +1890,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
               onMouseEnter={e=>{e.currentTarget.style.borderColor="#e63946";e.currentTarget.style.color="#e63946";}}
               onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textDim;}}
             >
-              － 削除
+              {T.exercise.removeSet}
             </button>
           )}
         </div>
@@ -1892,6 +1901,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
 
 // ─── CALENDAR ─────────────────────────────────────────────
 function CalendarView({ sessions, C }) {
+  const T = useT();
   const today = new Date();
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
@@ -1914,8 +1924,8 @@ function CalendarView({ sessions, C }) {
   for (let i=0; i<firstDay; i++) cells.push(null);
   for (let d=1; d<=daysInMonth; d++) cells.push(d);
 
-  const dayLabels = ["日","月","火","水","木","金","土"];
-  const monthStr  = `${year}年${month+1}月`;
+  const dayLabels = T.dayOfWeek;
+  const monthStr  = T.monthFmt(year, month+1);
 
   // その日のセッション取得
   function getSessionsForDay(d) {
@@ -2022,6 +2032,7 @@ function useLocalStorage(key, initialValue) {
 
 // ─── ACCESSORY PICKER ────────────────────────────────────
 function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
+  const T = useT();
   const [local, setLocal] = useState([...selected]);
   const allowedCats = DAY_CATS[dayKey] || Object.keys(CAT_LABELS);
   const catalog = EXERCISE_CATALOG.filter(e => allowedCats.includes(e.cat));
@@ -2043,12 +2054,12 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
         {/* Header */}
         <div style={{padding:"16px 18px 14px",borderBottom:C.bSub,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
           <div>
-            <div style={{fontWeight:800,fontSize:15}}>補助種目を選択</div>
-            <div style={{fontSize:10,color:C.textDim,marginTop:2}}>バーベル・ダンベル・スミス・マシン対応</div>
+            <div style={{fontWeight:800,fontSize:15}}>{T.picker.title}</div>
+            <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.picker.subtitle}</div>
           </div>
           <button onClick={()=>onSave(local)}
             style={{background:"#e63946",color:"#fff",border:"none",borderRadius:10,padding:"10px 18px",fontWeight:800,fontSize:12,cursor:"pointer",letterSpacing:0.5}}>
-            完了（{local.length}種目）
+            {T.picker.done(local.length)}
           </button>
         </div>
 
@@ -2057,7 +2068,7 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
           {categories.map(cat => (
             <div key={cat} style={{marginBottom:18}}>
               <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:8,paddingLeft:2}}>
-                {CAT_LABELS[cat]}
+                {T.catLabels[cat]??CAT_LABELS[cat]}
               </div>
               {catalog.filter(e=>e.cat===cat).map(ex => {
                 const sel = local.includes(ex.name);
@@ -2084,11 +2095,11 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
                       <div style={{display:"flex",alignItems:"center",gap:6}}>
                         <span style={{fontSize:13,fontWeight:600,color:sel?"#e63946":C.text}}>{ex.name}</span>
                         <span style={{fontSize:9,fontWeight:700,color:eqColor,background:eqColor+"18",borderRadius:4,padding:"1px 6px",flexShrink:0}}>
-                          {EQ_LABELS[ex.eq]}
+                          {T.eqLabels[ex.eq]??EQ_LABELS[ex.eq]}
                         </span>
                       </div>
                       <div style={{fontSize:10,color:C.textDim,marginTop:1}}>
-                        {ex.sets}セット × {ex.reps}回 · {ex.note}
+                        {T.picker.setSetsReps(ex.sets, ex.reps)} · {ex.note}
                       </div>
                     </div>
                   </div>
@@ -2112,12 +2123,14 @@ const GEN_MESSAGES = [
 ];
 
 function GeneratingScreen({ onComplete, C }) {
+  const T = useT();
+  const genMessages = T.genMessages;
   const [msgIdx,  setMsgIdx]  = useState(0);
   const [visible, setVisible] = useState(true);
   const [progress,setProgress]= useState(20);
   const [done,    setDone]    = useState(false);
   const [showOk,  setShowOk]  = useState(false);
-  const step = 100 / GEN_MESSAGES.length;
+  const step = 100 / genMessages.length;
   const ivRef = useRef(null);
 
   useEffect(() => {
@@ -2126,7 +2139,7 @@ function GeneratingScreen({ onComplete, C }) {
       setTimeout(() => {
         setMsgIdx(prev => {
           const next = prev + 1;
-          if (next >= GEN_MESSAGES.length) {
+          if (next >= genMessages.length) {
             clearInterval(ivRef.current);
             setProgress(100);
             setTimeout(() => setDone(true),  600);
@@ -2221,12 +2234,12 @@ function GeneratingScreen({ onComplete, C }) {
               opacity:visible?1:0,
               transform:visible?"translateY(0)":"translateY(8px)",
               transition:"opacity 0.3s ease,transform 0.3s ease",
-            }}>{GEN_MESSAGES[msgIdx]}</p>
+            }}>{genMessages[msgIdx]}</p>
           </div>
 
           {/* Step dots */}
           <div style={{display:"flex",gap:7}}>
-            {GEN_MESSAGES.map((_,i)=>(
+            {genMessages.map((_,i)=>(
               <div key={i} style={{
                 width:i===msgIdx?18:6,height:6,borderRadius:3,
                 background:i<=msgIdx?"linear-gradient(90deg,#F5C842,#FF7A3D)":C.borderDeep,
@@ -2245,7 +2258,7 @@ function GeneratingScreen({ onComplete, C }) {
             fontSize:36,animation:"checkIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards",
           }}>✓</div>
           <div style={{fontSize:26,fontWeight:900,color:C.text,letterSpacing:1,textAlign:"center",lineHeight:1.3}}>
-            プログラムの準備が<br/>できました
+            {T.genReady.split('\n').map((line,i)=><span key={i}>{line}{i===0&&<br/>}</span>)}
           </div>
           <p style={{margin:0,fontSize:12,color:C.textMid,letterSpacing:"0.1em"}}>YOUR 12-WEEK PROGRAM IS READY</p>
         </div>
@@ -2289,6 +2302,7 @@ export default function App() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
   const [theme, setTheme] = useLocalStorage("liftlog_theme", "light");
+  const [lang, setLang]   = useLocalStorage("liftlog_lang", "ja");
   const [setupError, setSetupError] = useState(null);
   const [onboardingDone, setOnboardingDone] = useLocalStorage("liftlog_onboarding_done", false);
   const [onboardingStep, setOnboardingStep] = useState(null);
@@ -2300,6 +2314,7 @@ export default function App() {
   // テーマに応じて C を動的に決定
   // eslint-disable-next-line no-shadow
   const C = theme === "light" ? LIGHT : DARK;
+  const T = TRANSLATIONS[lang];
 
   // テーマ変更時に html/body 背景色を同期
   useEffect(()=>{
@@ -2367,7 +2382,7 @@ export default function App() {
     setPurchaseLoading(true);
     try {
       if (!("getDigitalGoodsService" in window)) {
-        showToast("Google PlayアプリのLIFTLOGからご購入ください");
+        showToast(T.premium.purchasePlayOnly);
         return;
       }
       const paymentRequest = new PaymentRequest(
@@ -2375,14 +2390,14 @@ export default function App() {
         { total: { label: "合計", amount: { currency: "JPY", value: "0" } } }
       );
       const canPay = await paymentRequest.canMakePayment();
-      if (!canPay) { showToast("現在購入できません。Googleアカウントを確認してください。"); return; }
+      if (!canPay) { showToast(T.premium.purchaseUnavail); return; }
       const response = await paymentRequest.show();
       await response.complete("success");
       setPremium(true);
       setShowPremiumModal(false);
-      showToast("🎉 プレミアムプランへようこそ！広告が非表示になりました");
+      showToast(T.premium.purchaseToast);
     } catch (err) {
-      if (err.name !== "AbortError") showToast("購入に失敗しました。もう一度お試しください。");
+      if (err.name !== "AbortError") showToast(T.premium.purchaseError);
     } finally {
       setPurchaseLoading(false);
     }
@@ -2392,7 +2407,7 @@ export default function App() {
     setRestoreLoading(true);
     try {
       if (!("getDigitalGoodsService" in window)) {
-        showToast("Google PlayアプリのLIFTLOGで操作してください");
+        showToast(T.premium.restorePlayOnly);
         return;
       }
       const service = await window.getDigitalGoodsService("https://play.google.com/billing");
@@ -2400,12 +2415,12 @@ export default function App() {
       if (purchases.some(p => p.itemId === "liftlog_premium_monthly")) {
         setPremium(true);
         setShowPremiumModal(false);
-        showToast("購入を復元しました");
+        showToast(T.premium.restored);
       } else {
-        showToast("有効なサブスクリプションが見つかりませんでした");
+        showToast(T.premium.notFound);
       }
     } catch {
-      showToast("復元に失敗しました");
+      showToast(T.premium.restoreError);
     } finally {
       setRestoreLoading(false);
     }
@@ -2461,7 +2476,7 @@ export default function App() {
       const filtered = prev.filter(w => w.date !== dateStr);
       return [...filtered, {date:dateStr, weight:weightVal}].sort((a,b)=>a.date.localeCompare(b.date));
     });
-    showToast("体重を記録しました");
+    showToast(T.bodyWeight.recorded);
   }
 
   // マイルストーントースト
@@ -2666,14 +2681,15 @@ export default function App() {
 
   // ─── RENDER ─────────────────────────────────────────────
   const NAV=[
-    {id:"setup",  label:"設定",  Icon:Settings},
-    {id:"plan",   label:"プラン",Icon:Dumbbell},
-    {id:"log",    label:"ログ",  Icon:Calendar},
-    {id:"progress",label:"進捗", Icon:BarChart2},
-    {id:"blog",   label:"ブログ",Icon:BookOpen},
+    {id:"setup",   label:T.nav.setup,    Icon:Settings},
+    {id:"plan",    label:T.nav.plan,     Icon:Dumbbell},
+    {id:"log",     label:T.nav.log,      Icon:Calendar},
+    {id:"progress",label:T.nav.progress, Icon:BarChart2},
+    {id:"blog",    label:T.nav.blog,     Icon:BookOpen},
   ];
 
   return (
+    <LangCtx.Provider value={lang}>
     <div style={{fontFamily:"system-ui,-apple-system,sans-serif",background:C.bg,minHeight:"100vh",width:"100%",maxWidth:480,margin:"0 auto",color:C.text}}>
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"/>
 
@@ -2763,8 +2779,8 @@ export default function App() {
               <div style={{background:C.surface,borderRadius:14,padding:"14px",border:C.bSub}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div>
-                    <div style={{fontWeight:800,fontSize:13}}>カラーテーマ</div>
-                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{theme==="light"?"ライトモード（白基調）":"ダークモード（黒基調）"}</div>
+                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.colorTheme}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{theme==="light"?T.setup.lightMode:T.setup.darkMode}</div>
                   </div>
                   <div style={{display:"flex",gap:6}}>
                     {[{id:"dark",label:"Dark"},{id:"light",label:"Light"}].map(t=>(
@@ -2782,13 +2798,36 @@ export default function App() {
                 </div>
               </div>
             </div>
-            {/* トレーニング目標 */}
+            {/* Language toggle */}
             <div style={{marginBottom:18}}>
-              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>TRAINING GOAL</div>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>LANGUAGE</div>
+              <div style={{background:C.surface,borderRadius:14,padding:"14px",border:C.bSub}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{fontWeight:800,fontSize:13}}>{T.setup.language}</div>
+                  <div style={{display:"flex",gap:6}}>
+                    {[{id:"ja",label:"日本語"},{id:"en",label:"EN"}].map(l=>(
+                      <button key={l.id} onClick={()=>setLang(l.id)}
+                        style={{
+                          padding:"7px 14px",borderRadius:10,border:"none",cursor:"pointer",
+                          background:lang===l.id?"#e63946":C.surface2,
+                          color:lang===l.id?"#fff":C.textMid,
+                          fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
+                        }}>
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Training Goal */}
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>{T.setup.trainingGoal}</div>
               <div style={{display:"flex",gap:8}}>
                 {[
-                  {id:"strength",  label:"挙上重量向上", sub:"2〜6rep / 高重量", color:"#e63946"},
-                  {id:"hypertrophy",label:"筋肥大",      sub:"6〜15rep / 中重量", color:"#3b82f6"},
+                  {id:"strength",  label:T.setup.strength,    sub:T.setup.strengthSub,    color:"#e63946"},
+                  {id:"hypertrophy",label:T.setup.hypertrophy, sub:T.setup.hypertrophySub, color:"#3b82f6"},
                 ].map(g=>(
                   <button key={g.id} onClick={()=>setGoal(g.id)}
                     style={{
@@ -2803,18 +2842,18 @@ export default function App() {
                 ))}
               </div>
               <div style={{marginTop:8,fontSize:10,color:C.textFaint,background:C.surface2,borderRadius:8,padding:"8px 12px",border:C.bFaint}}>
-                12週プログラム — 蓄積（6週）→ 強化（4週）→ 現実化（2週）
+                {T.setup.cycleSummary}
               </div>
             </div>
 
             {/* Program mode toggles */}
             <div style={{marginBottom:18}}>
-              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>PROGRAM MODE</div>
+              <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>{T.setup.programMode}</div>
               <div style={{background:C.surface,borderRadius:14,padding:"14px",border:C.bSub,marginBottom:8}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
                   <div>
-                    <div style={{fontWeight:800,fontSize:13}}>ミリタリープレス</div>
-                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>肩・三頭筋の強化 / BIG5の5種目目</div>
+                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.milLabel}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.setup.milSub}</div>
                   </div>
                   <div onClick={()=>setUseMil(v=>!v)}
                     style={{width:48,height:26,borderRadius:13,background:useMil?"#e63946":C.borderFaint,border:`1px solid ${useMil?"#e63946":C.borderHi}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
@@ -2823,8 +2862,8 @@ export default function App() {
                 </div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div>
-                    <div style={{fontWeight:800,fontSize:13}}>チンニング（加重）</div>
-                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>背中・上腕二頭筋の強化</div>
+                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.chinLabel}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.setup.chinSub}</div>
                   </div>
                   <div onClick={()=>setUseChin(v=>!v)}
                     style={{width:48,height:26,borderRadius:13,background:useChin?"#e63946":C.borderFaint,border:`1px solid ${useChin?"#e63946":C.borderHi}`,cursor:"pointer",position:"relative",transition:"all 0.2s",flexShrink:0}}>
@@ -2833,7 +2872,7 @@ export default function App() {
                 </div>
               </div>
               <div style={{background:(!useMil&&!useChin)?C.legB.dim:C.surface2,borderRadius:10,padding:"10px 14px",border:`1px solid ${(!useMil&&!useChin)?C.legB.border:C.borderFaint}`,fontSize:11,color:(!useMil&&!useChin)?"#22c55e":C.textFaint,fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>
-                {(!useMil&&!useChin) ? "BIG3モード ― 週4日（ベンチ / スクワット / デッド / ベンチ）" : (useMil&&useChin) ? "BIG5モード ― 週5日" : "カスタムモード ― 週5日"}
+                {(!useMil&&!useChin) ? T.setup.big3Mode : (useMil&&useChin) ? T.setup.big5Mode : T.setup.customMode}
               </div>
             </div>
 
@@ -2845,7 +2884,7 @@ export default function App() {
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:13,color:dm.c.accent,letterSpacing:1,minWidth:28}}>D{i+1}</div>
                   <div style={{width:3,height:3,borderRadius:"50%",background:dm.c.accent,flexShrink:0}}/>
                   <div style={{flex:1}}>
-                    <div style={{fontWeight:700,fontSize:13}}>{dm.label}</div>
+                    <div style={{fontWeight:700,fontSize:13}}>{T.dayLabels[dm.key]??dm.label}</div>
                     <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{dm.sub}</div>
                   </div>
                 </div>
@@ -2853,8 +2892,9 @@ export default function App() {
             </div>
 
             {/* 1RM inputs */}
-            <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>1RM SETTINGS</div>
-            {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
+            <div style={{fontSize:10,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:10}}>{T.setup.rmSettings}</div>
+            {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,dk})=>{
+              const label = T.lifts[key]??key;
               const c=C[dk];
               const estW=tmp[`estW_${key}`]||"";
               const estR=tmp[`estR_${key}`]||"";
@@ -2870,23 +2910,23 @@ export default function App() {
                     {rm[key]>0&&<div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,color:c.accent}}>{rm[key]}<span style={{fontSize:11}}>kg</span></div>}
                   </div>
 
-                  <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>1RM直接入力</div>
+                  <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{T.setup.directInput}</div>
                   <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:14}}>
                     <input type="number" inputMode="decimal"
-                      placeholder={key==="chin"?"加重量（自重=0）":"例: 100"} value={tmp[key]}
+                      placeholder={key==="chin"?T.setup.chinPlaceholder:T.setup.weightPlaceholder} value={tmp[key]}
                       onChange={e=>setTmp(p=>({...p,[key]:e.target.value}))}
                       style={{...iStyle,border:`1px solid ${tmp[key]?c.border:C.borderSub}`,flex:1}}/>
                     <span style={{fontSize:12,color:C.textFaint,fontWeight:700}}>kg</span>
                   </div>
 
                   <div style={{borderTop:C.bFaint,paddingTop:14}}>
-                    <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>推定1RM — 重量×回数から計算</div>
+                    <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{T.setup.estimatedRm}</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr auto 1fr auto",gap:6,alignItems:"center",marginBottom:8}}>
-                      <input type="number" inputMode="decimal" placeholder="重量" value={estW}
+                      <input type="number" inputMode="decimal" placeholder={T.setup.weightLabel} value={estW}
                         onChange={e=>setTmp(p=>({...p,[`estW_${key}`]:e.target.value}))}
                         style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
                       <span style={{fontSize:11,color:C.textFaint,fontWeight:700,textAlign:"center"}}>kg ×</span>
-                      <input type="number" inputMode="numeric" placeholder="回数" value={estR}
+                      <input type="number" inputMode="numeric" placeholder={T.setup.repsLabel} value={estR}
                         onChange={e=>setTmp(p=>({...p,[`estR_${key}`]:e.target.value}))}
                         style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
                       <span style={{fontSize:11,color:C.textFaint,fontWeight:700}}>rep</span>
@@ -2899,7 +2939,7 @@ export default function App() {
                         </div>
                         <button onClick={()=>setTmp(p=>({...p,[key]:String(estRM)}))}
                           style={{padding:"10px 16px",background:c.accent,color:"#fff",border:"none",borderRadius:10,fontSize:11,fontWeight:800,cursor:"pointer",letterSpacing:0.5}}>
-                          この値を使う
+                          {T.setup.useValue}
                         </button>
                       </div>
                     )}
@@ -2917,19 +2957,19 @@ export default function App() {
             {!premium&&(
               <button onClick={()=>setShowPremiumModal(true)}
                 style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textDim,border:`1px solid ${C.borderSub}`,borderRadius:14,fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:0.5,marginTop:8}}>
-                ✨ 広告を非表示にする — プレミアム（¥300/月）
+                {T.setup.removAds}
               </button>
             )}
             {premium&&(
               <div style={{padding:"10px 0",textAlign:"center",fontSize:11,color:"#22c55e",fontWeight:700,letterSpacing:0.5,marginTop:8}}>
-                ✓ プレミアム有効 — 広告なし
+                {T.setup.premiumActive}
               </div>
             )}
 
             {/* データリセット */}
             {(rm.bench>0||sessions.length>0)&&(
               <button onClick={()=>{
-                if(!window.confirm("すべてのデータをリセットしますか？\n（1RM・セッション記録が消去されます）")) return;
+                if(!window.confirm(T.setup.resetConfirm)) return;
                 setRm({bench:0,dead:0,squat:0,mil:0,chin:0});
                 setSessions([]);
                 setWeek(1);
@@ -2938,16 +2978,16 @@ export default function App() {
                 setTmp({bench:"",dead:"",squat:"",mil:"",chin:"",
                   estW_bench:"",estR_bench:"",estW_dead:"",estR_dead:"",
                   estW_squat:"",estR_squat:"",estW_mil:"",estR_mil:"",estW_chin:"",estR_chin:""});
-                showToast("データをリセットしました");
+                showToast(T.setup.resetDone);
               }}
                 style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textFaint,border:C.b,borderRadius:14,fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:1,marginTop:8}}>
-                データをリセット
+                {T.setup.resetData}
               </button>
             )}
 
             {/* フッターリンク */}
             <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:28,paddingTop:20,borderTop:C.bCard}}>
-              {[["使い方ガイド","/guide"],["プライバシーポリシー","/privacy"],["お問い合わせ","/contact"]].map(([label,to])=>(
+              {[[T.setup.guideLink,"/guide"],[T.setup.privacyLink,"/privacy"],[T.setup.contactLink,"/contact"]].map(([label,to])=>(
                 <Link key={to} to={to} style={{fontSize:11,color:C.textDim,textDecoration:"none",fontWeight:600,letterSpacing:0.3}}>
                   {label}
                 </Link>
@@ -2962,7 +3002,7 @@ export default function App() {
             {!allSet?(
               <div style={{textAlign:"center",padding:60,color:C.textFaint}}>
                 <Settings size={40} color={C.border}/>
-                <div style={{marginTop:14,fontWeight:700,fontSize:13}}>設定タブで1RMを入力してください</div>
+                <div style={{marginTop:14,fontWeight:700,fontSize:13}}>{T.plan.noRm}</div>
               </div>
             ):(
               <>
@@ -2976,7 +3016,7 @@ export default function App() {
                     <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,letterSpacing:2,lineHeight:1}}>WEEK {week}</div>
                     <div style={{display:"inline-flex",alignItems:"center",gap:5,marginTop:4,background:cy.phaseColor+"22",border:`1px solid ${cy.phaseColor}44`,borderRadius:999,padding:"2px 12px"}}>
                       <div style={{width:5,height:5,borderRadius:"50%",background:cy.phaseColor}}/>
-                      <span style={{fontSize:10,color:cy.phaseColor,fontWeight:700,letterSpacing:1}}>{cy.phase}</span>
+                      <span style={{fontSize:10,color:cy.phaseColor,fontWeight:700,letterSpacing:1}}>{T.phases[cy.phase]??cy.phase}</span>
                     </div>
                   </div>
                   <button onClick={advanceWeek}
@@ -2990,10 +3030,10 @@ export default function App() {
                   <div style={{background:C.surface,borderRadius:12,padding:"10px 14px",marginBottom:10,border:`1px solid ${cy.phaseColor}33`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
                     <div style={{display:"flex",alignItems:"center",gap:6}}>
                       <div style={{width:8,height:8,borderRadius:"50%",background:cy.phaseColor,flexShrink:0}}/>
-                      <span style={{fontSize:11,fontWeight:800,color:cy.phaseColor,letterSpacing:0.5}}>{cy.phase}</span>
+                      <span style={{fontSize:11,fontWeight:800,color:cy.phaseColor,letterSpacing:0.5}}>{T.phases[cy.phase]??cy.phase}</span>
                     </div>
                     <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
-                    <span style={{fontSize:10,color:C.textMid}}>合計{cy.totalSets}セット</span>
+                    <span style={{fontSize:10,color:C.textMid}}>{T.plan.totalSets(cy.totalSets)}</span>
                     <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
                     <span style={{fontSize:10,color:C.textMid}}>RPE {cy.rpeMin}〜{cy.rpeMax}</span>
                     <div style={{width:1,height:14,background:C.border,flexShrink:0}}/>
@@ -3024,10 +3064,10 @@ export default function App() {
                     })}
                   </div>
                   <div style={{display:"flex",gap:2,marginTop:4}}>
-                    {[{label:"蓄積",w:6,c:"#22c55e"},{label:"強化",w:4,c:"#3b82f6"},{label:"現実化",w:2,c:"#f59e0b"}].map(b=>(
+                    {[{label:"蓄積",w:6,c:"#22c55e"},{label:"強化",w:4,c:"#3b82f6"},{label:"現実化",w:2,c:"#f59e0b"}].map(b=>( // keys are Japanese for phaseShort lookup
                       <div key={b.label} style={{display:"flex",alignItems:"center",gap:3,marginRight:6}}>
                         <div style={{width:6,height:6,borderRadius:1,background:b.c,opacity:0.6}}/>
-                        <span style={{fontSize:8,color:C.textFaint}}>{b.label}</span>
+                        <span style={{fontSize:8,color:C.textFaint}}>{T.phaseShort[b.label]??b.label}</span>
                       </div>
                     ))}
                   </div>
@@ -3043,9 +3083,9 @@ export default function App() {
                   <div style={{background:"linear-gradient(135deg,#1a1200,#2d2000)",borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #4a3800"}}>
                     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
                       <span style={{fontSize:16}}>🔽</span>
-                      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,letterSpacing:2,color:"#f59e0b"}}>TAPERING WEEK — 疲労抜き</div>
+                      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,letterSpacing:2,color:"#f59e0b"}}>{T.plan.tapering}</div>
                     </div>
-                    <div style={{fontSize:11,color:"#8a6f2a",lineHeight:1.7}}>セット数を削減し、疲労を抜いて次週の1RM更新に備えます。重量は維持しつつ、無理に追い込まないこと。RPE 7〜9を目安に。</div>
+                    <div style={{fontSize:11,color:"#8a6f2a",lineHeight:1.7}}>{T.plan.taperingDesc}</div>
                   </div>
                 )}
 
@@ -3056,7 +3096,7 @@ export default function App() {
                       <Award size={18} color="#8b5cf6"/>
                       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:2,color:"#8b5cf6"}}>MAX TESTING WEEK</div>
                     </div>
-                    <div style={{fontSize:11,color:"#6d4dc8",lineHeight:1.7}}>前回1RMより上・下半身+7.5%、上半身+5%の重量を目標に設定済み。ウォームアップを十分に行い挑戦してください。</div>
+                    <div style={{fontSize:11,color:"#6d4dc8",lineHeight:1.7}}>{T.plan.maxDesc}</div>
                     <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
                       {["40%×8","60%×5","75%×3","87%×1","93%×1","105〜107.5%!"].map(s=>(
                         <div key={s} style={{background:"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:"#6d4dc8",border:"1px solid #2d1060"}}>{s}</div>
@@ -3121,8 +3161,8 @@ export default function App() {
                         </div>
                         <div style={{width:1,height:36,background:C.borderFaint,flexShrink:0}}/>
                         <div style={{flex:1,minWidth:0}}>
-                          <div style={{fontWeight:800,fontSize:14,color:C.text}}>{dm.label}</div>
-                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{isMax?"1RM挑戦":dm.sub}</div>
+                          <div style={{fontWeight:800,fontSize:14,color:C.text}}>{T.dayLabels[dm.key]??dm.label}</div>
+                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{isMax?T.plan.maxChallenge:dm.sub}</div>
                           <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
                             {mains.map((ex,mi)=>(
                               <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:C.surface2,borderRadius:5,padding:"2px 8px",border:`1px solid ${C[dm.key].border}`}}>
@@ -3130,7 +3170,7 @@ export default function App() {
                               </div>
                             ))}
                           </div>
-                          {prevSess&&<div style={{fontSize:9,color:C.textFaint,marginTop:4}}>前回: {prevSess.date}</div>}
+                          {prevSess&&<div style={{fontSize:9,color:C.textFaint,marginTop:4}}>{T.plan.prevDate(prevSess.date)}</div>}
                         </div>
                         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
                           {hasInput&&<div style={{width:6,height:6,borderRadius:"50%",background:"#e63946"}}/>}
@@ -3143,11 +3183,11 @@ export default function App() {
                         <div style={{padding:"14px 12px 16px",borderTop:C.bFaint,background:C.surface2}}>
                           {isMax?(
                             <div style={{background:"#0d0818",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:11,color:"#6d4dc8",border:"1px solid #2d1060",lineHeight:1.6}}>
-                              ウォームアップ後、段階的に重量を上げて1RM挑戦。RPE入力でタイマーがスタートします。
+                              {T.plan.maxHint}
                             </div>
                           ):(
                             <div style={{background:C.surface,borderRadius:10,padding:"8px 14px",marginBottom:14,fontSize:11,color:C.textFaint,border:C.bFaint}}>
-                              RPEを入力するとインターバルタイマーが自動でスタートします
+                              {T.plan.rpeHint}
                             </div>
                           )}
 
@@ -3173,12 +3213,12 @@ export default function App() {
                             <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700}}>ACCESSORIES</div>
                             <button onClick={()=>setPickerDay(dm.key)}
                               style={{fontSize:10,color:C.textMid,background:C.card,border:C.b,borderRadius:7,padding:"4px 10px",cursor:"pointer",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
-                              ＋ 種目を編集
+                              {T.plan.editAccessories}
                             </button>
                           </div>
                           {exList.filter(e=>e.cat==="iso").length===0&&(
                             <div style={{textAlign:"center",padding:"16px 0",color:C.textFaint,fontSize:11}}>
-                              「種目を編集」から補助種目を追加してください
+                              {T.plan.noAccessories}
                             </div>
                           )}
                           {exList.filter(e=>e.cat==="iso").map(ex=>{
@@ -3217,7 +3257,7 @@ export default function App() {
 
             {/* Tab switcher */}
             <div style={{display:"flex",background:C.surface,borderRadius:12,padding:3,marginBottom:16,border:C.bSub}}>
-              {[["calendar","カレンダー"],["list","セッション一覧"]].map(([id,label])=>(
+              {[["calendar",T.log.calendar],["list",T.log.sessionList]].map(([id,label])=>(
                 <button key={id} onClick={()=>setLogTab(id)}
                   style={{flex:1,padding:"8px 0",borderRadius:9,border:"none",background:logTab===id?C.borderSub:"transparent",color:logTab===id?C.text:C.textDim,fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
                   {label}
@@ -3236,7 +3276,7 @@ export default function App() {
                 {sessions.length===0?(
                   <div style={{textAlign:"center",padding:60,color:C.textFaint}}>
                     <ClipboardList size={40} color={C.border}/>
-                    <div style={{marginTop:14,fontWeight:700,fontSize:13}}>プランタブから記録を保存してください</div>
+                    <div style={{marginTop:14,fontWeight:700,fontSize:13}}>{T.log.noSessions}</div>
                   </div>
                 ):sessions.map(s=>{
                   const dm=DAY_META.find(d=>d.key===s.dayKey)||DAY_META[0];
@@ -3252,8 +3292,8 @@ export default function App() {
                         </div>
                         <div style={{width:1,height:30,background:C.borderFaint,flexShrink:0}}/>
                         <div style={{flex:1,minWidth:0}}>
-                          <div style={{fontWeight:800,fontSize:13}}>{s.dayLabel}</div>
-                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{s.phase}</div>
+                          <div style={{fontWeight:800,fontSize:13}}>{T.dayLabels[s.dayKey]??s.dayLabel}</div>
+                          <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{T.phases[s.phase]??s.phase}</div>
                           <div style={{display:"flex",gap:4,marginTop:5,flexWrap:"wrap"}}>
                             {mainExs.map((ex,ei)=>{
                               const b=ex.sets.reduce((b,s)=>s.weight>b.weight?s:b,{weight:0,reps:0});
@@ -3291,7 +3331,7 @@ export default function App() {
                           })}
                           <button onClick={()=>handleShareSession(s)}
                             style={{marginTop:8,width:"100%",padding:"9px 0",background:C.surface,border:"1px solid #2a2a2a",borderRadius:10,color:C.textSub,fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:0.5}}>
-                            {canWebShare() ? "📸 Xにシェア" : "📸 画像を保存してシェア"}
+                            {canWebShare() ? T.log.shareX : T.log.saveShare}
                           </button>
                         </div>
                       )}
@@ -3334,7 +3374,7 @@ export default function App() {
                       <TrendingUp size={20} color={c.accent}/>
                       <div style={{flex:1}}>
                         <div style={{fontWeight:800,fontSize:16}}>{label}</div>
-                        <div style={{fontSize:10,color:C.textDim,marginTop:1}}>推定1RM推移</div>
+                        <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{T.progress.rmTrend}</div>
                       </div>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:c.accent,lineHeight:1}}>{cur||"–"}<span style={{fontSize:14}}>kg</span></div>
@@ -3356,7 +3396,7 @@ export default function App() {
                             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
                               <div>
                                 <span style={{fontWeight:700,fontSize:12}}>{s.date}</span>
-                                <span style={{fontSize:10,color:C.textFaint,marginLeft:8}}>W{s.week} · {s.phase}</span>
+                                <span style={{fontSize:10,color:C.textFaint,marginLeft:8}}>W{s.week} · {T.phases[s.phase]??s.phase}</span>
                               </div>
                               {rel.best1RM>0&&<div style={{fontSize:11,fontWeight:700,color:c.accent}}>1RM {rel.best1RM}kg</div>}
                             </div>
@@ -3407,9 +3447,9 @@ export default function App() {
               <div style={{padding:"20px 16px 12px",borderBottom:C.bFaint}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
                   <div style={{width:3,height:18,borderRadius:2,background:C.red,flexShrink:0}}/>
-                  <div style={{fontWeight:900,fontSize:16,letterSpacing:0.5}}>トレーニング知識</div>
+                  <div style={{fontWeight:900,fontSize:16,letterSpacing:0.5}}>{T.blog.heading}</div>
                 </div>
-                <div style={{fontSize:11,color:C.textMid,marginLeft:11}}>BIG3・ペリオダイゼーション・相対筋力などを解説</div>
+                <div style={{fontSize:11,color:C.textMid,marginLeft:11}}>{T.blog.subheading}</div>
               </div>
               <div style={{padding:"12px 12px 0"}}>
                 {getAllPosts().map(post=>(
@@ -3424,7 +3464,7 @@ export default function App() {
                     <div style={{fontSize:12,color:C.textSub,lineHeight:1.6,marginBottom:10}}>{post.description}</div>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <time style={{fontSize:10,color:"#3a3a3a"}}>{post.date}</time>
-                      <span style={{fontSize:11,color:C.red,fontWeight:700}}>続きを読む →</span>
+                      <span style={{fontSize:11,color:C.red,fontWeight:700}}>{T.blog.readMore}</span>
                     </div>
                   </button>
                 ))}
@@ -3455,7 +3495,7 @@ export default function App() {
                   {/* 戻るボタン */}
                   <button onClick={()=>setBlogSlug(null)}
                     style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:C.textMid,fontSize:12,padding:"14px 16px",cursor:"pointer",width:"100%",textAlign:"left",borderBottom:C.bFaint}}>
-                    <ChevronLeft size={14}/> 記事一覧に戻る
+                    <ChevronLeft size={14}/> {T.blog.backToList}
                   </button>
                   <div style={{padding:"16px 16px 0"}}>
                     {/* タグ */}
@@ -3471,11 +3511,11 @@ export default function App() {
                     <div className="blog-content" dangerouslySetInnerHTML={{__html:post.contentHtml}}/>
                     {/* CTA */}
                     <div style={{marginTop:32,padding:"20px",background:C.surface,border:C.bSub,borderRadius:14,textAlign:"center"}}>
-                      <div style={{fontWeight:800,fontSize:13,color:C.text,marginBottom:6}}>12週間プログラムを今すぐ作成</div>
-                      <div style={{fontSize:11,color:C.textMid,lineHeight:1.6,marginBottom:14}}>この記事の内容をすべて組み込んだ<br/>パーソナライズドプログラムを自動生成</div>
+                      <div style={{fontWeight:800,fontSize:13,color:C.text,marginBottom:6}}>{T.blog.ctaTitle}</div>
+                      <div style={{fontSize:11,color:C.textMid,lineHeight:1.6,marginBottom:14}}>{T.blog.ctaSub.split('\n').map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}</div>
                       <button onClick={()=>{setBlogSlug(null);setScreen("setup");}}
                         style={{background:C.red,color:"#fff",fontWeight:800,fontSize:12,padding:"10px 24px",borderRadius:8,border:"none",cursor:"pointer",letterSpacing:0.5}}>
-                        プログラムを作る →
+                        {T.blog.ctaButton}
                       </button>
                     </div>
                   </div>
@@ -3489,7 +3529,7 @@ export default function App() {
       {/* Footer */}
       <div style={{textAlign:"center",padding:"8px 0 16px",borderTop:C.bSub}}>
         <Link to="/privacy" style={{fontSize:10,color:C.textFaint,textDecoration:"none",letterSpacing:0.5}}>
-          プライバシーポリシー
+          {T.privacy}
         </Link>
       </div>
 
@@ -3548,18 +3588,14 @@ export default function App() {
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
               <div style={{width:36,height:36,borderRadius:12,background:"rgba(230,57,70,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>✨</div>
               <div>
-                <div style={{fontWeight:900,fontSize:17,color:C.text}}>LIFTLOGプレミアム</div>
-                <div style={{fontSize:12,color:"#e63946",fontWeight:700}}>¥300/月 · いつでもキャンセル可能</div>
+                <div style={{fontWeight:900,fontSize:17,color:C.text}}>{T.premium.title}</div>
+                <div style={{fontSize:12,color:"#e63946",fontWeight:700}}>{T.premium.price}</div>
               </div>
             </div>
 
             {/* Benefits */}
             <div style={{background:C.surface,borderRadius:14,padding:"14px 16px",margin:"20px 0",border:C.bSub}}>
-              {[
-                ["🚫","全広告を完全に非表示"],
-                ["⚡","クリーンなトレーニング体験"],
-                ["🔄","サブスクはいつでもキャンセル可能"],
-              ].map(([icon,text])=>(
+              {T.premium.benefits.map(([icon,text])=>(
                 <div key={text} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:`1px solid ${C.borderFaint}`}}>
                   <span style={{fontSize:16}}>{icon}</span>
                   <div style={{fontWeight:700,fontSize:13,color:C.text}}>{text}</div>
@@ -3572,29 +3608,29 @@ export default function App() {
               <>
                 <button onClick={handlePurchasePremium} disabled={purchaseLoading}
                   style={{width:"100%",padding:"16px 0",background:purchaseLoading?"#555":"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:14,fontWeight:800,cursor:purchaseLoading?"not-allowed":"pointer",letterSpacing:1,marginBottom:10}}>
-                  {purchaseLoading?"処理中...":"Google Playで購入する（¥300/月）"}
+                  {purchaseLoading ? T.premium.purchasing : T.premium.purchase}
                 </button>
                 <button onClick={handleRestorePurchases} disabled={restoreLoading}
                   style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textMid,border:`1px solid ${C.borderSub}`,borderRadius:12,fontSize:12,fontWeight:700,cursor:restoreLoading?"not-allowed":"pointer",marginBottom:10}}>
-                  {restoreLoading?"確認中...":"購入を復元する"}
+                  {restoreLoading ? T.premium.restoring : T.premium.restore}
                 </button>
               </>
             ):(
               <div style={{background:C.surface,borderRadius:12,padding:"14px 16px",marginBottom:10,textAlign:"center"}}>
                 <div style={{fontSize:12,color:C.textMid,lineHeight:1.7,marginBottom:12}}>
-                  プレミアムプランはGoogle PlayのAndroidアプリからご購入いただけます
+                  {T.premium.webNote}
                 </div>
                 <a href="https://play.google.com/store/apps/details?id=com.liftlog.big3planner"
                   target="_blank" rel="noopener noreferrer"
                   style={{display:"inline-block",padding:"10px 24px",background:"#e63946",color:"#fff",borderRadius:10,fontSize:12,fontWeight:800,textDecoration:"none",letterSpacing:0.5}}>
-                  Google Playでダウンロード →
+                  {T.premium.googlePlay}
                 </a>
               </div>
             )}
 
             <button onClick={()=>setShowPremiumModal(false)}
               style={{width:"100%",padding:"12px 0",background:"transparent",border:"none",color:C.textFaint,fontSize:12,cursor:"pointer"}}>
-              閉じる
+              {T.premium.close}
             </button>
           </div>
         </div>
@@ -3614,20 +3650,15 @@ export default function App() {
                     <span style={{fontWeight:900,fontSize:20,letterSpacing:2,color:C.text}}>LIFTLOG</span>
                   </div>
                   <div style={{fontSize:24,fontWeight:900,color:C.text,lineHeight:1.35,marginBottom:14}}>
-                    科学的な筋力プログラムを<br/>自動で作成します
+                    {T.onboarding.headline.split('\n').map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}
                   </div>
                   <div style={{fontSize:13,color:C.textMid,lineHeight:1.8}}>
-                    BIG3／BIG5の1RMを入力するだけで、<br/>
-                    12週間のブロック周期プログラムを生成します。
+                    {T.onboarding.subline.split('\n').map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}
                   </div>
                 </div>
 
                 <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:36}}>
-                  {[
-                    {icon:"📊",title:"12週間の自動プログラム",desc:"蓄積・強化・現実化の3フェーズで効率的に強くなる"},
-                    {icon:"📝",title:"セッション記録",desc:"毎回のトレーニングを記録してボリュームを管理"},
-                    {icon:"📈",title:"進捗グラフ",desc:"1RMの推移を可視化して成長を確認"},
-                  ].map(({icon,title,desc})=>(
+                  {T.onboarding.features.map(({icon,title,desc})=>(
                     <div key={title} style={{background:C.surface,borderRadius:12,padding:"14px 16px",border:C.bSub,display:"flex",gap:14,alignItems:"flex-start"}}>
                       <span style={{fontSize:20,flexShrink:0}}>{icon}</span>
                       <div>
@@ -3640,11 +3671,11 @@ export default function App() {
 
                 <button onClick={()=>setOnboardingStep(1)}
                   style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:15,fontWeight:800,cursor:"pointer",letterSpacing:1,marginBottom:14}}>
-                  はじめる →
+                  {T.onboarding.start}
                 </button>
                 <button onClick={()=>{setOnboardingDone(true);setOnboardingStep(null);}}
                   style={{width:"100%",padding:"12px 0",background:"transparent",color:C.textFaint,border:"none",fontSize:12,cursor:"pointer"}}>
-                  スキップして後で設定する
+                  {T.onboarding.skip}
                 </button>
               </div>
             )}
@@ -3654,31 +3685,31 @@ export default function App() {
               <div>
                 <button onClick={()=>setOnboardingStep(0)}
                   style={{background:"none",border:"none",color:C.textMid,fontSize:13,cursor:"pointer",marginBottom:28,padding:0,display:"flex",alignItems:"center",gap:4}}>
-                  ← 戻る
+                  {T.onboarding.back}
                 </button>
                 <div style={{marginBottom:32}}>
                   <div style={{fontSize:11,color:"#e63946",fontWeight:700,letterSpacing:2,marginBottom:8}}>STEP 1 / 2</div>
-                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>トレーニングモードを選択</div>
-                  <div style={{fontSize:13,color:C.textMid,marginTop:10,lineHeight:1.7}}>ミリタリープレス・チンニングを行う場合はBIG5を選択してください</div>
+                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>{T.onboarding.step1Title}</div>
+                  <div style={{fontSize:13,color:C.textMid,marginTop:10,lineHeight:1.7}}>{T.onboarding.step1Sub}</div>
                 </div>
 
                 <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:36}}>
                   {[
-                    {id:"big3",label:"BIG3モード",sub:"週4日 — ベンチプレス・スクワット・デッドリフト",active:!useMil&&!useChin,onClick:()=>{setUseMil(false);setUseChin(false);}},
-                    {id:"big5",label:"BIG5モード",sub:"週5日 — BIG3＋ミリタリープレス＋チンニング（加重）",active:useMil&&useChin,onClick:()=>{setUseMil(true);setUseChin(true);}},
+                    {id:"big3",label:T.onboarding.big3Label,sub:T.onboarding.big3Sub,active:!useMil&&!useChin,onClick:()=>{setUseMil(false);setUseChin(false);}},
+                    {id:"big5",label:T.onboarding.big5Label,sub:T.onboarding.big5Sub,active:useMil&&useChin,onClick:()=>{setUseMil(true);setUseChin(true);}},
                   ].map(({id,label,sub,active,onClick})=>(
                     <button key={id} onClick={onClick}
                       style={{width:"100%",textAlign:"left",padding:"18px 20px",borderRadius:14,border:`2px solid ${active?"#e63946":C.borderSub}`,background:active?"rgba(230,57,70,0.08)":C.surface,cursor:"pointer",transition:"all 0.15s"}}>
                       <div style={{fontWeight:800,fontSize:15,color:active?"#e63946":C.text,marginBottom:4}}>{label}</div>
                       <div style={{fontSize:12,color:active?"#e6394499":C.textMid,lineHeight:1.5}}>{sub}</div>
-                      {active&&<div style={{fontSize:11,color:"#e63946",fontWeight:700,marginTop:8}}>✓ 選択中</div>}
+                      {active&&<div style={{fontSize:11,color:"#e63946",fontWeight:700,marginTop:8}}>{T.onboarding.selected}</div>}
                     </button>
                   ))}
                 </div>
 
                 <button onClick={()=>setOnboardingStep(2)}
                   style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:15,fontWeight:800,cursor:"pointer",letterSpacing:1}}>
-                  次へ →
+                  {T.onboarding.next}
                 </button>
               </div>
             )}
@@ -3688,17 +3719,17 @@ export default function App() {
               <div>
                 <button onClick={()=>setOnboardingStep(1)}
                   style={{background:"none",border:"none",color:C.textMid,fontSize:13,cursor:"pointer",marginBottom:28,padding:0,display:"flex",alignItems:"center",gap:4}}>
-                  ← 戻る
+                  {T.onboarding.back}
                 </button>
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,color:"#e63946",fontWeight:700,letterSpacing:2,marginBottom:8}}>STEP 2 / 2</div>
-                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>1RMを入力してください</div>
+                  <div style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1.3}}>{T.onboarding.step2Title}</div>
                   <div style={{fontSize:13,color:C.textMid,marginTop:10,lineHeight:1.7}}>
-                    1回だけ持ち上げられる最大重量です。わからない場合は推定1RM計算機を使ってください。
+                    {T.onboarding.step2Sub}
                   </div>
                 </div>
 
-                {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,label,dk})=>{
+                {BIG5_LIFTS.filter(({key})=>(key!=="mil"||useMil)&&(key!=="chin"||useChin)).map(({key,dk})=>{
                   const c=C[dk];
                   const estW=tmp[`estW_${key}`]||"";
                   const estR=tmp[`estR_${key}`]||"";
@@ -3708,26 +3739,26 @@ export default function App() {
                     <div key={key} style={{background:C.surface,borderRadius:14,padding:"15px",marginBottom:10,border:`1px solid ${c.border}`}}>
                       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
                         <div style={{width:3,height:24,borderRadius:2,background:c.accent,flexShrink:0}}/>
-                        <div style={{fontWeight:800,fontSize:14,letterSpacing:0.3}}>{label}</div>
+                        <div style={{fontWeight:800,fontSize:14,letterSpacing:0.3}}>{T.lifts[key]??key}</div>
                       </div>
 
-                      <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>1RM直接入力</div>
+                      <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{T.setup.directInput}</div>
                       <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:14}}>
                         <input type="number" inputMode="decimal"
-                          placeholder={key==="chin"?"加重量（自重=0）":"例: 100"} value={tmp[key]}
+                          placeholder={key==="chin"?T.setup.chinPlaceholder:T.setup.weightPlaceholder} value={tmp[key]}
                           onChange={e=>setTmp(p=>({...p,[key]:e.target.value}))}
                           style={{...iStyle,border:`1px solid ${tmp[key]?c.border:C.borderSub}`,flex:1}}/>
                         <span style={{fontSize:12,color:C.textFaint,fontWeight:700}}>kg</span>
                       </div>
 
                       <div style={{borderTop:C.bFaint,paddingTop:14}}>
-                        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>推定1RM — 重量×回数から計算</div>
+                        <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{T.setup.estimatedRm}</div>
                         <div style={{display:"grid",gridTemplateColumns:"1fr auto 1fr auto",gap:6,alignItems:"center",marginBottom:8}}>
-                          <input type="number" inputMode="decimal" placeholder="重量" value={estW}
+                          <input type="number" inputMode="decimal" placeholder={T.setup.weightLabel} value={estW}
                             onChange={e=>setTmp(p=>({...p,[`estW_${key}`]:e.target.value}))}
                             style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
                           <span style={{fontSize:11,color:C.textFaint,fontWeight:700,textAlign:"center"}}>kg ×</span>
-                          <input type="number" inputMode="numeric" placeholder="回数" value={estR}
+                          <input type="number" inputMode="numeric" placeholder={T.setup.repsLabel} value={estR}
                             onChange={e=>setTmp(p=>({...p,[`estR_${key}`]:e.target.value}))}
                             style={{...iStyle,fontSize:15,padding:"10px 8px"}}/>
                           <span style={{fontSize:11,color:C.textFaint,fontWeight:700}}>rep</span>
@@ -3740,7 +3771,7 @@ export default function App() {
                             </div>
                             <button onClick={()=>setTmp(p=>({...p,[key]:String(estRM)}))}
                               style={{padding:"10px 16px",background:c.accent,color:"#fff",border:"none",borderRadius:10,fontSize:11,fontWeight:800,cursor:"pointer",letterSpacing:0.5}}>
-                              この値を使う
+                              {T.setup.useValue}
                             </button>
                           </div>
                         )}
@@ -3751,7 +3782,7 @@ export default function App() {
 
                 <button onClick={handleOnboardingGenerate}
                   style={{width:"100%",padding:"16px 0",background:"#e63946",color:"#fff",border:"none",borderRadius:14,fontSize:14,fontWeight:800,cursor:"pointer",letterSpacing:2,marginTop:4}}>
-                  GENERATE PLAN →
+                  {T.setup.generatePlan}
                 </button>
               </div>
             )}
@@ -3760,5 +3791,6 @@ export default function App() {
         </div>
       )}
     </div>
+    </LangCtx.Provider>
   );
 }
