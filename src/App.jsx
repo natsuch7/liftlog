@@ -2818,7 +2818,7 @@ export default function App() {
           <div style={{width:8,height:8,borderRadius:"50%",background:"#e63946",flexShrink:0}}/>
           <div style={{fontFamily:"system-ui,-apple-system,sans-serif",fontWeight:900,fontSize:16,letterSpacing:1,color:C.text}}>LIFTLOG</div>
           <div style={{flex:1}}/>
-          {allSet&&<div style={{fontSize:10,color:C.textFaint,letterSpacing:1}}>W{week} · {cy.phase}</div>}
+          {allSet&&<div style={{fontSize:10,color:C.textFaint,letterSpacing:1}}>W{week} · {T.phases[cy.phase]??cy.phase}</div>}
         </div>
       </div>
 
@@ -3492,7 +3492,7 @@ export default function App() {
                     <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
                       <TrendingUp size={20} color={c.accent}/>
                       <div style={{flex:1}}>
-                        <div style={{fontWeight:800,fontSize:16}}>{label}</div>
+                        <div style={{fontWeight:800,fontSize:16}}>{T.lifts[key]??label}</div>
                         <div style={{fontSize:10,color:C.textDim,marginTop:1}}>{T.progress.rmTrend}</div>
                       </div>
                       <div style={{textAlign:"right"}}>
