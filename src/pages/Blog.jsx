@@ -4,7 +4,7 @@ import { getAllPosts } from '../lib/blog'
 
 const AD_CLIENT = 'ca-pub-5626983282072406'
 // TODO: AdSenseダッシュボードで作成したad unitのslot IDに置き換えてください
-const AD_SLOT_LIST = 'REPLACE_WITH_YOUR_SLOT_ID'
+const AD_SLOT_LIST = '5965671953'
 
 function AdUnit({ slotId }) {
   const pushed = useRef(false)
