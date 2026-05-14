@@ -59,7 +59,7 @@ export default function BenchPressPlateauPeriodization() {
           '2週目：中程度の週（75〜80%）ボリュームを積む',
           '3週目：重い週（85〜90%）神経系を追い込む',
           '4週目：デロード（60%）疲労を抜いて次のサイクルへ',
-        ].map(item => <li key={item} style={{ fontSize: 15, color: '#ccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
+        ].map(item => <li key={item} style={{ fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
       </ul>
       <p style={pStyle}>この「波」を作ることで、筋肉への刺激が毎回変わり、慣れが生じにくくなります。</p>
 
@@ -70,7 +70,7 @@ export default function BenchPressPlateauPeriodization() {
           '蓄積期（Accumulation）：ボリュームを増やして基礎を作る',
           '強化期（Intensification）：強度を上げて神経系を鍛える',
           '実現期（Realization）：疲労を抜きながら最大筋力を発揮する',
-        ].map(item => <li key={item} style={{ fontSize: 15, color: '#ccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
+        ].map(item => <li key={item} style={{ fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
       </ul>
       <p style={pStyle}>中長期的な記録更新を狙うなら、このブロック構造が特に効果的です。</p>
 
@@ -84,7 +84,7 @@ export default function BenchPressPlateauPeriodization() {
           '毎回同じ強度では8週で頭打ちになる（研究より）',
           '非線形・ブロックピリオダイゼーションで波を作ると12週間伸び続ける',
           'LIFTLOGを使えばこの設計が自動化できる',
-        ].map(item => <li key={item} style={{ fontSize: 15, color: '#ccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
+        ].map(item => <li key={item} style={{ fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
       </ul>
     </BlogLayout>
   )

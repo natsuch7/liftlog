@@ -14,7 +14,7 @@ function CheckGroup({ title, items , C}) {
           <div style={{ width:16, height:16, borderRadius:3, border:`1px solid ${C.border}`, flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
             <div style={{ width:6, height:6, borderRadius:1, background:C.red }} />
           </div>
-          <span style={{ fontSize:14, color:'#ccc' }}>{item}</span>
+          <span style={{ fontSize:14, color:C===DARK?'#cccccc':'#444444' }}>{item}</span>
         </div>
       ))}
     </div>
@@ -30,7 +30,7 @@ function RecoveryCard({ severity, period, children , C}) {
         <span style={{ fontWeight:800, fontSize:14, color:C.text }}>{severity}</span>
         <span style={{ fontSize:11, fontWeight:700, color:C.red, background:'rgba(230,57,70,0.1)', borderRadius:4, padding:'2px 8px' }}>{period}</span>
       </div>
-      <p style={{ margin:0, fontSize:14, color:'#aaa', lineHeight:1.7 }}>{children}</p>
+      <p style={{ margin:0, fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>{children}</p>
     </div>
   )
 }

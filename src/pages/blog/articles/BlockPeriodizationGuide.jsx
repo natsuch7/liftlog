@@ -15,15 +15,15 @@ function PhaseCard({ num, label, weeks, intensity, children , C}) {
     <div style={{ background: isLast ? 'rgba(230,57,70,0.06)' : C.card, borderRadius:12, padding:'20px 22px', border: isLast ? `1px solid ${C.red}44` : `1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, marginBottom:12 }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
         <div>
-          <div style={{ fontSize:11, color:'#444', letterSpacing:2, marginBottom:4 }}>PHASE {num}</div>
+          <div style={{ fontSize:11, color:C.textSub, letterSpacing:2, marginBottom:4 }}>PHASE {num}</div>
           <div style={{ fontWeight:900, fontSize:16, color:C.text }}>{label}</div>
         </div>
         <div style={{ textAlign:'right' }}>
           <div style={{ fontWeight:700, fontSize:16, color:C.red, fontFamily:'monospace' }}>{intensity}</div>
-          <div style={{ fontSize:11, color:'#555', marginTop:2 }}>{weeks}</div>
+          <div style={{ fontSize:11, color:C.textSub, marginTop:2 }}>{weeks}</div>
         </div>
       </div>
-      <p style={{ margin:0, fontSize:14, color:'#aaa', lineHeight:1.7 }}>{children}</p>
+      <p style={{ margin:0, fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>{children}</p>
     </div>
   )
 }

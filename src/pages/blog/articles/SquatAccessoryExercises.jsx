@@ -14,7 +14,7 @@ function ExerciseCard({ num, name, frequency, children , C}) {
         <div style={{ width:28, height:28, borderRadius:'50%', background:C.red, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:13, color:'#fff', flexShrink:0 }}>{num}</div>
         <div style={{ fontWeight:800, fontSize:15, color:C.text }}>{name}</div>
       </div>
-      <p style={{ margin:'0 0 10px', fontSize:14, color:'#aaa', lineHeight:1.7, paddingLeft:38 }}>{children}</p>
+      <p style={{ margin:'0 0 10px', fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7, paddingLeft:38 }}>{children}</p>
       <div style={{ paddingLeft:38 }}>
         <span style={{ fontSize:11, fontWeight:700, color:C.red, background:'rgba(230,57,70,0.1)', borderRadius:4, padding:'3px 10px' }}>頻度: {frequency}</span>
       </div>
@@ -55,7 +55,7 @@ export default function SquatAccessoryExercises() {
           <div key={muscle} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:10 }}>
             <div style={{ width:6, height:6, borderRadius:'50%', background:C.red, flexShrink:0 }} />
             <span style={{ fontSize:14, fontWeight:700, color:C.text, minWidth:100 }}>{muscle}</span>
-            <span style={{ fontSize:13, color:'#666' }}>{role}</span>
+            <span style={{ fontSize:13, color:C.textSub }}>{role}</span>
           </div>
         ))}
       </div>

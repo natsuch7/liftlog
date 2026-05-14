@@ -10,7 +10,7 @@ function FrequencyRow({ lift, freq, note , C}) {
     <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', background:C.card, borderRadius:10, border:`1px solid ${C.border}`, marginBottom:8 }}>
       <div style={{ fontWeight:800, fontSize:14, color:C.text, minWidth:130 }}>{lift}</div>
       <div style={{ fontWeight:700, fontSize:16, color:C.red, minWidth:60, fontFamily:'monospace' }}>{freq}</div>
-      <div style={{ fontSize:13, color:'#666', flex:1 }}>{note}</div>
+      <div style={{ fontSize:13, color:C.textSub, flex:1 }}>{note}</div>
     </div>
   )
 }
@@ -57,11 +57,11 @@ export default function Big3TrainingFrequency() {
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
         <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}` }}>
           <div style={{ fontWeight:800, fontSize:13, color:C.red, marginBottom:8 }}>初心者（〜1年）</div>
-          <p style={{ margin:0, fontSize:13, color:'#aaa', lineHeight:1.7 }}>神経系の習得段階にあるため、週2〜3回同じ種目を練習することでフォームの定着が早まります。</p>
+          <p style={{ margin:0, fontSize:13, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>神経系の習得段階にあるため、週2〜3回同じ種目を練習することでフォームの定着が早まります。</p>
         </div>
         <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}` }}>
-          <div style={{ fontWeight:800, fontSize:13, color:'#888', marginBottom:8 }}>中上級者（1年以上）</div>
-          <p style={{ margin:0, fontSize:13, color:'#aaa', lineHeight:1.7 }}>回復に時間がかかるため、週2回を基本に強度の波を作ることが重要になります。</p>
+          <div style={{ fontWeight:800, fontSize:13, color:C.textSub, marginBottom:8 }}>中上級者（1年以上）</div>
+          <p style={{ margin:0, fontSize:13, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>回復に時間がかかるため、週2回を基本に強度の波を作ることが重要になります。</p>
         </div>
       </div>
 

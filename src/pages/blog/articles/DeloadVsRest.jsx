@@ -30,12 +30,12 @@ export default function DeloadVsRest() {
       <h2 style={h2}>完全休養とデロードの違い</h2>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
         <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}` }}>
-          <div style={{ fontWeight:800, fontSize:14, color:'#888', marginBottom:8 }}>完全休養</div>
-          <p style={{ margin:0, fontSize:13, color:'#666', lineHeight:1.7 }}>トレーニングを一切行わない期間。神経系のパターンが失われやすく、復帰後にフォームが崩れることがある。</p>
+          <div style={{ fontWeight:800, fontSize:14, color:C.textSub, marginBottom:8 }}>完全休養</div>
+          <p style={{ margin:0, fontSize:13, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>トレーニングを一切行わない期間。神経系のパターンが失われやすく、復帰後にフォームが崩れることがある。</p>
         </div>
         <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.red}44` }}>
           <div style={{ fontWeight:800, fontSize:14, color:C.red, marginBottom:8 }}>デロード</div>
-          <p style={{ margin:0, fontSize:13, color:'#aaa', lineHeight:1.7 }}>強度・ボリュームを大幅に下げながらトレーニングを継続。神経系を維持しながら疲労を回復できる。</p>
+          <p style={{ margin:0, fontSize:13, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>強度・ボリュームを大幅に下げながらトレーニングを継続。神経系を維持しながら疲労を回復できる。</p>
         </div>
       </div>
       <p style={p}>どちらも疲労回復を目的としていますが、筋肉量と神経系への影響が異なります。</p>
@@ -51,9 +51,9 @@ export default function DeloadVsRest() {
           { title:'心理的なルーティンの維持', body:'トレーニングの習慣を途切れさせないため、復帰が楽になります。' },
           { title:'疲労は十分に回復できる', body:'60〜70%の強度なら筋肉への刺激が少なく、疲労は完全休養に近いペースで回復します。' },
         ].map(({ title, body }) => (
-          <div key={title} style={{ marginBottom:14, paddingBottom:14, borderBottom:'1px solid #1a1a1a' }}>
+          <div key={title} style={{ marginBottom:14, paddingBottom:14, borderBottom:`1px solid ${C.border}` }}>
             <div style={{ fontWeight:700, fontSize:13, color:C.red, marginBottom:4 }}>{title}</div>
-            <p style={{ margin:0, fontSize:14, color:'#aaa', lineHeight:1.7 }}>{body}</p>
+            <p style={{ margin:0, fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>{body}</p>
           </div>
         ))}
       </div>
@@ -67,7 +67,7 @@ export default function DeloadVsRest() {
           </ul>
         </div>
         <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}` }}>
-          <div style={{ fontWeight:800, fontSize:13, color:'#888', marginBottom:10 }}>完全休養を選ぶケース</div>
+          <div style={{ fontWeight:800, fontSize:13, color:C.textSub, marginBottom:10 }}>完全休養を選ぶケース</div>
           <ul style={{ paddingLeft:16, margin:0 }}>
             {['急性の怪我や炎症がある','病気・体調不良','物理的にトレーニングができない環境'].map(t => <li key={t} style={li}>{t}</li>)}
           </ul>

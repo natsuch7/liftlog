@@ -9,12 +9,12 @@ function MisconceptionCard({ num, title, children , C}) {
   return (
     <div style={{ background:C.card, borderRadius:14, padding:'20px 22px', border:`1px solid ${C.border}`, marginBottom:16 }}>
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-        <div style={{ width:28, height:28, borderRadius:'50%', background:'#1a1a1a', border:`1px solid ${C.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:12, color:C.red, flexShrink:0 }}>
+        <div style={{ width:28, height:28, borderRadius:'50%', background:C.card, border:`1px solid ${C.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900, fontSize:12, color:C.red, flexShrink:0 }}>
           {num}
         </div>
         <div style={{ fontWeight:800, fontSize:15, color:C.text }}>{title}</div>
       </div>
-      <div style={{ fontSize:14, color:'#aaa', lineHeight:1.8, paddingLeft:38 }}>{children}</div>
+      <div style={{ fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.8, paddingLeft:38 }}>{children}</div>
     </div>
   )
 }

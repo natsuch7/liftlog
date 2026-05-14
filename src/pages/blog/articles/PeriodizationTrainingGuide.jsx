@@ -15,7 +15,7 @@ function LevelCard({ num, title, children, pointText , C}) {
         <div style={{ width: 28, height: 28, border: `1px solid ${C.red}66`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.red, fontWeight: 900, fontSize: 13, flexShrink: 0 }}>{num}</div>
         <div style={{ fontWeight: 800, fontSize: 15, color: C.text }}>{title}</div>
       </div>
-      <p style={{ margin: '0 0 10px', fontSize: 14, color: '#aaa', lineHeight: 1.7 }}>{children}</p>
+      <p style={{ margin: '0 0 10px', fontSize: 14, color: C===DARK?'#cccccc':'#444444', lineHeight: 1.7 }}>{children}</p>
       <div style={{ fontSize: 13, color: C.text, fontWeight: 700, borderTop: `1px solid ${C.border}`, paddingTop: 10 }}>
         ポイント：{pointText}
       </div>
@@ -99,13 +99,13 @@ export default function PeriodizationTrainingGuide() {
 
       <h2 style={h2}>まとめ</h2>
       <div style={{ background: C.card, borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}`, marginBottom: 20 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '48px 1fr 80px', background: '#111', borderBottom: `1px solid ${C.border}` }}>
-          {['Lv', '内容', '重要度'].map(h => <div key={h} style={{ padding: '10px 14px', fontSize: 11, fontWeight: 700, color: '#555', letterSpacing: 1 }}>{h}</div>)}
+        <div style={{ display: 'grid', gridTemplateColumns: '48px 1fr 80px', background: C.card, borderBottom: `1px solid ${C.border}` }}>
+          {['Lv', '内容', '重要度'].map(h => <div key={h} style={{ padding: '10px 14px', fontSize: 11, fontWeight: 700, color: C.textSub, letterSpacing: 1 }}>{h}</div>)}
         </div>
         {TABLE_ROWS.map(row => (
           <div key={row.level} style={{ display: 'grid', gridTemplateColumns: '48px 1fr 80px', borderBottom: `1px solid ${C.border}` }}>
             <div style={{ padding: '12px 14px', fontSize: 13, fontWeight: 900, color: C.red }}>{row.level}</div>
-            <div style={{ padding: '12px 14px', fontSize: 13, color: '#ccc' }}>{row.content}</div>
+            <div style={{ padding: '12px 14px', fontSize: 13, color: theme==='light'?'#444444':'#cccccc' }}>{row.content}</div>
             <div style={{ padding: '12px 14px', fontSize: 11, color: C.red }}>{row.stars}</div>
           </div>
         ))}

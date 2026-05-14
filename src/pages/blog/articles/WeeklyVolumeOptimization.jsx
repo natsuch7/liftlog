@@ -5,14 +5,9 @@ import VolumeOptimizationChart from '../../../components/charts/VolumeOptimizati
 const DARK  = { text:'#f0f0f0', textSub:'#888888', red:'#e63946', border:'#222222', card:'#161616' }
 const LIGHT = { text:'#111111', textSub:'#555555', red:'#e63946', border:'#e0e0e0', card:'#f0f0f0' }
 const C = DARK
-const pStyle  = { fontSize: 15, color: '#ccc', lineHeight: 1.9, margin: '0 0 18px' }
 
 const tableStyle = {
   width: '100%', borderCollapse: 'collapse', margin: '0 0 24px', fontSize: 13,
-}
-const thStyle = {
-  background: '#161616', color: '#888', fontWeight: 700, padding: '10px 14px',
-  border: '1px solid #222', textAlign: 'left', letterSpacing: 0.5,
 }
 
 export default function WeeklyVolumeOptimization() {
@@ -25,6 +20,8 @@ export default function WeeklyVolumeOptimization() {
   const h2Style = h2
   const strong = { color:C.text, fontWeight:700 }
   const strongStyle = strong
+  const pStyle  = { fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.9, margin: '0 0 18px' }
+  const thStyle = { background: C.card, color: C.textSub, fontWeight: 700, padding: '10px 14px', border: `1px solid ${C.border}`, textAlign: 'left', letterSpacing: 0.5 }
   const tdStyle = { padding:'10px 14px', border:`1px solid ${C.border}`, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.6 }
   const tdHighlight = { ...tdStyle, color:'#22c55e', fontWeight:700, background:'rgba(34,197,94,0.07)' }
   return (
@@ -114,7 +111,7 @@ export default function WeeklyVolumeOptimization() {
           </tbody>
         </table>
       </div>
-      <p style={{ ...pStyle, fontSize: 12, color: '#555' }}>※個人差があります。トレーニング経験・強度・回復力によって最適値は変わります。</p>
+      <p style={{ ...pStyle, fontSize: 12, color: C.textSub }}>※個人差があります。トレーニング経験・強度・回復力によって最適値は変わります。</p>
 
       <h2 style={h2Style}>「やりすぎ」が起きやすいパターン</h2>
       <ul style={{ paddingLeft: 20, margin: '0 0 20px' }}>
@@ -123,7 +120,7 @@ export default function WeeklyVolumeOptimization() {
           '同じ部位を週3回以上トレーニングしている',
           '補助種目を多く入れすぎている',
           'セット間の休憩が短すぎる',
-        ].map(item => <li key={item} style={{ fontSize: 15, color: '#ccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
+        ].map(item => <li key={item} style={{ fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
       </ul>
       <p style={pStyle}>心当たりがある場合は、まずボリュームを見直すことが先決です。</p>
 
@@ -143,7 +140,7 @@ export default function WeeklyVolumeOptimization() {
           '週20セットを超えるとネガティブな結果が出始める傾向がある',
           'ボリュームを増やすのは「最後の手段」',
           'まずは栄養・睡眠・フォームを見直す',
-        ].map(item => <li key={item} style={{ fontSize: 15, color: '#ccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
+        ].map(item => <li key={item} style={{ fontSize: 15, color: theme==='light'?'#444444':'#cccccc', lineHeight: 1.8, marginBottom: 8 }}>{item}</li>)}
       </ul>
     </BlogLayout>
   )

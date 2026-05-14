@@ -39,9 +39,9 @@ export default function SquatDepthHypertrophy() {
           { muscle:'内転筋群（内もも）', result:'フルスクワットでのみ顕著な筋肥大が確認された。' },
           { muscle:'ハムストリングス（腿裏）', result:'どちらの深さでもほぼ鍛えられない。デッドリフトで補うべき。' },
         ].map(({ muscle, result }) => (
-          <div key={muscle} style={{ marginBottom:14, paddingBottom:14, borderBottom:'1px solid #1a1a1a' }}>
+          <div key={muscle} style={{ marginBottom:14, paddingBottom:14, borderBottom:`1px solid ${C.border}` }}>
             <div style={{ fontWeight:700, fontSize:13, color:C.red, marginBottom:4 }}>{muscle}</div>
-            <p style={{ margin:0, fontSize:14, color:'#aaa', lineHeight:1.7 }}>{result}</p>
+            <p style={{ margin:0, fontSize:14, color:theme==='light'?'#444444':'#cccccc', lineHeight:1.7 }}>{result}</p>
           </div>
         ))}
       </div>

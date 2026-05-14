@@ -11,7 +11,7 @@ function MethodCard({ title, children , C}) {
   return (
     <div style={{ background:C.card, borderRadius:12, padding:'16px 20px', border:`1px solid ${C.border}`, marginBottom:12 }}>
       <div style={{ fontWeight:800, fontSize:14, color:C.red, marginBottom:8 }}>{title}</div>
-      <p style={{ margin:0, fontSize:14, color:'#aaa', lineHeight:1.7 }}>{children}</p>
+      <p style={{ margin:0, fontSize:14, color:C===DARK?'#cccccc':'#444444', lineHeight:1.7 }}>{children}</p>
     </div>
   )
 }
@@ -49,7 +49,7 @@ export default function DeloadSigns() {
         {['先週より記録が落ちた','十分寝ているのに疲れが取れない','モチベーションが著しく低下している','安静時心拍数が普段より高い','関節や腱に違和感がある'].map(sign => (
           <div key={sign} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
             <div style={{ width:6, height:6, borderRadius:'50%', background:C.red, flexShrink:0 }} />
-            <span style={{ fontSize:14, color:'#ccc' }}>{sign}</span>
+            <span style={{ fontSize:14, color:theme==='light'?'#444444':'#cccccc' }}>{sign}</span>
           </div>
         ))}
       </div>
