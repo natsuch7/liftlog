@@ -8,7 +8,7 @@ const C = DARK
 
 export default function BenchPressPlateauPeriodization() {
   const [theme] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'dark' } catch { return 'dark' }
+    try { return JSON.parse(localStorage.getItem('liftlog_theme')) || 'light' } catch { return 'light' }
   })
   // eslint-disable-next-line no-shadow
   const C = theme === 'light' ? LIGHT : DARK

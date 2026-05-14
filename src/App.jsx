@@ -2356,6 +2356,10 @@ export default function App() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
   const [theme, setTheme] = useLocalStorage("liftlog_theme", "light");
+  // Persist the theme default so standalone blog pages can read it
+  if (!localStorage.getItem("liftlog_theme")) {
+    try { localStorage.setItem("liftlog_theme", JSON.stringify("light")); } catch {}
+  }
   const [lang, setLang]   = useLocalStorage("liftlog_lang", "ja");
   const [setupError, setSetupError] = useState(null);
   const [onboardingDone, setOnboardingDone] = useLocalStorage("liftlog_onboarding_done", false);
