@@ -3605,7 +3605,7 @@ export default function App() {
                     <div style={{fontWeight:800,fontSize:14,color:C.text,lineHeight:1.5,marginBottom:6}}>{post.title}</div>
                     <div style={{fontSize:12,color:C.textSub,lineHeight:1.6,marginBottom:10}}>{post.description}</div>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                      <time style={{fontSize:10,color:"#3a3a3a"}}>{post.date}</time>
+                      <time style={{fontSize:10,color:C.textSub}}>{post.date}</time>
                       <span style={{fontSize:11,color:C.red,fontWeight:700}}>{T.blog.readMore}</span>
                     </div>
                   </button>
@@ -3618,18 +3618,20 @@ export default function App() {
               const post=getPostBySlug(blogSlug);
               if(!post) return null;
               const articleCss=`
-                .blog-content{font-size:13px;line-height:1.9;color:#bbb}
-                .blog-content h2{font-size:15px;font-weight:800;color:#f0f0f0;margin:28px 0 10px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;letter-spacing:0.3px}
-                .blog-content h3{font-size:13px;font-weight:800;color:#e63946;margin:20px 0 6px}
+                .blog-content{font-size:13px;line-height:1.9;color:${theme==="light"?"#444444":"#bbbbbb"}}
+                .blog-content h2{font-size:15px;font-weight:800;color:${C.text};margin:28px 0 10px;padding-bottom:8px;border-bottom:1px solid ${C.border};letter-spacing:0.3px}
+                .blog-content h3{font-size:13px;font-weight:800;color:${C.red};margin:20px 0 6px}
                 .blog-content p{margin:0 0 14px}
                 .blog-content ul,.blog-content ol{margin:0 0 14px;padding-left:18px}
                 .blog-content li{margin-bottom:5px}
-                .blog-content strong{color:#f0f0f0;font-weight:700}
-                .blog-content hr{border:none;border-top:1px solid #1e1e1e;margin:24px 0}
+                .blog-content strong{color:${C.text};font-weight:700}
+                .blog-content hr{border:none;border-top:1px solid ${C.border};margin:24px 0}
                 .blog-content table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:11px}
-                .blog-content th{background:#161616;color:#f0f0f0;font-weight:700;padding:7px 10px;border:1px solid #222;text-align:left}
-                .blog-content td{padding:7px 10px;border:1px solid #1a1a1a;color:#888}
-                .blog-content tr:nth-child(even) td{background:#111}
+                .blog-content th{background:${C.card};color:${C.text};font-weight:700;padding:7px 10px;border:1px solid ${C.border};text-align:left}
+                .blog-content td{padding:7px 10px;border:1px solid ${C.border};color:${C.textMid}}
+                .blog-content tr:nth-child(even) td{background:${C.surface}}
+                .blog-content blockquote{margin:0 0 14px;padding:10px 14px;border-left:3px solid ${C.red};background:${C.surface};color:${C.textMid}}
+                .blog-content code{background:${theme==="light"?"#e8e8e8":"#1a1a1a"};border:1px solid ${C.border};border-radius:3px;padding:1px 5px;font-size:12px;color:${C.red}}
               `;
               return (
                 <div>
@@ -3648,7 +3650,7 @@ export default function App() {
                     </div>
                     {/* タイトル */}
                     <h1 style={{margin:"0 0 8px",fontSize:18,fontWeight:900,color:C.text,lineHeight:1.4,letterSpacing:0.3}}>{post.title}</h1>
-                    <time style={{fontSize:10,color:"#3a3a3a",display:"block",marginBottom:16,paddingBottom:14,borderBottom:C.bFaint}}>{post.date}</time>
+                    <time style={{fontSize:10,color:C.textSub,display:"block",marginBottom:16,paddingBottom:14,borderBottom:C.bFaint}}>{post.date}</time>
                     {/* 本文 */}
                     <div className="blog-content" dangerouslySetInnerHTML={{__html:post.contentHtml}}/>
                     {/* CTA */}
