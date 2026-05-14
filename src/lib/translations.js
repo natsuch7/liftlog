@@ -103,6 +103,8 @@ export const TRANSLATIONS = {
       editAccessories: '＋ 種目を編集',
       noAccessories: '「種目を編集」から補助種目を追加してください',
       saveSession: 'SAVE SESSION',
+      mainLifts: 'メイン種目',
+      accessories: '補助種目',
     },
 
     // ── Log screen ──────────────────────────────────────────
@@ -169,6 +171,12 @@ export const TRANSLATIONS = {
       details: '詳細 →',
     },
 
+    // ── Calendar ─────────────────────────────────────────────
+    calendar: {
+      thisMonth: '今月のセッション',
+      sessionUnit: '回',
+    },
+
     // ── Cycle complete modal ─────────────────────────────────
     cycle: {
       title: 'サイクル完了！',
@@ -178,7 +186,13 @@ export const TRANSLATIONS = {
       keepRm: '現在の1RMのまま開始',
       continueDeload: 'デロード週を続ける',
       pr: '記録',
+      startedToast: '新しいサイクルを開始しました🔥',
     },
+
+    // ── Share / download ─────────────────────────────────────
+    shareEst: est => `推定1RM ${est}kg`,
+    shareHashtags: '#LIFTLOG #筋トレ #BIG3',
+    downloadedImg: '画像をダウンロードしました。Xに添付してください💪',
 
     // ── Session complete modal ───────────────────────────────
     sessionComplete: {
@@ -208,6 +222,8 @@ export const TRANSLATIONS = {
       removeSet: '－ 削除',
       weightCol: '重量',
       repsCol: '回数',
+      warmUp: 'ウォームアップ',
+      setsRepsLabel: (r, s) => `${r}レップ × ${s}`,
     },
 
     // ── Accessory picker ─────────────────────────────────────
@@ -215,7 +231,7 @@ export const TRANSLATIONS = {
       title: '補助種目を選択',
       subtitle: 'バーベル・ダンベル・スミス・マシン対応',
       done: n => `完了（${n}種目）`,
-      setSetsReps: (s, r) => `${s}セット × ${r}回`,
+      setSetsReps: (s, r) => `${s}セット × ${r}レップ`,
     },
 
     // ── Premium modal ────────────────────────────────────────
@@ -396,6 +412,8 @@ export const TRANSLATIONS = {
       editAccessories: '+ Edit Exercises',
       noAccessories: 'Add accessories from "Edit Exercises"',
       saveSession: 'SAVE SESSION',
+      mainLifts: 'MAIN LIFTS',
+      accessories: 'ACCESSORIES',
     },
 
     // ── Log screen ───────────────────────────────────────────
@@ -462,6 +480,12 @@ export const TRANSLATIONS = {
       details: 'Details →',
     },
 
+    // ── Calendar ──────────────────────────────────────────────
+    calendar: {
+      thisMonth: 'Sessions This Month',
+      sessionUnit: '',
+    },
+
     // ── Cycle complete modal ──────────────────────────────────
     cycle: {
       title: 'Cycle Complete!',
@@ -471,7 +495,13 @@ export const TRANSLATIONS = {
       keepRm: 'Start with Current 1RM',
       continueDeload: 'Continue Deload Week',
       pr: 'PR',
+      startedToast: 'New cycle started 🔥',
     },
+
+    // ── Share / download ──────────────────────────────────────
+    shareEst: est => `Est. 1RM ${est}kg`,
+    shareHashtags: '#LIFTLOG #Powerlifting #BIG3',
+    downloadedImg: 'Image downloaded. Attach it to your X post 💪',
 
     // ── Session complete modal ────────────────────────────────
     sessionComplete: {
@@ -501,6 +531,8 @@ export const TRANSLATIONS = {
       removeSet: '− Remove',
       weightCol: 'Weight',
       repsCol: 'Reps',
+      warmUp: 'WARM UP',
+      setsRepsLabel: (r, s) => `${r}rep × ${s}`,
     },
 
     // ── Accessory picker ──────────────────────────────────────
@@ -581,4 +613,161 @@ export const TRANSLATIONS = {
     // ── Footer ────────────────────────────────────────────────
     privacy: 'Privacy Policy',
   },
+};
+
+// ── Exercise name → English display name ──────────────────────────────────
+export const EXERCISE_EN = {
+  // BIG5 main lifts (used in plan / log)
+  'ベンチプレス':          'Bench Press',
+  'スクワット':            'Squat',
+  'デッドリフト':          'Deadlift',
+  'ミリタリープレス':      'Military Press',
+  'チンニング（加重）':    'Weighted Chin-up',
+  'ベントオーバーロウ':    'Bent-Over Row',
+  // ── Chest ─────────────────────────────────────────────────
+  'インクラインベンチプレス':       'Incline Bench Press',
+  'デクラインベンチプレス':         'Decline Bench Press',
+  'ナローグリップベンチプレス':     'Close-Grip Bench Press',
+  'ダンベルベンチプレス':           'Dumbbell Bench Press',
+  'ダンベルフライ':                 'Dumbbell Fly',
+  'インクラインダンベルプレス':     'Incline DB Press',
+  'ダンベルプルオーバー':           'DB Pullover',
+  'スミスマシンインクラインプレス': 'Smith Incline Press',
+  'ディップス（加重）':             'Weighted Dips',
+  // ── Back ──────────────────────────────────────────────────
+  'ペンドレイロウ':                 'Pendlay Row',
+  'バーベルシュラッグ':             'Barbell Shrug',
+  'ダンベルロウ':                   'DB Row',
+  'インバーテッドロウ':             'Inverted Row',
+  'ダンベルリアレイズ（背中）':     'Rear Delt Fly (Back)',
+  // ── Shoulder ──────────────────────────────────────────────
+  'バーベルショルダープレス':       'Barbell Shoulder Press',
+  'バーベルアップライトロウ':       'Barbell Upright Row',
+  'ダンベルショルダープレス':       'DB Shoulder Press',
+  'アーノルドプレス':               'Arnold Press',
+  'ダンベルサイドレイズ':           'DB Lateral Raise',
+  'ダンベルフロントレイズ':         'DB Front Raise',
+  'ダンベルリアレイズ':             'Rear Delt Fly',
+  'スミスマシンショルダープレス':   'Smith Shoulder Press',
+  // ── Bicep ─────────────────────────────────────────────────
+  'バーベルカール':                 'Barbell Curl',
+  'EZバーカール':                   'EZ Bar Curl',
+  'ダンベルカール':                 'DB Curl',
+  'ハンマーカール':                 'Hammer Curl',
+  'インクラインカール':             'Incline Curl',
+  'コンセントレーションカール':     'Concentration Curl',
+  // ── Tricep ────────────────────────────────────────────────
+  'スカルクラッシャー':             'Skull Crusher',
+  'EZバースカルクラッシャー':       'EZ Skull Crusher',
+  'クローズグリップベンチプレス':   'Close-Grip Bench',
+  'ダンベルトライセップスエクステンション': 'DB Tricep Extension',
+  'ダンベルキックバック':           'DB Kickback',
+  // ── Quad ──────────────────────────────────────────────────
+  'フロントスクワット':             'Front Squat',
+  'ハイバースクワット':             'High-Bar Squat',
+  'ボックススクワット':             'Box Squat',
+  'スミスマシンスクワット':         'Smith Squat',
+  'スミスマシンブルガリアンSQ':     'Smith Bulgarian SQ',
+  'ダンベルゴブレットスクワット':   'Goblet Squat',
+  'ダンベルランジ':                 'DB Lunge',
+  'ウォーキングランジ（DB）':       'Walking Lunge (DB)',
+  // ── Hamstring ─────────────────────────────────────────────
+  'バーベルRDL':                    'Barbell RDL',
+  'グッドモーニング':               'Good Morning',
+  'ダンベルRDL':                    'DB RDL',
+  'スミスマシンRDL':                'Smith RDL',
+  'ノルディックカール':             'Nordic Curl',
+  'グルートハムレイズ':             'Glute-Ham Raise',
+  // ── Glute ─────────────────────────────────────────────────
+  'バーベルヒップスラスト':         'Barbell Hip Thrust',
+  'スモウデッドリフト':             'Sumo Deadlift',
+  'スミスマシンヒップスラスト':     'Smith Hip Thrust',
+  'ダンベルヒップスラスト':         'DB Hip Thrust',
+  'バックエクステンション（DB）':   'Back Extension (DB)',
+  // ── Machine ───────────────────────────────────────────────
+  'チェストプレス':                 'Chest Press',
+  'ケーブルクロスオーバー':         'Cable Crossover',
+  'ペックデック':                   'Pec Deck',
+  'ラットプルダウン':               'Lat Pulldown',
+  'シーテッドロー':                 'Seated Row',
+  'ショルダープレス（マシン）':     'Machine Shoulder Press',
+  'ケーブルサイドレイズ':           'Cable Lateral Raise',
+  'ケーブルカール':                 'Cable Curl',
+  'トライセップスプレスダウン':     'Tricep Pressdown',
+  'レッグプレス':                   'Leg Press',
+  'レッグカール':                   'Leg Curl',
+  'レッグエクステンション':         'Leg Extension',
+  'シーテッドカーフレイズ':         'Seated Calf Raise',
+  'アブドミナルマシン':             'Abdominal Machine',
+};
+
+// ── Exercise note → English note ─────────────────────────────────────────
+export const NOTE_EN = {
+  'インクラインベンチプレス':       'Upper chest emphasis',
+  'デクラインベンチプレス':         'Lower chest strength',
+  'ナローグリップベンチプレス':     'Triceps & inner chest',
+  'ダンベルベンチプレス':           'Chest fundamental',
+  'ダンベルフライ':                 'Chest ROM expansion',
+  'インクラインダンベルプレス':     'Upper chest emphasis',
+  'ダンベルプルオーバー':           'Chest & lats',
+  'スミスマシンインクラインプレス': 'Upper chest',
+  'ディップス（加重）':             'Lower chest & triceps',
+  'ベントオーバーロウ':             'Lat & trap fundamental',
+  'ペンドレイロウ':                 'Explosive back strength',
+  'バーベルシュラッグ':             'Upper trap strength',
+  'ダンベルロウ':                   'Unilateral lat strength',
+  'インバーテッドロウ':             'Upper back & traps (BW)',
+  'ダンベルリアレイズ（背中）':     'Rear delt strength',
+  'バーベルショルダープレス':       'Full delt press',
+  'バーベルアップライトロウ':       'Delts & traps',
+  'ダンベルショルダープレス':       'Full delt strength',
+  'アーノルドプレス':               'Full delt development',
+  'ダンベルサイドレイズ':           'Lateral delt strength',
+  'ダンベルフロントレイズ':         'Anterior delt strength',
+  'ダンベルリアレイズ':             'Posterior delt strength',
+  'スミスマシンショルダープレス':   'Stable shoulder press',
+  'バーベルカール':                 'Bicep fundamental',
+  'EZバーカール':                   'Reduced wrist stress',
+  'ダンベルカール':                 'Bicep strength',
+  'ハンマーカール':                 'Brachioradialis & biceps',
+  'インクラインカール':             'Long head stretch',
+  'コンセントレーションカール':     'Bicep peak contraction',
+  'スカルクラッシャー':             'Full tricep stimulus',
+  'EZバースカルクラッシャー':       'Reduced wrist strain',
+  'クローズグリップベンチプレス':   'Triceps & inner chest',
+  'ダンベルトライセップスエクステンション': 'Tricep long head',
+  'ダンベルキックバック':           'Tricep contraction',
+  'フロントスクワット':             'Quads & core',
+  'ハイバースクワット':             'Quad-focused squat',
+  'ボックススクワット':             'Form & glutes',
+  'スミスマシンスクワット':         'Quad fundamental',
+  'スミスマシンブルガリアンSQ':     'Single-leg stability & glutes',
+  'ダンベルゴブレットスクワット':   'Quads & core',
+  'ダンベルランジ':                 'Glutes & quads',
+  'ウォーキングランジ（DB）':       'Glutes & quads',
+  'バーベルRDL':                    'Full hamstring strength',
+  'グッドモーニング':               'Hams & erectors',
+  'ダンベルRDL':                    'Hamstring stretch',
+  'スミスマシンRDL':                'Full hamstring strength',
+  'ノルディックカール':             'Eccentric hamstring (BW)',
+  'グルートハムレイズ':             'BW hamstring strength',
+  'バーベルヒップスラスト':         'Max glute contraction',
+  'スモウデッドリフト':             'Adductors & glutes',
+  'スミスマシンヒップスラスト':     'Heavy glute stimulus',
+  'ダンベルヒップスラスト':         'Glute contraction',
+  'バックエクステンション（DB）':   'Erectors & glutes',
+  'チェストプレス':                 'Chest & triceps',
+  'ケーブルクロスオーバー':         'Chest (unilateral)',
+  'ペックデック':                   'Chest ROM',
+  'ラットプルダウン':               'Lats & teres major',
+  'シーテッドロー':                 'Lats & traps',
+  'ショルダープレス（マシン）':     'Full delts',
+  'ケーブルサイドレイズ':           'Lateral delt (unilateral)',
+  'ケーブルカール':                 'Biceps',
+  'トライセップスプレスダウン':     'Triceps',
+  'レッグプレス':                   'Quads & glutes',
+  'レッグカール':                   'Hamstrings',
+  'レッグエクステンション':         'Quads',
+  'シーテッドカーフレイズ':         'Calves',
+  'アブドミナルマシン':             'Abs',
 };

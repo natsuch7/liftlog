@@ -4,7 +4,7 @@ import { useAnalytics } from "./hooks/useAnalytics";
 import { Dumbbell, Flame, Zap, Target, BarChart2, Settings, ClipboardList, Calendar, ChevronRight, ChevronLeft, Check, RotateCcw, X, TrendingUp, Award, Clock, BookOpen } from "lucide-react";
 import { getAllPosts, getPostBySlug } from "./lib/blog";
 import InstallBanner from "./components/InstallBanner";
-import { TRANSLATIONS } from "./lib/translations";
+import { TRANSLATIONS, EXERCISE_EN, NOTE_EN } from "./lib/translations";
 
 const LangCtx = createContext("ja");
 const useT = () => TRANSLATIONS[useContext(LangCtx)];
@@ -944,7 +944,7 @@ const canWebShare = () => {
   try { return !!navigator.share && !!navigator.canShare; } catch { return false; }
 };
 
-async function doShareCanvas(canvas, filename, text, onFallbackToast) {
+async function doShareCanvas(canvas, filename, text, onFallbackToast, fallbackMsg = "画像をダウンロードしました。Xに添付してください💪") {
   return new Promise(resolve => {
     canvas.toBlob(async blob => {
       if (!blob) { resolve(); return; }
@@ -954,18 +954,17 @@ async function doShareCanvas(canvas, filename, text, onFallbackToast) {
           await navigator.share({title:'LIFTLOG', text, files:[file]});
         } catch(e) {
           if (e?.name !== 'AbortError') {
-            // fallback on non-abort errors
             const a=document.createElement('a'); a.download=filename;
             a.href=URL.createObjectURL(blob); a.click();
             setTimeout(()=>window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,'_blank'),500);
-            if(onFallbackToast) onFallbackToast("画像をダウンロードしました。Xに添付してください💪");
+            if(onFallbackToast) onFallbackToast(fallbackMsg);
           }
         }
       } else {
         const a=document.createElement('a'); a.download=filename;
         a.href=URL.createObjectURL(blob); a.click();
         setTimeout(()=>window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,'_blank'),500);
-        if(onFallbackToast) onFallbackToast("画像をダウンロードしました。Xに添付してください💪");
+        if(onFallbackToast) onFallbackToast(fallbackMsg);
       }
       resolve();
     }, 'image/png');
@@ -1000,7 +999,7 @@ function BodyStatsSection({ weights, rm, onToast, C }) {
     const sR = squatR ? squatR.toFixed(2) : "--";
     const dR = deadR  ? deadR.toFixed(2)  : "--";
     const text = T.shareText(bR, sR, dR, bw);
-    doShareCanvas(createStatsCanvas(bw, rm), "liftlog_stats.png", text, onToast);
+    doShareCanvas(createStatsCanvas(bw, rm), "liftlog_stats.png", text, onToast, T.downloadedImg);
   }
 
   return (
@@ -1369,7 +1368,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
             border:"1px solid #333333",borderRadius:12,fontSize:14,fontWeight:800,
             cursor:"pointer",letterSpacing:0.5,marginBottom:10,
           }}>
-          📸 Xにシェア
+          {T.shareX}
         </button>
         <button onClick={onClose}
           style={{
@@ -1377,7 +1376,7 @@ function SessionCompleteModal({ data, onShare, onClose }) {
             border:"none",borderRadius:12,fontSize:13,fontWeight:700,
             cursor:"pointer",
           }}>
-          閉じる
+          {T.premium.close}
         </button>
       </div>
     </div>
@@ -1422,7 +1421,8 @@ function IOSInstallBanner({ onDismiss }) {
 
 // ─── REST TIMER ───────────────────────────────────────────
 function getRestDuration(exName) {
-  if (exName.includes("スクワット")||exName.includes("デッドリフト")) return 5*60;
+  if (exName.includes("スクワット")||exName.includes("デッドリフト")||
+      exName.includes("Squat")||exName.includes("Deadlift")) return 5*60;
   return 3*60+30;
 }
 
@@ -1741,8 +1741,34 @@ function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onCh
 }
 
 // ─── EXERCISE BLOCK ───────────────────────────────────────
+const REF_JA = { bench:'ベンチプレス', dead:'デッドリフト', squat:'スクワット', mil:'ミリタリープレス' };
+
+function translatePurpose(purpose, name, lang) {
+  if (lang === 'en') {
+    let p = purpose.replace('目標 ', 'Target ').replace('加重 / 自重', 'Added weight / BW');
+    const enNote = NOTE_EN[name];
+    if (enNote) {
+      if (p.includes(' · ')) {
+        p = p.slice(0, p.lastIndexOf(' · ') + 3) + enNote;
+      } else if (!/^\d+%/.test(p)) {
+        p = enNote;
+      }
+    }
+    return p;
+  }
+  // 日本語: "22% of bench · note" → "ベンチプレスの22% · note"
+  const match = purpose.match(/^(\d+%) of (\w+)(.*)/);
+  if (match) {
+    const [, pct, ref, rest] = match;
+    return `${REF_JA[ref] ?? ref}の${pct}${rest}`;
+  }
+  return purpose;
+}
+
 function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
   const T = useT();
+  const lang = useContext(LangCtx);
+  const exDisplayName = lang === 'en' ? (EXERCISE_EN[ex.name] ?? ex.name) : ex.name;
   const isMain     = ex.cat==="main";
   const isMachine  = ex.eq==="mc";
   const isDumbbell = ex.eq==="db";
@@ -1783,10 +1809,10 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
         <div style={{flex:1,minWidth:0}}>
           <div style={{fontWeight:700,fontSize:isMain?14:12,color:adjusted?"#e07b39":C.text,
             whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
-            {ex.name}
+            {exDisplayName}
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",marginTop:2,flexWrap:"wrap"}}>
-            <span style={{fontSize:10,color:C.textDim}}>{ex.purpose}</span>
+            <span style={{fontSize:10,color:C.textDim}}>{translatePurpose(ex.purpose, ex.name, lang)}</span>
             {prevBest?.weight>0&&(
               <span style={{fontSize:9,background:C.borderFaint,border:"1px solid #252525",borderRadius:4,padding:"1px 6px",color:C.textMid,fontWeight:600}}>
                 {T.exercise.prevBest(prevBest.weight, prevBest.reps)}
@@ -1806,7 +1832,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
                 {effectiveWeight}<span style={{fontSize:10,color:C.textMid}}>kg</span>
               </div>
             : <div style={{fontSize:10,color:C.textFaint,fontStyle:"italic"}}>{isMachine?T.exercise.selectWeight:T.exercise.bodyweight}</div>}
-          <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{ex.reps}rep × {ex.sets}</div>
+          <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.exercise.setsRepsLabel(ex.reps, ex.sets)}</div>
         </div>
       </div>
 
@@ -1817,7 +1843,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
           <div style={{marginBottom:10}}>
             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
               <Flame size={10} color="#e07b39"/>
-              <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>WARM UP</span>
+              <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>{T.exercise.warmUp}</span>
             </div>
             <div style={{display:"flex",marginBottom:4,paddingLeft:35,gap:5}}>
               <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.weightCol}</div>
@@ -1857,7 +1883,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
             value={sv}
             onChange={val=>onSetChange(exIdx,si,val)}
             accent={accent}
-            onRpeComplete={()=>onStartTimer(ex.name)}
+            onRpeComplete={()=>onStartTimer(exDisplayName, ex.name)}
             wRef={setRef(`${si}_w`)}
             rRef={setRef(`${si}_r`)}
             rpeRef={setRef(`${si}_rpe`)}
@@ -1999,13 +2025,13 @@ function CalendarView({ sessions, C }) {
       {sessions.length>0&&(
         <div style={{marginTop:16,padding:"12px 14px",background:C.surface,borderRadius:12,border:C.bSub}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <div style={{fontSize:11,color:C.textDim,letterSpacing:1}}>今月のセッション</div>
+            <div style={{fontSize:11,color:C.textDim,letterSpacing:1}}>{T.calendar.thisMonth}</div>
             <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:C.text}}>
               {sessions.filter(s=>{
                 const parts=s.date.split("/");
                 return parseInt(parts[0])===year&&parseInt(parts[1])===month+1;
               }).length}
-              <span style={{fontSize:12,color:C.textDim,marginLeft:2}}>回</span>
+              <span style={{fontSize:12,color:C.textDim,marginLeft:2}}>{T.calendar.sessionUnit}</span>
             </div>
           </div>
         </div>
@@ -2037,6 +2063,7 @@ function useLocalStorage(key, initialValue) {
 // ─── ACCESSORY PICKER ────────────────────────────────────
 function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
   const T = useT();
+  const lang = useContext(LangCtx);
   const [local, setLocal] = useState([...selected]);
   const allowedCats = DAY_CATS[dayKey] || Object.keys(CAT_LABELS);
   const catalog = EXERCISE_CATALOG.filter(e => allowedCats.includes(e.cat));
@@ -2097,13 +2124,13 @@ function AccessoryPicker({ dayKey, selected, onClose, onSave, C }) {
                     </div>
                     <div style={{flex:1,minWidth:0}}>
                       <div style={{display:"flex",alignItems:"center",gap:6}}>
-                        <span style={{fontSize:13,fontWeight:600,color:sel?"#e63946":C.text}}>{ex.name}</span>
+                        <span style={{fontSize:13,fontWeight:600,color:sel?"#e63946":C.text}}>{lang==='en' ? EXERCISE_EN[ex.name]??ex.name : ex.name}</span>
                         <span style={{fontSize:9,fontWeight:700,color:eqColor,background:eqColor+"18",borderRadius:4,padding:"1px 6px",flexShrink:0}}>
                           {T.eqLabels[ex.eq]??EQ_LABELS[ex.eq]}
                         </span>
                       </div>
                       <div style={{fontSize:10,color:C.textDim,marginTop:1}}>
-                        {T.picker.setSetsReps(ex.sets, ex.reps)} · {ex.note}
+                        {T.picker.setSetsReps(ex.sets, ex.reps)} · {lang==='en' ? NOTE_EN[ex.name]??ex.note : ex.note}
                       </div>
                     </div>
                   </div>
@@ -2430,7 +2457,7 @@ export default function App() {
     }
   }
 
-  const startTimer   = useCallback(n=>setTimerState({active:true,exName:n,duration:getRestDuration(n),startedAt:Date.now()}),[]);
+  const startTimer   = useCallback((displayName,internalName)=>setTimerState({active:true,exName:displayName,duration:getRestDuration(internalName??displayName),startedAt:Date.now()}),[]);
   const dismissTimer = useCallback(()=>setTimerState(t=>({...t,active:false})),[]);
   const resetTimer   = useCallback(()=>setTimerState(t=>({...t,startedAt:Date.now()})),[]);
 
@@ -2472,7 +2499,7 @@ export default function App() {
     setCycleStartRm({...nextRm});
     setWeek(1);
     setShowCycleModal(false);
-    showToast("新しいサイクルを開始しました🔥");
+    showToast(T.cycle.startedToast);
   }
 
   function handleSaveWeight(dateStr, weightVal) {
@@ -2663,10 +2690,10 @@ export default function App() {
       const best=vs.reduce((b,st)=>st.weight>b.weight?st:b,vs[0]);
       const est=calc1RM(best.weight,best.reps);
       const setLines=vs.map((st,i)=>`${i+1}Set  ${st.weight}kg × ${st.reps}rep`+(st.rpe?` @RPE${st.rpe}`:''));
-      return `${ex.name}\n推定1RM ${est}kg\n${setLines.join('\n')}`;
+      return `${EXERCISE_EN[ex.name]??ex.name}\n${T.shareEst(est)}\n${setLines.join('\n')}`;
     }).filter(Boolean).join('\n\n');
-    const text=`Well Done💪\nW${s.week} ${s.phase}\n\n${exLines}\n\n#LIFTLOG #筋トレ #BIG3`;
-    doShareCanvas(cv,`liftlog_session_${s.date.replace(/\//g,"-")}.png`,text,showToast);
+    const text=`Well Done💪\nW${s.week} ${T.phases[s.phase]??s.phase}\n\n${exLines}\n\n${T.shareHashtags}`;
+    doShareCanvas(cv,`liftlog_session_${s.date.replace(/\//g,"-")}.png`,text,showToast,T.downloadedImg);
   }
 
   function getProgressData(rmKey) {
@@ -3130,7 +3157,7 @@ export default function App() {
                     const c=C[dk];
                     return (
                       <div key={key} style={{flexShrink:0,background:C.surface,borderRadius:10,padding:"8px 12px",textAlign:"center",border:`1px solid ${c.border}`,minWidth:72}}>
-                        <div style={{fontSize:9,color:C.textDim,marginBottom:2}}>{label.replace("ミリタリープレス","MIL").replace("ベンチプレス","BENCH").replace("デッドリフト","DEAD").replace("スクワット","SQUAT").replace("チンニング加重","CHIN")}</div>
+                        <div style={{fontSize:9,color:C.textDim,marginBottom:2}}>{(T.lifts[key]??label).toUpperCase()}</div>
                         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,color:c.accent}}>{rm[key]||"–"}<span style={{fontSize:9}}>kg</span></div>
                       </div>
                     );
@@ -3165,7 +3192,7 @@ export default function App() {
                           <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
                             {mains.map((ex,mi)=>(
                               <div key={mi} style={{fontSize:10,fontWeight:700,color:dm.c.accent,background:C.surface2,borderRadius:5,padding:"2px 8px",border:`1px solid ${C[dm.key].border}`}}>
-                                {ex.name} {ex.weight>0?`${ex.weight}kg`:"BW"}
+                                {lang==='en' ? EXERCISE_EN[ex.name]??ex.name : ex.name} {ex.weight>0?`${ex.weight}kg`:"BW"}
                               </div>
                             ))}
                           </div>
@@ -3190,7 +3217,7 @@ export default function App() {
                             </div>
                           )}
 
-                          <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>MAIN LIFTS</div>
+                          <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{T.plan.mainLifts}</div>
                           {exList.filter(e=>e.cat==="main").map(ex=>{
                             const absIdx=exList.indexOf(ex);
                             const deloadW=checkDeload(sessions,ex.name,ex.reps);
@@ -3209,7 +3236,7 @@ export default function App() {
                           })}
 
                           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:14,marginBottom:8}}>
-                            <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700}}>ACCESSORIES</div>
+                            <div style={{fontSize:9,color:C.textFaint,letterSpacing:1.5,fontWeight:700}}>{T.plan.accessories}</div>
                             <button onClick={()=>setPickerDay(dm.key)}
                               style={{fontSize:10,color:C.textMid,background:C.card,border:C.b,borderRadius:7,padding:"4px 10px",cursor:"pointer",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
                               {T.plan.editAccessories}
@@ -3298,7 +3325,7 @@ export default function App() {
                               const b=ex.sets.reduce((b,s)=>s.weight>b.weight?s:b,{weight:0,reps:0});
                               return b.weight>0?(
                                 <div key={ei} style={{fontSize:9,fontWeight:700,color:dm.c.accent,background:C.surface2,borderRadius:5,padding:"1px 7px",border:`1px solid ${C[dm.key].border}`}}>
-                                  {ex.name} {b.weight}×{b.reps}
+                                  {lang==='en' ? EXERCISE_EN[ex.name]??ex.name : ex.name} {b.weight}×{b.reps}
                                 </div>
                               ):null;
                             })}
@@ -3315,7 +3342,7 @@ export default function App() {
                               <div key={ei} style={{marginBottom:10}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}>
                                   {ex.cat==="main"?<Target size={12} color={dm.c.accent}/>:<Zap size={11} color={C.textFaint}/>}
-                                  <div style={{fontWeight:700,fontSize:12,color:ex.cat==="main"?C.text:"#555"}}>{ex.name}</div>
+                                  <div style={{fontWeight:700,fontSize:12,color:ex.cat==="main"?C.text:"#555"}}>{lang==='en' ? EXERCISE_EN[ex.name]??ex.name : ex.name}</div>
                                   {ex.best1RM>0&&<div style={{marginLeft:"auto",fontSize:10,fontWeight:700,color:dm.c.accent}}>1RM {ex.best1RM}kg</div>}
                                 </div>
                                 <div style={{display:"flex",gap:4,flexWrap:"wrap",paddingLeft:18}}>
@@ -3355,7 +3382,7 @@ export default function App() {
                 return (
                   <button key={key} onClick={()=>setProgressLift(key)}
                     style={{flexShrink:0,padding:"7px 14px",borderRadius:9,border:`1px solid ${active?c.accent:c.border}`,background:active?c.dim:C.surface,color:active?c.accent:C.textDim,fontSize:10,fontWeight:800,cursor:"pointer",letterSpacing:0.5,transition:"all 0.15s"}}>
-                    {label.replace("ミリタリープレス","MIL.").replace("ベンチプレス","BENCH").replace("デッドリフト","DEAD").replace("スクワット","SQUAT").replace("チンニング加重","CHIN")}
+                    {(T.lifts[key]??label).toUpperCase()}
                   </button>
                 );
               })}
