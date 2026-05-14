@@ -2298,6 +2298,29 @@ function GeneratingScreen({ onComplete, C }) {
   );
 }
 
+// ─── IN-APP AD UNIT ──────────────────────────────────────
+const APP_AD_CLIENT = 'ca-pub-5626983282072406';
+const APP_AD_SLOT   = '5965671953';
+
+function AppAdUnit({ C }) {
+  const pushed = useRef(false);
+  useEffect(() => {
+    if (pushed.current) return;
+    pushed.current = true;
+    try { ;(window.adsbygoogle = window.adsbygoogle || []).push({}); } catch {}
+  }, []);
+  return (
+    <ins
+      className="adsbygoogle"
+      style={{ display: 'block', margin: '0' }}
+      data-ad-client={APP_AD_CLIENT}
+      data-ad-slot={APP_AD_SLOT}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  );
+}
+
 // ─── APP ──────────────────────────────────────────────────
 export default function App() {
   const { trackGenerateProgram, trackStartSession, trackCompleteSession, trackExitPoint } = useAnalytics();
@@ -3024,6 +3047,27 @@ export default function App() {
                 </Link>
               ))}
             </div>
+
+            {/* ── About LIFTLOG ── */}
+            <div style={{marginTop:32,background:C.surface,borderRadius:14,padding:"16px",border:C.bSub}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                <div style={{width:3,height:14,borderRadius:2,background:C.red,flexShrink:0}}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.red,letterSpacing:1}}>LIFTLOG について</div>
+              </div>
+              <p style={{margin:"0 0 10px",fontSize:12,color:C.textMid,lineHeight:1.7}}>
+                LIFTLOG は、BIG3（スクワット・ベンチプレス・デッドリフト）の挙上重量向上に特化したトレーニング管理アプリです。ブロックピリオダイゼーション理論に基づいた9週間の科学的プログラムを自動生成します。
+              </p>
+              <p style={{margin:"0 0 10px",fontSize:12,color:C.textMid,lineHeight:1.7}}>
+                蓄積（ACC）・強化（INT）・現実化（REA）の3フェーズで、計画的にトレーニング内容を変化させることでプラトーを防ぎ、継続的な筋力向上を実現します。
+              </p>
+              <div style={{fontSize:11,color:C.textFaint,lineHeight:1.6}}>
+                <span style={{fontWeight:700,color:C.textDim}}>設定のヒント：</span> 1RMは正確な最大値でなくても構いません。直近で挙げた重量からおおよそのMaxを入力してください。プログラムはそこから自動調整されます。
+              </div>
+            </div>
+            {/* Ad */}
+            <div style={{marginTop:16,borderRadius:12,overflow:"hidden",border:C.bSub}}>
+              <AppAdUnit C={C}/>
+            </div>
           </div>
         )}
 
@@ -3273,6 +3317,33 @@ export default function App() {
                 })}
               </>
             )}
+
+            {/* ── About Block Periodization ── */}
+            <div style={{marginTop:20,background:C.surface,borderRadius:14,padding:"16px",border:C.bSub}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                <div style={{width:3,height:14,borderRadius:2,background:C.red,flexShrink:0}}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.red,letterSpacing:1}}>12週ブロックプログラムについて</div>
+              </div>
+              <p style={{margin:"0 0 10px",fontSize:12,color:C.textMid,lineHeight:1.7}}>
+                ブロックピリオダイゼーションとは、<strong style={{color:C.text}}>蓄積（ACC）→ 強化（INT）→ 現実化（REA）</strong>の3フェーズで、計画的にトレーニング刺激を変化させる方法です。単調なプログラムに比べ、プラトーを回避して継続的な筋力向上を実現しやすくなります。
+              </p>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[
+                  {label:"蓄積 1〜6週",desc:"高ボリューム・中強度でベースを作る",color:"#22c55e"},
+                  {label:"強化 7〜10週",desc:"重量を上げてセット数を絞る",color:"#3b82f6"},
+                  {label:"現実化 11〜12週",desc:"テーパリングで1RM更新を狙う",color:"#f59e0b"},
+                ].map(ph=>(
+                  <div key={ph.label} style={{flex:"1 1 140px",background:C.card,borderRadius:10,padding:"10px 12px",border:`1px solid ${ph.color}33`}}>
+                    <div style={{fontSize:10,fontWeight:800,color:ph.color,marginBottom:4,letterSpacing:0.3}}>{ph.label}</div>
+                    <div style={{fontSize:11,color:C.textMid,lineHeight:1.5}}>{ph.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Ad */}
+            <div style={{marginTop:16,borderRadius:12,overflow:"hidden",border:C.bSub}}>
+              <AppAdUnit C={C}/>
+            </div>
           </div>
         )}
 
@@ -3366,6 +3437,36 @@ export default function App() {
                 })}
               </div>
             )}
+
+            {/* ── About Training Log ── */}
+            <div style={{marginTop:20,background:C.surface,borderRadius:14,padding:"16px",border:C.bSub}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                <div style={{width:3,height:14,borderRadius:2,background:C.red,flexShrink:0}}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.red,letterSpacing:1}}>効果的なログ記録のコツ</div>
+              </div>
+              <p style={{margin:"0 0 10px",fontSize:12,color:C.textMid,lineHeight:1.7}}>
+                正確なログ記録は、進捗追跡と適切なプログラム調整の鍵です。重量・レップ数だけでなく、<strong style={{color:C.text}}>RPE（自覚的運動強度）</strong>を記録することで、実際の強度がプログラムと一致しているか確認できます。
+              </p>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {[
+                  {label:"重量を正確に",desc:"0.5kg単位で記録。細かい進捗の可視化がモチベーション維持につながります。"},
+                  {label:"RPEを記録する",desc:"RPE 10=限界・RPE 7=あと3回挙げられる状態。強度管理に欠かせません。"},
+                  {label:"セット数を把握",desc:"週あたりのボリューム（セット数）を意識することが筋肥大・筋力向上の鍵です。"},
+                ].map(tip=>(
+                  <div key={tip.label} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+                    <div style={{width:4,height:4,borderRadius:"50%",background:C.red,marginTop:6,flexShrink:0}}/>
+                    <div>
+                      <span style={{fontSize:12,fontWeight:700,color:C.text}}>{tip.label}：</span>
+                      <span style={{fontSize:12,color:C.textMid}}>{tip.desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Ad */}
+            <div style={{marginTop:16,borderRadius:12,overflow:"hidden",border:C.bSub}}>
+              <AppAdUnit C={C}/>
+            </div>
           </div>
         )}
 
@@ -3460,6 +3561,33 @@ export default function App() {
                 </div>
               </div>
             )}
+
+            {/* ── About Progress Tracking ── */}
+            <div style={{marginTop:20,background:C.surface,borderRadius:14,padding:"16px",border:C.bSub}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                <div style={{width:3,height:14,borderRadius:2,background:C.red,flexShrink:0}}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.red,letterSpacing:1}}>進捗管理の重要性</div>
+              </div>
+              <p style={{margin:"0 0 10px",fontSize:12,color:C.textMid,lineHeight:1.7}}>
+                トレーニングの進捗を数値で可視化することは、継続的な成長に不可欠です。<strong style={{color:C.text}}>1RM推移グラフ</strong>では各ブロックの効果を確認でき、ボリュームトラッキングで週あたりの刺激量を最適化できます。
+              </p>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[
+                  {label:"1RM推移",desc:"BIG3の挙上記録を時系列で追跡"},
+                  {label:"相対筋力",desc:"体重比で自分の強みを客観評価"},
+                  {label:"ボリューム",desc:"週次セット数で過剰・不足を把握"},
+                ].map(item=>(
+                  <div key={item.label} style={{flex:"1 1 120px",background:C.card,borderRadius:10,padding:"10px 12px",border:C.bCard}}>
+                    <div style={{fontSize:10,fontWeight:800,color:C.text,marginBottom:4}}>{item.label}</div>
+                    <div style={{fontSize:11,color:C.textMid,lineHeight:1.5}}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Ad */}
+            <div style={{marginTop:16,borderRadius:12,overflow:"hidden",border:C.bSub}}>
+              <AppAdUnit C={C}/>
+            </div>
           </div>
         )}
       </div>
