@@ -296,6 +296,50 @@ export const TRANSLATIONS = {
       ctaButton: 'プログラムを作る →',
     },
 
+    // ── In-app content sections ───────────────────────────────
+    content: {
+      setup: {
+        sectionTitle: 'LIFTLOG について',
+        p1: 'LIFTLOG は、BIG3（スクワット・ベンチプレス・デッドリフト）の挙上重量向上に特化したトレーニング管理アプリです。ブロックピリオダイゼーション理論に基づいた9週間の科学的プログラムを自動生成します。',
+        p2: '蓄積（ACC）・強化（INT）・現実化（REA）の3フェーズで、計画的にトレーニング内容を変化させることでプラトーを防ぎ、継続的な筋力向上を実現します。',
+        tipLabel: '設定のヒント：',
+        tip: '1RMは正確な最大値でなくても構いません。直近で挙げた重量からおおよそのMaxを入力してください。プログラムはそこから自動調整されます。',
+      },
+      plan: {
+        sectionTitle: '12週ブロックプログラムについて',
+        p1a: 'ブロックピリオダイゼーションとは、',
+        p1b: '蓄積（ACC）→ 強化（INT）→ 現実化（REA）',
+        p1c: 'の3フェーズで、計画的にトレーニング刺激を変化させる方法です。単調なプログラムに比べ、プラトーを回避して継続的な筋力向上を実現しやすくなります。',
+        phases: [
+          { label: '蓄積 1〜6週', desc: '高ボリューム・中強度でベースを作る', color: '#22c55e' },
+          { label: '強化 7〜10週', desc: '重量を上げてセット数を絞る', color: '#3b82f6' },
+          { label: '現実化 11〜12週', desc: 'テーパリングで1RM更新を狙う', color: '#f59e0b' },
+        ],
+      },
+      log: {
+        sectionTitle: '効果的なログ記録のコツ',
+        p1a: '正確なログ記録は、進捗追跡と適切なプログラム調整の鍵です。重量・レップ数だけでなく、',
+        p1b: 'RPE（自覚的運動強度）',
+        p1c: 'を記録することで、実際の強度がプログラムと一致しているか確認できます。',
+        tips: [
+          { label: '重量を正確に', desc: '0.5kg単位で記録。細かい進捗の可視化がモチベーション維持につながります。' },
+          { label: 'RPEを記録する', desc: 'RPE 10=限界・RPE 7=あと3回挙げられる状態。強度管理に欠かせません。' },
+          { label: 'セット数を把握', desc: '週あたりのボリューム（セット数）を意識することが筋肥大・筋力向上の鍵です。' },
+        ],
+      },
+      progress: {
+        sectionTitle: '進捗管理の重要性',
+        p1a: 'トレーニングの進捗を数値で可視化することは、継続的な成長に不可欠です。',
+        p1b: '1RM推移グラフ',
+        p1c: 'では各ブロックの効果を確認でき、ボリュームトラッキングで週あたりの刺激量を最適化できます。',
+        cards: [
+          { label: '1RM推移', desc: 'BIG3の挙上記録を時系列で追跡' },
+          { label: '相対筋力', desc: '体重比で自分の強みを客観評価' },
+          { label: 'ボリューム', desc: '週次セット数で過剰・不足を把握' },
+        ],
+      },
+    },
+
     // ── Body stats share ─────────────────────────────────────
     shareText: (bR, sR, dR, bw) => `BIG3 相対強度チェック💪\nベンチ ${bR}倍・スクワット ${sR}倍・デッド ${dR}倍\n体重 ${bw}kg\n\n#LIFTLOG #筋トレ #BIG3`,
     shareX: '📸 Xにシェア',
@@ -603,6 +647,50 @@ export const TRANSLATIONS = {
       ctaTitle: 'Create Your 12-Week Program Now',
       ctaSub: 'Auto-generate a personalized program\nincorporating all the content in this article',
       ctaButton: 'Create Program →',
+    },
+
+    // ── In-app content sections ────────────────────────────────
+    content: {
+      setup: {
+        sectionTitle: 'ABOUT LIFTLOG',
+        p1: 'LIFTLOG is a strength training app focused on improving your BIG3 (Squat, Bench Press, Deadlift) lifts. It auto-generates a 9-week science-based program using block periodization principles.',
+        p2: 'Three phases — Accumulation (ACC), Intensification (INT), and Realization (REA) — systematically vary training stimuli to prevent plateaus and ensure continuous strength gains.',
+        tipLabel: 'Setup Tip:',
+        tip: "Your 1RM doesn't need to be exact. Enter a rough max based on recent lifts — the program adjusts automatically from there.",
+      },
+      plan: {
+        sectionTitle: 'ABOUT THE 12-WEEK BLOCK PROGRAM',
+        p1a: 'Block periodization systematically varies training stimuli across ',
+        p1b: 'three distinct phases',
+        p1c: '. Unlike monotonous programs, this approach avoids plateaus and drives continuous strength improvement.',
+        phases: [
+          { label: 'Accumulation Wk 1–6', desc: 'Build a base with high volume, moderate intensity', color: '#22c55e' },
+          { label: 'Intensification Wk 7–10', desc: 'Increase load while reducing sets', color: '#3b82f6' },
+          { label: 'Realization Wk 11–12', desc: 'Taper and peak for a 1RM attempt', color: '#f59e0b' },
+        ],
+      },
+      log: {
+        sectionTitle: 'TIPS FOR EFFECTIVE LOGGING',
+        p1a: 'Accurate log records are the key to tracking progress and adjusting your program. Logging ',
+        p1b: 'RPE (Rate of Perceived Exertion)',
+        p1c: ' alongside weight and reps lets you verify that actual intensity matches the program.',
+        tips: [
+          { label: 'Log weight precisely', desc: 'Track in 0.5 kg increments. Seeing small gains keeps motivation high.' },
+          { label: 'Record RPE', desc: 'RPE 10 = max effort · RPE 7 = 3 reps left. Essential for intensity management.' },
+          { label: 'Track set count', desc: 'Weekly volume (total sets) is the key driver of hypertrophy and strength gain.' },
+        ],
+      },
+      progress: {
+        sectionTitle: 'WHY PROGRESS TRACKING MATTERS',
+        p1a: 'Visualizing your training progress in numbers is essential for continuous growth. The ',
+        p1b: '1RM trend chart',
+        p1c: " lets you verify each block's effect, while volume tracking optimizes your weekly stimulus.",
+        cards: [
+          { label: '1RM Trend', desc: 'Track BIG3 records chronologically' },
+          { label: 'Relative Strength', desc: 'Objective self-assessment via bodyweight ratio' },
+          { label: 'Volume', desc: 'Identify excess or deficit via weekly sets' },
+        ],
+      },
     },
 
     // ── Body stats share ──────────────────────────────────────
