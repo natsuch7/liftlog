@@ -1,6 +1,33 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getPostBySlug } from '../lib/blog'
+
+const AD_CLIENT = 'ca-pub-5626983282072406'
+// TODO: AdSenseダッシュボードで作成したad unitのslot IDに置き換えてください
+// https://adsense.google.com/ → 広告 → 広告ユニット別 → ディスプレイ広告を作成
+const AD_SLOT_POST = 'REPLACE_WITH_YOUR_SLOT_ID'
+
+function AdUnit({ slotId }) {
+  const pushed = useRef(false)
+  useEffect(() => {
+    if (pushed.current || slotId === 'REPLACE_WITH_YOUR_SLOT_ID') return
+    pushed.current = true
+    try { ;(window.adsbygoogle = window.adsbygoogle || []).push({}) } catch {}
+  }, [slotId])
+
+  if (slotId === 'REPLACE_WITH_YOUR_SLOT_ID') return null
+
+  return (
+    <ins
+      className="adsbygoogle"
+      style={{ display: 'block', margin: '32px 0' }}
+      data-ad-client={AD_CLIENT}
+      data-ad-slot={slotId}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  )
+}
 
 const DARK = {
   bg:      '#0a0a0a',
@@ -193,6 +220,9 @@ export default function BlogPost() {
           className="blog-content"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
+
+        {/* Ad */}
+        <AdUnit slotId={AD_SLOT_POST} />
 
         {/* CTA */}
         <div style={{

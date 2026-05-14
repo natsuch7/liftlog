@@ -1,6 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllPosts } from '../lib/blog'
+
+const AD_CLIENT = 'ca-pub-5626983282072406'
+// TODO: AdSenseダッシュボードで作成したad unitのslot IDに置き換えてください
+const AD_SLOT_LIST = 'REPLACE_WITH_YOUR_SLOT_ID'
+
+function AdUnit({ slotId }) {
+  const pushed = useRef(false)
+  useEffect(() => {
+    if (pushed.current || slotId === 'REPLACE_WITH_YOUR_SLOT_ID') return
+    pushed.current = true
+    try { ;(window.adsbygoogle = window.adsbygoogle || []).push({}) } catch {}
+  }, [slotId])
+
+  if (slotId === 'REPLACE_WITH_YOUR_SLOT_ID') return null
+
+  return (
+    <ins
+      className="adsbygoogle"
+      style={{ display: 'block', margin: '32px 0' }}
+      data-ad-client={AD_CLIENT}
+      data-ad-slot={slotId}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  )
+}
 
 const DARK = {
   bg:      '#0a0a0a',
@@ -129,6 +155,9 @@ export default function Blog() {
             </Link>
           ))}
         </div>
+
+        {/* Ad */}
+        <AdUnit slotId={AD_SLOT_LIST} />
 
         {/* Back to app */}
         <div style={{ marginTop: 40, paddingTop: 24, borderTop: `1px solid ${C.border}`, textAlign: 'center' }}>
