@@ -205,21 +205,23 @@ const fmtPct  = v => `${Math.round(v*100)}%`;
 
 function buildWarmups(mainWeight) {
   if (!mainWeight || mainWeight <= 20) return [];
+  const w = (r) => Math.max(20, snap(mainWeight*r));
   return [
-    { weight:snap(mainWeight*0.40), reps:8, label:"W1" },
-    { weight:snap(mainWeight*0.60), reps:5, label:"W2" },
-    { weight:snap(mainWeight*0.80), reps:3, label:"W3" },
+    { weight:w(0.40), reps:8, label:"W1" },
+    { weight:w(0.60), reps:5, label:"W2" },
+    { weight:w(0.80), reps:3, label:"W3" },
   ];
 }
 
 function buildMaxWarmups(maxWeight) {
   if (!maxWeight || maxWeight <= 20) return [];
+  const w = (r) => Math.max(20, snap(maxWeight*r));
   return [
-    { weight:snap(maxWeight*0.40), reps:8, label:"W1" },
-    { weight:snap(maxWeight*0.60), reps:5, label:"W2" },
-    { weight:snap(maxWeight*0.75), reps:3, label:"W3" },
-    { weight:snap(maxWeight*0.87), reps:1, label:"W4" },
-    { weight:snap(maxWeight*0.93), reps:1, label:"W5" },
+    { weight:w(0.40), reps:8, label:"W1" },
+    { weight:w(0.60), reps:5, label:"W2" },
+    { weight:w(0.75), reps:3, label:"W3" },
+    { weight:w(0.87), reps:1, label:"W4" },
+    { weight:w(0.93), reps:1, label:"W5" },
   ];
 }
 
