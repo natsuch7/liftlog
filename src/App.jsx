@@ -2618,18 +2618,21 @@ export default function App() {
       const day = {...(prev[dayKey]||{})};
       const isWu = typeof exIdx === "string";
       const numIdx = isWu ? parseInt(exIdx.replace("wu_","")) : exIdx;
-      const totalSets = plan[dayKey]?.[isWu ? numIdx : exIdx]?.sets || 4;
-      const defaultSets = Array.from({length:totalSets}, ()=>({weight:"",reps:"",rpe:""}));
+      const ex = plan[dayKey]?.[isWu ? numIdx : exIdx];
+      const totalSets = ex?.sets || 4;
+      const defaultW = !isWu && ex?.weight > 0 ? String(ex.weight) : "";
+      const defaultR = !isWu && ex?.reps   > 0 ? String(ex.reps)   : "";
+      const defaultSets = Array.from({length:totalSets}, ()=>({weight:defaultW, reps:defaultR, rpe:"", isDefault:!isWu}));
       const sets = [...(day[exIdx] || defaultSets)];
       // ウォームアップのみ最小セット数を保証（ワークセットはユーザー操作で可変）
       if (isWu) { while (sets.length < totalSets) sets.push({weight:"",reps:"",rpe:""}); }
       const prevVal = sets[setIdx] || {weight:"",reps:"",rpe:""};
       sets[setIdx] = val;
-      // 重量が新規入力されたら後続の空セットに自動引き継ぎ（本番セットのみ）
+      // 重量が新規入力されたら後続のデフォルトセットに自動引き継ぎ（本番セットのみ）
       if (!isWu && val.weight && val.weight !== prevVal.weight) {
         for (let i = setIdx + 1; i < sets.length; i++) {
           if (!sets[i]) sets[i] = {weight:"",reps:"",rpe:""};
-          if (!sets[i].weight) sets[i] = {...sets[i], weight: val.weight};
+          if (!sets[i].weight || sets[i].isDefault) sets[i] = {...sets[i], weight: val.weight, isDefault: false};
         }
       }
       day[exIdx] = sets;
@@ -2640,10 +2643,14 @@ export default function App() {
   function handleAddSet(dayKey, exIdx) {
     setSessionInputs(prev=>{
       const day = {...(prev[dayKey]||{})};
-      const defaultCount = plan[dayKey]?.[exIdx]?.sets || 4;
-      const current = day[exIdx] || Array.from({length:defaultCount}, ()=>({weight:"",reps:"",rpe:""}));
-      const lastWeight = [...current].reverse().find(s=>s.weight)?.weight || "";
-      day[exIdx] = [...current, {weight:lastWeight, reps:"", rpe:""}];
+      const ex = plan[dayKey]?.[exIdx];
+      const defaultCount = ex?.sets || 4;
+      const defaultW = ex?.weight > 0 ? String(ex.weight) : "";
+      const defaultR = ex?.reps   > 0 ? String(ex.reps)   : "";
+      const defaultSets = Array.from({length:defaultCount}, ()=>({weight:defaultW, reps:defaultR, rpe:"", isDefault:true}));
+      const current = day[exIdx] || defaultSets;
+      const lastWeight = [...current].reverse().find(s=>s.weight)?.weight || defaultW;
+      day[exIdx] = [...current, {weight:lastWeight, reps:defaultR, rpe:"", isDefault:true}];
       return {...prev, [dayKey]:day};
     });
   }
@@ -2651,8 +2658,12 @@ export default function App() {
   function handleRemoveSet(dayKey, exIdx) {
     setSessionInputs(prev=>{
       const day = {...(prev[dayKey]||{})};
-      const defaultCount = plan[dayKey]?.[exIdx]?.sets || 4;
-      const current = day[exIdx] || Array.from({length:defaultCount}, ()=>({weight:"",reps:"",rpe:""}));
+      const ex = plan[dayKey]?.[exIdx];
+      const defaultCount = ex?.sets || 4;
+      const defaultW = ex?.weight > 0 ? String(ex.weight) : "";
+      const defaultR = ex?.reps   > 0 ? String(ex.reps)   : "";
+      const defaultSets = Array.from({length:defaultCount}, ()=>({weight:defaultW, reps:defaultR, rpe:"", isDefault:true}));
+      const current = day[exIdx] || defaultSets;
       if (current.length <= 1) return prev;
       day[exIdx] = current.slice(0, -1);
       return {...prev, [dayKey]:day};
