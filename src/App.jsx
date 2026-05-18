@@ -508,7 +508,7 @@ function buildPlan(rm, cy, accessories = {}, useMil = true, useChin = true) {
       const ex = EXERCISE_CATALOG.find(e => e.name === n);
       return (ex && ex.ref === ref) ? sum + ex.sets : sum;
     }, 0);
-    return Math.max(1, base - Math.floor(accTotal / 3));
+    return Math.max(3, base - Math.floor(accTotal / 3));
   };
 
   const chinWeight = isMax
