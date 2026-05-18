@@ -2342,6 +2342,7 @@ export default function App() {
     estW_squat:"",estR_squat:"",estW_mil:"",estR_mil:"",estW_chin:"",estR_chin:""});
   const [sessionInputs,setSessionInputs] = useState({});
   const [expandDay,setExpandDay] = useState(null);
+  const [rpeGuideOpen,setRpeGuideOpen] = useState(false);
   const [expandLog,setExpandLog] = useState(null);
   const [progressLift,setProgressLift] = useState("bench");
   const [logTab,setLogTab]   = useState("calendar");
@@ -3132,6 +3133,40 @@ export default function App() {
                     <span style={{fontSize:10,color:C.textMid}}>{cy.repLabel}</span>
                   </div>
                 )}
+
+                {/* RPEガイド（折りたたみ） */}
+                <div style={{background:C.surface,borderRadius:10,border:C.bFaint,marginBottom:10,overflow:"hidden"}}>
+                  <button
+                    onClick={()=>setRpeGuideOpen(v=>!v)}
+                    style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"9px 12px",background:"transparent",border:"none",cursor:"pointer",gap:8}}
+                  >
+                    <span style={{fontSize:11,fontWeight:800,color:C.textMid,letterSpacing:0.5}}>{T.plan.rpeGuideTitle}</span>
+                    <span style={{fontSize:10,color:C.textDim,transition:"transform 0.2s",display:"inline-block",transform:rpeGuideOpen?"rotate(180deg)":"rotate(0deg)"}}>▼</span>
+                  </button>
+                  {rpeGuideOpen&&(
+                    <div style={{padding:"0 12px 12px"}}>
+                      <p style={{fontSize:11,color:C.textSub,margin:"0 0 10px",lineHeight:1.6}}>{T.plan.rpeGuideDesc}</p>
+                      {T.plan.rpeGuideRows.map(({val,label,sub})=>{
+                        const barColor=val<=7?"#22c55e":val<=8?"#f59e0b":val<=9?"#e07b39":"#e63946";
+                        const filled=val-5;
+                        return (
+                          <div key={val} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                            <div style={{width:22,fontFamily:"'Bebas Neue',sans-serif",fontSize:15,color:barColor,textAlign:"center",flexShrink:0}}>{val}</div>
+                            <div style={{display:"flex",gap:2,flexShrink:0}}>
+                              {Array.from({length:5},(_,i)=>(
+                                <div key={i} style={{width:8,height:8,borderRadius:2,background:i<filled?barColor:C.borderSub}}/>
+                              ))}
+                            </div>
+                            <div style={{flex:1,minWidth:0}}>
+                              <span style={{fontSize:11,fontWeight:700,color:C.text}}>{label}</span>
+                              <span style={{fontSize:10,color:C.textDim,marginLeft:6}}>{sub}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
                 {/* 12週プログレスバー */}
                 <div style={{background:C.surface,borderRadius:10,padding:"8px 12px",marginBottom:10,border:C.bFaint}}>
