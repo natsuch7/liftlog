@@ -1587,7 +1587,7 @@ const RPE_OPTIONS       = [6,7,8,9,10];                            // RPE 6〜10
 // ─── SET INPUT ROW ────────────────────────────────────────
 // タイマーはRPE入力後に起動
 function SetInputRow({ setIdx, isWarmup, plannedWeight, plannedReps, value, onChange, accent, onRpeComplete, wRef, rRef, rpeRef, onAdvance, weightOptions, C }) {
-  const prevHadRpe = useRef(false);
+  const prevHadRpe = useRef(!!value.rpe);
   // デフォルト値（自動入力）かつRPE未入力 → まだ実施していない状態
   const isDefault  = value.isDefault && !value.rpe;
   const isComplete = !!(value.weight && value.reps);
