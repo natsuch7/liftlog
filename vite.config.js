@@ -51,6 +51,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,ico,png,svg,woff,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/blog/],
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
       },
     }),
     sitemap({
