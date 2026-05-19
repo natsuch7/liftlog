@@ -588,7 +588,7 @@ function BodyWeightSection({ weights, onSave, C }) {
 
   const iStyle = {
     flex:1, minWidth:0, background:C.surface2, border:C.bSub, borderRadius:10,
-    color:"#f0f0f0", outline:"none", fontWeight:700, padding:"11px 14px",
+    color:C.text, outline:"none", fontWeight:700, padding:"11px 14px",
     fontSize:20, textAlign:"center", boxSizing:"border-box",
   };
 
@@ -641,7 +641,7 @@ function BodyWeightSection({ weights, onSave, C }) {
             )}
             <div style={{flex:1,background:C.surface,borderRadius:10,padding:"10px 12px",border:C.b,minWidth:80}}>
               <div style={{fontSize:9,color:C.textDim,letterSpacing:1,marginBottom:4}}>{T.bodyWeight.logDays}</div>
-              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#f0f0f0",lineHeight:1}}>{weights.length}<span style={{fontSize:12}}>{T.bodyWeight.daysUnit}</span></div>
+              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:C.text,lineHeight:1}}>{weights.length}<span style={{fontSize:12}}>{T.bodyWeight.daysUnit}</span></div>
             </div>
           </div>
         )}
@@ -1244,7 +1244,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
         {/* タイトル */}
         <div style={{textAlign:"center",marginBottom:18}}>
           <div style={{fontSize:36,lineHeight:1,marginBottom:6}}>🎉</div>
-          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:34,letterSpacing:3,color:"#f0f0f0",lineHeight:1}}>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:34,letterSpacing:3,color:C.text,lineHeight:1}}>
             {T.cycle.title}
           </div>
           <div style={{fontSize:12,color:C.textMid,marginTop:6,fontWeight:600}}>
@@ -1351,13 +1351,13 @@ function SessionCompleteModal({ data, onShare, onClose }) {
           <div style={{display:"flex",gap:10}}>
             <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
               <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>VOLUME</div>
-              <div style={{fontSize:20,fontWeight:800,color:"#f0f0f0"}}>
+              <div style={{fontSize:20,fontWeight:800,color:C.text}}>
                 {totalVolume.toLocaleString()}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>kg</span>
               </div>
             </div>
             <div style={{flex:1,background:C.surface,borderRadius:12,padding:"12px 14px",border:C.b}}>
               <div style={{fontSize:9,color:C.textDim,letterSpacing:2,fontWeight:700,marginBottom:4}}>SETS</div>
-              <div style={{fontSize:20,fontWeight:800,color:"#f0f0f0"}}>
+              <div style={{fontSize:20,fontWeight:800,color:C.text}}>
                 {totalSets}<span style={{fontSize:12,color:C.textSub,marginLeft:3}}>sets</span>
               </div>
             </div>
@@ -1403,7 +1403,7 @@ function IOSInstallBanner({ onDismiss }) {
       <div style={{display:"flex", alignItems:"flex-start", gap:12}}>
         <div style={{fontSize:22, lineHeight:1, flexShrink:0, marginTop:1}}>📲</div>
         <div style={{flex:1, minWidth:0}}>
-          <div style={{fontWeight:800, fontSize:13, color:"#f0f0f0", marginBottom:5}}>
+          <div style={{fontWeight:800, fontSize:13, color:C.text, marginBottom:5}}>
             {T.install.title}
           </div>
           <div style={{fontSize:11, color:C.textMid, lineHeight:1.7}}>
