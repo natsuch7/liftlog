@@ -1775,7 +1775,7 @@ function translatePurpose(purpose, name, lang) {
   return purpose;
 }
 
-function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, warmupCount=3, C }) {
+function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
   const T = useT();
   const lang = useContext(LangCtx);
   const exDisplayName = lang === 'en' ? (EXERCISE_EN[ex.name] ?? ex.name) : ex.name;
@@ -1785,9 +1785,11 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
   const wOpts      = isMachine ? WEIGHT_OPTIONS_MC : (isDumbbell ? WEIGHT_OPTIONS_DB : WEIGHT_OPTIONS);
   const effectiveWeight = (deloadWeight&&ex.weight>0) ? deloadWeight : ex.weight;
   const adjusted = !!(deloadWeight&&ex.weight>0);
+  const maxWuCount = isMain ? (effectiveWeight > 20 ? (isMaxWeek ? 5 : 3) : 0) : 2;
+  const [wuCount, setWuCount] = useState(maxWuCount);
   const warmups  = isMain
-    ? (isMaxWeek ? buildMaxWarmups(effectiveWeight, warmupCount) : buildWarmups(effectiveWeight, warmupCount))
-    : buildAccessoryWarmups(effectiveWeight, isDumbbell ? 2 : 2.5, Math.min(warmupCount, 2));
+    ? (isMaxWeek ? buildMaxWarmups(effectiveWeight, wuCount) : buildWarmups(effectiveWeight, wuCount))
+    : buildAccessoryWarmups(effectiveWeight, isDumbbell ? 2 : 2.5, wuCount);
   const defaultW = ex.weight>0 ? String(ex.weight) : "";
   const defaultR = ex.reps>0  ? String(ex.reps)   : "";
   const sets     = setInputs[exIdx] || Array.from({length:ex.sets},()=>({weight:defaultW,reps:defaultR,rpe:"",isDefault:true}));
@@ -1849,31 +1851,46 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
       {/* Body */}
       <div style={{padding:"10px 12px 10px",background:C.surface2}}>
         {/* Warmup */}
-        {warmups.length>0&&(
+        {maxWuCount>0&&(
           <div style={{marginBottom:10}}>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:wuCount>0?6:0}}>
               <Flame size={10} color="#e07b39"/>
               <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>{T.exercise.warmUp}</span>
+              <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5}}>
+                <button onClick={()=>setWuCount(c=>Math.max(0,c-1))}
+                  style={{width:22,height:22,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,
+                    color:wuCount===0?C.textFaint:C.textMid,fontSize:14,lineHeight:1,cursor:wuCount===0?"default":"pointer",
+                    display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>−</button>
+                <span style={{fontSize:10,color:C.textMid,fontWeight:700,minWidth:12,textAlign:"center"}}>{wuCount}</span>
+                <button onClick={()=>setWuCount(c=>Math.min(maxWuCount,c+1))}
+                  style={{width:22,height:22,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,
+                    color:wuCount===maxWuCount?C.textFaint:C.textMid,fontSize:14,lineHeight:1,cursor:wuCount===maxWuCount?"default":"pointer",
+                    display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
+              </div>
             </div>
-            <div style={{display:"flex",marginBottom:4,paddingLeft:35,gap:5}}>
-              <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.weightCol}</div>
-              <div style={{width:20}}/>
-              <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.repsCol}</div>
-            </div>
-            {warmups.map((wu,wi)=>{
-              const wuInputs=setInputs[`wu_${exIdx}`]||{};
-              const wuVal=wuInputs[wi]||{weight:wu.weight>0?String(wu.weight):"",reps:String(wu.reps),label:wu.label,isDefault:wu.weight>0};
-              return (
-                <SetInputRow key={wi} setIdx={wi} isWarmup={true}
-                  plannedWeight={wu.weight||null} plannedReps={wu.reps}
-                  value={{...wuVal,label:wu.label}}
-                  onChange={val=>onSetChange(`wu_${exIdx}`,wi,val)}
-                  accent={accent}
-                  weightOptions={wOpts}
-                  C={C}/>
-              );
-            })}
-            <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
+            {wuCount>0&&(
+              <>
+                <div style={{display:"flex",marginBottom:4,paddingLeft:35,gap:5}}>
+                  <div style={{flex:3,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.weightCol}</div>
+                  <div style={{width:20}}/>
+                  <div style={{flex:2,fontSize:8,color:C.textFaint,textAlign:"center"}}>{T.exercise.repsCol}</div>
+                </div>
+                {warmups.map((wu,wi)=>{
+                  const wuInputs=setInputs[`wu_${exIdx}`]||{};
+                  const wuVal=wuInputs[wi]||{weight:wu.weight>0?String(wu.weight):"",reps:String(wu.reps),label:wu.label,isDefault:wu.weight>0};
+                  return (
+                    <SetInputRow key={wi} setIdx={wi} isWarmup={true}
+                      plannedWeight={wu.weight||null} plannedReps={wu.reps}
+                      value={{...wuVal,label:wu.label}}
+                      onChange={val=>onSetChange(`wu_${exIdx}`,wi,val)}
+                      accent={accent}
+                      weightOptions={wOpts}
+                      C={C}/>
+                  );
+                })}
+                <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
+              </>
+            )}
           </div>
         )}
 
@@ -2366,9 +2383,8 @@ export default function App() {
   const [showCycleModal,setShowCycleModal] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
-  const [theme, setTheme]           = useLocalStorage("liftlog_theme", "light");
-  const [fontSize, setFontSize]     = useLocalStorage("liftlog_font_size", "medium");
-  const [warmupCount, setWarmupCount] = useLocalStorage("liftlog_warmup_count", 3);
+  const [theme, setTheme]       = useLocalStorage("liftlog_theme", "light");
+  const [fontSize, setFontSize] = useLocalStorage("liftlog_font_size", "medium");
   // Persist the theme default so standalone blog pages can read it
   if (!localStorage.getItem("liftlog_theme")) {
     try { localStorage.setItem("liftlog_theme", JSON.stringify("light")); } catch {}
@@ -2973,25 +2989,6 @@ export default function App() {
                     <div style={{position:"absolute",top:3,left:useChin?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
                   </div>
                 </div>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12,paddingTop:12,borderTop:`1px solid ${C.borderFaint}`}}>
-                  <div>
-                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.warmupSets}</div>
-                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.setup.warmupSetsSub}</div>
-                  </div>
-                  <div style={{display:"flex",gap:6}}>
-                    {[{id:0,label:T.setup.warmupNone},{id:1,label:"1"},{id:2,label:"2"},{id:3,label:"3"}].map(o=>(
-                      <button key={o.id} onClick={()=>setWarmupCount(o.id)}
-                        style={{
-                          padding:"7px 12px",borderRadius:10,border:"none",cursor:"pointer",
-                          background:warmupCount===o.id?"#e63946":C.surface2,
-                          color:warmupCount===o.id?"#fff":C.textMid,
-                          fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
-                        }}>
-                        {o.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
               <div style={{background:(!useMil&&!useChin)?C.legB.dim:C.surface2,borderRadius:10,padding:"10px 14px",border:`1px solid ${(!useMil&&!useChin)?C.legB.border:C.borderFaint}`,fontSize:11,color:(!useMil&&!useChin)?"#22c55e":C.textFaint,fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>
                 {(!useMil&&!useChin) ? T.setup.big3Mode : (useMil&&useChin) ? T.setup.big5Mode : T.setup.customMode}
@@ -3377,7 +3374,6 @@ export default function App() {
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={deloadW}
                                 isMaxWeek={!!cy.isMaxWeek}
-                                warmupCount={warmupCount}
                                 C={C}/>
                             );
                           })}
@@ -3405,7 +3401,6 @@ export default function App() {
                                 accent={dm.c.accent}
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={null}
-                                warmupCount={warmupCount}
                                 C={C}/>
                             );
                           })}
