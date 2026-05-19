@@ -57,10 +57,10 @@ const LIGHT = {
   bFaint:      "1px solid #eeeeee",
   bCard:       "1px solid #e5e5e5",
   text:        "#111111",
-  textSub:     "#888888",
+  textSub:     "#666666",
   textMid:     "#555555",
-  textDim:     "#aaaaaa",
-  textFaint:   "#c0c0c0",
+  textDim:     "#767676",
+  textFaint:   "#999999",
   red:         "#e63946",
   redDim:      "#fff0f1",
   ppA:  { accent:"#e07b39", dim:"#fff4ee", border:"#ffd9b8" },
@@ -71,6 +71,8 @@ const LIGHT = {
 };
 
 const C = DARK;
+
+const FONT_SCALE = { small: 0.88, medium: 1, large: 1.14 };
 
 const DAY_META = [
   { key:"ppA",  label:"ベンチプレス",          sub:"Bench + Row",         c:C.ppA  },
@@ -2358,7 +2360,8 @@ export default function App() {
   const [showCycleModal,setShowCycleModal] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
-  const [theme, setTheme] = useLocalStorage("liftlog_theme", "light");
+  const [theme, setTheme]       = useLocalStorage("liftlog_theme", "light");
+  const [fontSize, setFontSize] = useLocalStorage("liftlog_font_size", "medium");
   // Persist the theme default so standalone blog pages can read it
   if (!localStorage.getItem("liftlog_theme")) {
     try { localStorage.setItem("liftlog_theme", JSON.stringify("light")); } catch {}
@@ -2762,7 +2765,7 @@ export default function App() {
 
   return (
     <LangCtx.Provider value={lang}>
-    <div style={{fontFamily:"system-ui,-apple-system,sans-serif",background:C.bg,minHeight:"100vh",width:"100%",maxWidth:480,margin:"0 auto",color:C.text}}>
+    <div style={{fontFamily:"system-ui,-apple-system,sans-serif",background:C.bg,minHeight:"100vh",width:"100%",maxWidth:480,margin:"0 auto",color:C.text,zoom:FONT_SCALE[fontSize]}}>
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"/>
 
       {toast&&(
@@ -2864,6 +2867,27 @@ export default function App() {
                           fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
                         }}>
                         {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12,paddingTop:12,borderTop:`1px solid ${C.borderFaint}`}}>
+                  <div>
+                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.fontSize}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>
+                      {fontSize==="small"?T.setup.smallSize:fontSize==="large"?T.setup.largeSize:T.setup.mediumSize}
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:6}}>
+                    {[{id:"small",label:"小"},{id:"medium",label:"中"},{id:"large",label:"大"}].map(f=>(
+                      <button key={f.id} onClick={()=>setFontSize(f.id)}
+                        style={{
+                          padding:"7px 14px",borderRadius:10,border:"none",cursor:"pointer",
+                          background:fontSize===f.id?"#e63946":C.surface2,
+                          color:fontSize===f.id?"#fff":C.textMid,
+                          fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
+                        }}>
+                        {f.label}
                       </button>
                     ))}
                   </div>
