@@ -205,41 +205,47 @@ const calc1RM = (w,r) => (!w||!r)?0 : r===1?w : Math.round(w*(1+r/30));
 const snap    = (v,s=2.5) => Math.round(v/s)*s;
 const fmtPct  = v => `${Math.round(v*100)}%`;
 
-function buildWarmups(mainWeight) {
-  if (!mainWeight || mainWeight <= 20) return [];
+function buildWarmups(mainWeight, count=3) {
+  if (!mainWeight || mainWeight <= 20 || count === 0) return [];
   const w = (r) => Math.max(20, snap(mainWeight*r));
-  return [
-    { weight:w(0.40), reps:8, label:"W1" },
-    { weight:w(0.60), reps:5, label:"W2" },
-    { weight:w(0.80), reps:3, label:"W3" },
+  const all = [
+    { weight:w(0.40), reps:8 },
+    { weight:w(0.60), reps:5 },
+    { weight:w(0.80), reps:3 },
   ];
+  // 少ない場合は作業重量に近い（重い）セットを優先して残す
+  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
-function buildMaxWarmups(maxWeight) {
-  if (!maxWeight || maxWeight <= 20) return [];
+function buildMaxWarmups(maxWeight, count=3) {
+  if (!maxWeight || maxWeight <= 20 || count === 0) return [];
   const w = (r) => Math.max(20, snap(maxWeight*r));
-  return [
-    { weight:w(0.40), reps:8, label:"W1" },
-    { weight:w(0.60), reps:5, label:"W2" },
-    { weight:w(0.75), reps:3, label:"W3" },
-    { weight:w(0.87), reps:1, label:"W4" },
-    { weight:w(0.93), reps:1, label:"W5" },
+  const all = [
+    { weight:w(0.40), reps:8 },
+    { weight:w(0.60), reps:5 },
+    { weight:w(0.75), reps:3 },
+    { weight:w(0.87), reps:1 },
+    { weight:w(0.93), reps:1 },
   ];
+  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
-// 補助種目用ウォームアップ（2セット）
-function buildAccessoryWarmups(weight, snapStep=2.5) {
+// 補助種目用ウォームアップ
+function buildAccessoryWarmups(weight, snapStep=2.5, count=2) {
+  if (count === 0) return [];
   if (weight > 0) {
-    return [
-      { weight:snap(weight*0.50, snapStep), reps:10, label:"W1" },
-      { weight:snap(weight*0.75, snapStep), reps:5,  label:"W2" },
+    const all = [
+      { weight:snap(weight*0.50, snapStep), reps:10 },
+      { weight:snap(weight*0.75, snapStep), reps:5  },
     ];
+    return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
   }
-  // マシン・自重：空欄で2セット表示（任意入力）
-  return [
-    { weight:0, reps:10, label:"W1" },
-    { weight:0, reps:5,  label:"W2" },
+  // マシン・自重：空欄で表示（任意入力）
+  const all = [
+    { weight:0, reps:10 },
+    { weight:0, reps:5  },
   ];
+  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
 // ─── PERIODIZATION (12週ブロックピリオダイゼーション) ────────
@@ -1769,7 +1775,7 @@ function translatePurpose(purpose, name, lang) {
   return purpose;
 }
 
-function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
+function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, warmupCount=3, C }) {
   const T = useT();
   const lang = useContext(LangCtx);
   const exDisplayName = lang === 'en' ? (EXERCISE_EN[ex.name] ?? ex.name) : ex.name;
@@ -1780,8 +1786,8 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
   const effectiveWeight = (deloadWeight&&ex.weight>0) ? deloadWeight : ex.weight;
   const adjusted = !!(deloadWeight&&ex.weight>0);
   const warmups  = isMain
-    ? (isMaxWeek ? buildMaxWarmups(effectiveWeight) : buildWarmups(effectiveWeight))
-    : buildAccessoryWarmups(effectiveWeight, isDumbbell ? 2 : 2.5);
+    ? (isMaxWeek ? buildMaxWarmups(effectiveWeight, warmupCount) : buildWarmups(effectiveWeight, warmupCount))
+    : buildAccessoryWarmups(effectiveWeight, isDumbbell ? 2 : 2.5, Math.min(warmupCount, 2));
   const defaultW = ex.weight>0 ? String(ex.weight) : "";
   const defaultR = ex.reps>0  ? String(ex.reps)   : "";
   const sets     = setInputs[exIdx] || Array.from({length:ex.sets},()=>({weight:defaultW,reps:defaultR,rpe:"",isDefault:true}));
@@ -2360,8 +2366,9 @@ export default function App() {
   const [showCycleModal,setShowCycleModal] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [sessionCompleteData, setSessionCompleteData] = useState(null);
-  const [theme, setTheme]       = useLocalStorage("liftlog_theme", "light");
-  const [fontSize, setFontSize] = useLocalStorage("liftlog_font_size", "medium");
+  const [theme, setTheme]           = useLocalStorage("liftlog_theme", "light");
+  const [fontSize, setFontSize]     = useLocalStorage("liftlog_font_size", "medium");
+  const [warmupCount, setWarmupCount] = useLocalStorage("liftlog_warmup_count", 3);
   // Persist the theme default so standalone blog pages can read it
   if (!localStorage.getItem("liftlog_theme")) {
     try { localStorage.setItem("liftlog_theme", JSON.stringify("light")); } catch {}
@@ -2966,6 +2973,25 @@ export default function App() {
                     <div style={{position:"absolute",top:3,left:useChin?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
                   </div>
                 </div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12,paddingTop:12,borderTop:`1px solid ${C.borderFaint}`}}>
+                  <div>
+                    <div style={{fontWeight:800,fontSize:13}}>{T.setup.warmupSets}</div>
+                    <div style={{fontSize:10,color:C.textDim,marginTop:2}}>{T.setup.warmupSetsSub}</div>
+                  </div>
+                  <div style={{display:"flex",gap:6}}>
+                    {[{id:0,label:T.setup.warmupNone},{id:1,label:"1"},{id:2,label:"2"},{id:3,label:"3"}].map(o=>(
+                      <button key={o.id} onClick={()=>setWarmupCount(o.id)}
+                        style={{
+                          padding:"7px 12px",borderRadius:10,border:"none",cursor:"pointer",
+                          background:warmupCount===o.id?"#e63946":C.surface2,
+                          color:warmupCount===o.id?"#fff":C.textMid,
+                          fontSize:11,fontWeight:800,letterSpacing:0.5,transition:"all 0.15s",
+                        }}>
+                        {o.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
               <div style={{background:(!useMil&&!useChin)?C.legB.dim:C.surface2,borderRadius:10,padding:"10px 14px",border:`1px solid ${(!useMil&&!useChin)?C.legB.border:C.borderFaint}`,fontSize:11,color:(!useMil&&!useChin)?"#22c55e":C.textFaint,fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>
                 {(!useMil&&!useChin) ? T.setup.big3Mode : (useMil&&useChin) ? T.setup.big5Mode : T.setup.customMode}
@@ -3351,6 +3377,7 @@ export default function App() {
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={deloadW}
                                 isMaxWeek={!!cy.isMaxWeek}
+                                warmupCount={warmupCount}
                                 C={C}/>
                             );
                           })}
@@ -3378,6 +3405,7 @@ export default function App() {
                                 accent={dm.c.accent}
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={null}
+                                warmupCount={warmupCount}
                                 C={C}/>
                             );
                           })}
