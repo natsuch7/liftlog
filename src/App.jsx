@@ -208,44 +208,49 @@ const fmtPct  = v => `${Math.round(v*100)}%`;
 function buildWarmups(mainWeight, count=3) {
   if (!mainWeight || mainWeight <= 20 || count === 0) return [];
   const w = (r) => Math.max(20, snap(mainWeight*r));
-  const all = [
+  const base = [
     { weight:w(0.40), reps:8 },
     { weight:w(0.60), reps:5 },
     { weight:w(0.80), reps:3 },
   ];
-  // 少ない場合は作業重量に近い（重い）セットを優先して残す
-  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
+  const sets = count <= base.length
+    ? base.slice(base.length - count)
+    : [...base, ...Array.from({length:count-base.length}, ()=>({...base[base.length-1]}))];
+  return sets.map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
 function buildMaxWarmups(maxWeight, count=3) {
   if (!maxWeight || maxWeight <= 20 || count === 0) return [];
   const w = (r) => Math.max(20, snap(maxWeight*r));
-  const all = [
+  const base = [
     { weight:w(0.40), reps:8 },
     { weight:w(0.60), reps:5 },
     { weight:w(0.75), reps:3 },
     { weight:w(0.87), reps:1 },
     { weight:w(0.93), reps:1 },
   ];
-  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
+  const sets = count <= base.length
+    ? base.slice(base.length - count)
+    : [...base, ...Array.from({length:count-base.length}, ()=>({...base[base.length-1]}))];
+  return sets.map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
 // 補助種目用ウォームアップ
 function buildAccessoryWarmups(weight, snapStep=2.5, count=2) {
   if (count === 0) return [];
-  if (weight > 0) {
-    const all = [
-      { weight:snap(weight*0.50, snapStep), reps:10 },
-      { weight:snap(weight*0.75, snapStep), reps:5  },
-    ];
-    return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
-  }
-  // マシン・自重：空欄で表示（任意入力）
-  const all = [
-    { weight:0, reps:10 },
-    { weight:0, reps:5  },
-  ];
-  return all.slice(Math.max(0, all.length - count)).map((s,i) => ({ ...s, label:`W${i+1}` }));
+  const base = weight > 0
+    ? [
+        { weight:snap(weight*0.50, snapStep), reps:10 },
+        { weight:snap(weight*0.75, snapStep), reps:5  },
+      ]
+    : [
+        { weight:0, reps:10 },
+        { weight:0, reps:5  },
+      ];
+  const sets = count <= base.length
+    ? base.slice(base.length - count)
+    : [...base, ...Array.from({length:count-base.length}, ()=>({...base[base.length-1]}))];
+  return sets.map((s,i) => ({ ...s, label:`W${i+1}` }));
 }
 
 // ─── PERIODIZATION (12週ブロックピリオダイゼーション) ────────
@@ -1775,7 +1780,7 @@ function translatePurpose(purpose, name, lang) {
   return purpose;
 }
 
-function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
+function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSet, onAddWarmupSet, onRemoveWarmupSet, accent, onStartTimer, prevSession, deloadWeight, isMaxWeek, C }) {
   const T = useT();
   const lang = useContext(LangCtx);
   const exDisplayName = lang === 'en' ? (EXERCISE_EN[ex.name] ?? ex.name) : ex.name;
@@ -1786,7 +1791,7 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
   const effectiveWeight = (deloadWeight&&ex.weight>0) ? deloadWeight : ex.weight;
   const adjusted = !!(deloadWeight&&ex.weight>0);
   const maxWuCount = isMain ? (effectiveWeight > 20 ? (isMaxWeek ? 5 : 3) : 0) : 2;
-  const [wuCount, setWuCount] = useState(maxWuCount);
+  const wuCount = setInputs[`wu_count_${exIdx}`] !== undefined ? setInputs[`wu_count_${exIdx}`] : maxWuCount;
   const warmups  = isMain
     ? (isMaxWeek ? buildMaxWarmups(effectiveWeight, wuCount) : buildWarmups(effectiveWeight, wuCount))
     : buildAccessoryWarmups(effectiveWeight, isDumbbell ? 2 : 2.5, wuCount);
@@ -1853,20 +1858,9 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
         {/* Warmup */}
         {maxWuCount>0&&(
           <div style={{marginBottom:10}}>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:wuCount>0?6:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:wuCount>0?6:2}}>
               <Flame size={10} color="#e07b39"/>
               <span style={{fontSize:9,color:C.textDim,letterSpacing:1,fontWeight:700}}>{T.exercise.warmUp}</span>
-              <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5}}>
-                <button onClick={()=>setWuCount(c=>Math.max(0,c-1))}
-                  style={{width:22,height:22,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,
-                    color:wuCount===0?C.textFaint:C.textMid,fontSize:14,lineHeight:1,cursor:wuCount===0?"default":"pointer",
-                    display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>−</button>
-                <span style={{fontSize:10,color:C.textMid,fontWeight:700,minWidth:12,textAlign:"center"}}>{wuCount}</span>
-                <button onClick={()=>setWuCount(c=>Math.min(maxWuCount,c+1))}
-                  style={{width:22,height:22,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,
-                    color:wuCount===maxWuCount?C.textFaint:C.textMid,fontSize:14,lineHeight:1,cursor:wuCount===maxWuCount?"default":"pointer",
-                    display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
-              </div>
             </div>
             {wuCount>0&&(
               <>
@@ -1888,9 +1882,40 @@ function ExerciseBlock({ ex, exIdx, setInputs, onSetChange, onAddSet, onRemoveSe
                       C={C}/>
                   );
                 })}
-                <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
               </>
             )}
+            <div style={{display:"flex",gap:6,marginTop:wuCount>0?6:2}}>
+              <button
+                onClick={()=>onAddWarmupSet(maxWuCount)}
+                style={{
+                  flex:1,padding:"6px 0",background:"transparent",
+                  border:`1px dashed ${C.borderDeep}`,borderRadius:8,
+                  color:C.textMid,fontSize:10,fontWeight:700,cursor:"pointer",
+                  display:"flex",alignItems:"center",justifyContent:"center",gap:4,
+                  transition:"border-color 0.15s,color 0.15s",
+                }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="#e07b39";e.currentTarget.style.color="#e07b39";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=C.borderDeep;e.currentTarget.style.color=C.textMid;}}
+              >
+                {T.exercise.addWarmup}
+              </button>
+              {wuCount>0&&(
+                <button
+                  onClick={()=>onRemoveWarmupSet(maxWuCount)}
+                  style={{
+                    padding:"6px 12px",background:"transparent",
+                    border:C.b,borderRadius:8,
+                    color:C.textDim,fontSize:10,fontWeight:700,cursor:"pointer",
+                    transition:"border-color 0.15s,color 0.15s",
+                  }}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor="#e63946";e.currentTarget.style.color="#e63946";}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.textDim;}}
+                >
+                  {T.exercise.removeSet}
+                </button>
+              )}
+            </div>
+            <div style={{borderTop:C.bCard,margin:"8px 0"}}/>
           </div>
         )}
 
@@ -2697,6 +2722,27 @@ export default function App() {
     });
   }
 
+  function handleAddWarmupSet(dayKey, exIdx, defaultCount) {
+    setSessionInputs(prev=>{
+      const day = {...(prev[dayKey]||{})};
+      const key = `wu_count_${exIdx}`;
+      const current = day[key] !== undefined ? day[key] : defaultCount;
+      day[key] = current + 1;
+      return {...prev, [dayKey]:day};
+    });
+  }
+
+  function handleRemoveWarmupSet(dayKey, exIdx, defaultCount) {
+    setSessionInputs(prev=>{
+      const day = {...(prev[dayKey]||{})};
+      const key = `wu_count_${exIdx}`;
+      const current = day[key] !== undefined ? day[key] : defaultCount;
+      if (current <= 0) return prev;
+      day[key] = current - 1;
+      return {...prev, [dayKey]:day};
+    });
+  }
+
   function handleSaveSession(dayKey) {
     const exList=plan[dayKey];
     const inputs=sessionInputs[dayKey]||{};
@@ -3370,6 +3416,8 @@ export default function App() {
                                 onSetChange={(ei,si,val)=>handleSetChange(dm.key,ei,si,val)}
                                 onAddSet={()=>handleAddSet(dm.key,absIdx)}
                                 onRemoveSet={()=>handleRemoveSet(dm.key,absIdx)}
+                                onAddWarmupSet={(def)=>handleAddWarmupSet(dm.key,absIdx,def)}
+                                onRemoveWarmupSet={(def)=>handleRemoveWarmupSet(dm.key,absIdx,def)}
                                 accent={isMax?C.ppC.accent:dm.c.accent}
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={deloadW}
@@ -3398,6 +3446,8 @@ export default function App() {
                                 onSetChange={(ei,si,val)=>handleSetChange(dm.key,ei,si,val)}
                                 onAddSet={()=>handleAddSet(dm.key,absIdx)}
                                 onRemoveSet={()=>handleRemoveSet(dm.key,absIdx)}
+                                onAddWarmupSet={(def)=>handleAddWarmupSet(dm.key,absIdx,def)}
+                                onRemoveWarmupSet={(def)=>handleRemoveWarmupSet(dm.key,absIdx,def)}
                                 accent={dm.c.accent}
                                 onStartTimer={startTimer}
                                 prevSession={prevSess} deloadWeight={null}
