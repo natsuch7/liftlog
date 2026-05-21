@@ -3312,11 +3312,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Weekly volume compact */}
-                {sessions.length>0&&(
-                  <WeeklyVolumeCompact sessions={sessions} onViewDetails={()=>setScreen("progress")} C={C}/>
-                )}
-
                 {/* Tapering week banner */}
                 {cy.isDeload&&(
                   <div style={{background:"linear-gradient(135deg,#1a1200,#2d2000)",borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #4a3800"}}>
