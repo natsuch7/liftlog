@@ -1321,7 +1321,7 @@ function CycleCompleteModal({ rm, cycleStartRm, sessions, onNewCycle, onContinue
 }
 
 // ─── SESSION COMPLETE MODAL ───────────────────────────────
-function SessionCompleteModal({ data, onShare, onClose }) {
+function SessionCompleteModal({ data, onShare, onClose, C }) {
   const T = useT();
   const { dayLabel, totalVolume, totalSets, rmUpdates } = data;
   const hasRmUpdate = rmUpdates.length > 0;
@@ -1346,11 +1346,11 @@ function SessionCompleteModal({ data, onShare, onClose }) {
             {hasRmUpdate ? "🔥" : "💪"}
           </div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,letterSpacing:3,
-            color:hasRmUpdate?"#e63946":"#f0f0f0",lineHeight:1}}>
+            color:hasRmUpdate?"#e63946":C.text,lineHeight:1}}>
             {hasRmUpdate ? T.sessionComplete.newPr : T.sessionComplete.wellDone}
           </div>
           <div style={{fontSize:16,marginTop:8,fontWeight:600,
-            color:hasRmUpdate?"#22c55e":"#666666"}}>
+            color:hasRmUpdate?"#22c55e":C.textMid}}>
             {hasRmUpdate
               ? `${firstUpdate.name} ${firstUpdate.oldRm}kg → ${firstUpdate.newRm}kg`
               : T.sessionComplete.goodWork}
@@ -1375,12 +1375,12 @@ function SessionCompleteModal({ data, onShare, onClose }) {
           </div>
         </div>
 
-        <div style={{height:1,background:"#222222",marginBottom:20}}/>
+        <div style={{height:1,background:C.border,marginBottom:20}}/>
 
         <button onClick={onShare}
           style={{
-            width:"100%",padding:"15px 0",background:C.headerBg,color:"#fff",
-            border:"1px solid #333333",borderRadius:12,fontSize:14,fontWeight:800,
+            width:"100%",padding:"15px 0",background:C.text,color:C.bg,
+            border:C.b,borderRadius:12,fontSize:14,fontWeight:800,
             cursor:"pointer",letterSpacing:0.5,marginBottom:10,
           }}>
           {T.shareX}
@@ -2868,6 +2868,7 @@ export default function App() {
           data={sessionCompleteData}
           onShare={()=>{handleShareSession(sessionCompleteData.session);}}
           onClose={()=>setSessionCompleteData(null)}
+          C={C}
         />
       )}
       {screen==="generating"&&(
