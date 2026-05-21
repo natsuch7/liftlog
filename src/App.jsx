@@ -2354,13 +2354,22 @@ function GeneratingScreen({ onComplete, C }) {
 const APP_AD_CLIENT = 'ca-pub-5626983282072406';
 const APP_AD_SLOT   = '5965671953';
 
+// TWA（Android）環境かどうかを判定する
+// AdSense はブラウザ専用のためTWA内では表示しない（ポリシー違反防止）
+function isTWA() {
+  return "getDigitalGoodsService" in window ||
+    /; wv\)/.test(navigator.userAgent);
+}
+
 function AppAdUnit({ C }) {
   const pushed = useRef(false);
   useEffect(() => {
+    if (isTWA()) return;
     if (pushed.current) return;
     pushed.current = true;
     try { ;(window.adsbygoogle = window.adsbygoogle || []).push({}); } catch {}
   }, []);
+  if (isTWA()) return null;
   return (
     <ins
       className="adsbygoogle"
@@ -2481,7 +2490,9 @@ export default function App() {
       try {
         const service = await window.getDigitalGoodsService("https://play.google.com/billing");
         const purchases = await service.listPurchases();
-        if (purchases.some(p => p.itemId === "liftlog_premium_monthly")) {
+        const p = purchases.find(p => p.itemId === "liftlog_premium_monthly");
+        if (p) {
+          try { await service.acknowledge(p.purchaseToken, "repeating"); } catch (_) {}
           setPremium(true);
         }
       } catch {}
@@ -2505,6 +2516,11 @@ export default function App() {
       if (!canPay) { showToast(T.premium.purchaseUnavail); return; }
       const response = await paymentRequest.show();
       await response.complete("success");
+      // 3日以内にacknowledgeしないとGoogle Playが自動返金するため必須
+      try {
+        const billingService = await window.getDigitalGoodsService("https://play.google.com/billing");
+        await billingService.acknowledge(response.details.purchaseToken, "repeating");
+      } catch (_) {}
       setPremium(true);
       setShowPremiumModal(false);
       showToast(T.premium.purchaseToast);
@@ -2524,7 +2540,10 @@ export default function App() {
       }
       const service = await window.getDigitalGoodsService("https://play.google.com/billing");
       const purchases = await service.listPurchases();
-      if (purchases.some(p => p.itemId === "liftlog_premium_monthly")) {
+      const premiumPurchase = purchases.find(p => p.itemId === "liftlog_premium_monthly");
+      if (premiumPurchase) {
+        // 未acknowledgeの購入を確認（自動返金防止）
+        try { await service.acknowledge(premiumPurchase.purchaseToken, "repeating"); } catch (_) {}
         setPremium(true);
         setShowPremiumModal(false);
         showToast(T.premium.restored);

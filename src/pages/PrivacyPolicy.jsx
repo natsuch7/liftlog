@@ -75,7 +75,7 @@ export default function PrivacyPolicy() {
           fontWeight: 900, fontSize: 22, margin: "0 0 6px",
           color: C.text, letterSpacing: 0.3,
         }}>プライバシーポリシー</h1>
-        <div style={{ fontSize: 11, color: C.textSub, marginBottom: 32 }}>最終更新日：2026年3月17日</div>
+        <div style={{ fontSize: 11, color: C.textSub, marginBottom: 32 }}>最終更新日：2026年5月20日</div>
 
         <div style={{
           background: C.surface, borderRadius: 14, padding: "20px",
@@ -109,18 +109,18 @@ export default function PrivacyPolicy() {
             をご確認ください。
           </Section>
 
-          <Section C={C} title="広告・Cookieについて">
-            当サービスでは、Google AdSenseによる広告を掲載しています。広告配信にあたり、Googleがお使いのデバイスにCookieを保存することがあります。これにより、ユーザーの興味に応じた広告が表示される場合があります。<br /><br />
-            Cookieを無効にする方法や、行動ターゲティング広告をオプトアウトする方法については、
-            <a
-              href="https://www.google.com/settings/ads"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: C.accent, textDecoration: "none" }}
-            >
-              Googleの広告設定
-            </a>
-            またはお使いのブラウザの設定をご確認ください。
+          <Section C={C} title="広告について">
+            当サービスでは、以下の広告サービスを使用しています。<br /><br />
+            <strong style={{ color: C.text }}>Webブラウザ版：</strong> Google AdSenseを使用しています。広告配信にあたり、GoogleがCookieを使用してユーザーの興味に応じた広告を表示する場合があります。オプトアウトは
+            <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none" }}>Googleの広告設定</a>
+            またはブラウザの設定からご変更ください。<br /><br />
+            <strong style={{ color: C.text }}>Androidアプリ版（Google Play）：</strong> Google AdMobを使用しています。AdMobは広告配信のためにデバイス識別子（広告ID）を使用する場合があります。広告IDの利用設定はAndroidの「設定 → プライバシー → 広告」からオプトアウトできます。AdMobのプライバシーポリシーは
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none" }}>こちら</a>
+            をご確認ください。
+          </Section>
+
+          <Section C={C} title="インアプリ購入について">
+            Androidアプリ版では、Google Playを通じてプレミアムプランへのサブスクリプション購入が可能です。購入・解約・返金はすべてGoogle Playの規約に従います。購入情報（購入トークン等）はGoogle Playによって管理され、当サービスの運営者がお支払い情報にアクセスすることはありません。
           </Section>
 
           <Section C={C} title="免責事項">
