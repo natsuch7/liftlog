@@ -3666,34 +3666,6 @@ export default function App() {
                     <MiniChart data={data} color={c.accent} C={C}/>
                   </div>
 
-                  {data.length>0&&(
-                    <div>
-                      <div style={{fontSize:9,color:C.textFaint,letterSpacing:2,fontWeight:700,marginBottom:8}}>SESSION HISTORY</div>
-                      {sessions.map(s=>{
-                        const rel=s.exercises.find(e=>e.rmKey===key&&e.sets.some(st=>st.weight>0));
-                        if(!rel) return null;
-                        const dm=DAY_META.find(d=>d.key===s.dayKey)||DAY_META[0];
-                        return (
-                          <div key={s.id} style={{background:C.surface,borderRadius:12,padding:"12px 14px",marginBottom:6,border:C.bFaint}}>
-                            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
-                              <div>
-                                <span style={{fontWeight:700,fontSize:12}}>{s.date}</span>
-                                <span style={{fontSize:10,color:C.textFaint,marginLeft:8}}>W{s.week} · {T.phases[s.phase]??s.phase}</span>
-                              </div>
-                              {rel.best1RM>0&&<div style={{fontSize:11,fontWeight:700,color:c.accent}}>1RM {rel.best1RM}kg</div>}
-                            </div>
-                            <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-                              {rel.sets.filter(st=>st.weight>0).map((st,si)=>(
-                                <div key={si} style={{fontSize:10,fontWeight:700,color:c.accent,background:c.dim,borderRadius:6,padding:"3px 9px",border:`1px solid ${c.border}`}}>
-                                  {st.weight}kg×{st.reps}{st.rpe>0?` R${st.rpe}`:""}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
                 </div>
               );
             })}
