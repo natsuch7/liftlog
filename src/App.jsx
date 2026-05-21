@@ -1557,34 +1557,66 @@ function WeightChart({ data, C }) {
     </div>
   );
   const vals = data.map(d => d.weight);
-  const minV = Math.min(...vals) - 1, maxV = Math.max(...vals) + 1;
-  const W = 280, H = 60, PAD = 5;
-  const pts = vals.map((v,i) => ({
-    x: (i/(vals.length-1))*W,
-    y: PAD + (H - PAD*2) - ((v-minV)/(maxV-minV||1))*(H - PAD*2),
-  }));
-  const path = pts.map((p,i) => `${i===0?"M":"L"} ${p.x},${p.y}`).join(" ");
-  const gradId = "gwt06b6d4";
+  const minV = Math.min(...vals) - 0.5;
+  const maxV = Math.max(...vals) + 0.5;
+  const W = 300, H = 80, PADY = 8, PADX = 4;
+  const toX = (i) => PADX + (i / (vals.length - 1)) * (W - PADX * 2);
+  const toY = (v) => PADY + (H - PADY * 2) - ((v - minV) / (maxV - minV || 1)) * (H - PADY * 2);
+  const pts = vals.map((v, i) => ({ x: toX(i), y: toY(v) }));
+  // スムーズ三次ベジェ（中点をコントロールポイントに使用）
+  const smoothPath = pts.map((pt, i) => {
+    if (i === 0) return `M ${pt.x},${pt.y}`;
+    const prev = pts[i - 1];
+    const cpx = (prev.x + pt.x) / 2;
+    return `C ${cpx},${prev.y} ${cpx},${pt.y} ${pt.x},${pt.y}`;
+  }).join(" ");
+  const last = pts[pts.length - 1];
+  const lastVal = vals[vals.length - 1];
+  const rawDiff = parseFloat((lastVal - vals[0]).toFixed(1));
+  const isUp = rawDiff > 0;
+  const todayStr = new Date().toLocaleDateString("ja-JP");
+  const isToday = data[data.length - 1].date === todayStr;
+  const firstDate = data[0].date.split("/").slice(1).join("/");
+  const endLabel = isToday ? "今日" : data[data.length - 1].date.split("/").slice(1).join("/");
+  const gradId = "wc-grad";
   return (
     <div>
       <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{display:"block"}}>
         <defs>
           <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%"   stopColor={COLOR} stopOpacity="0.3"/>
+            <stop offset="0%"   stopColor={COLOR} stopOpacity="0.25"/>
+            <stop offset="75%"  stopColor={COLOR} stopOpacity="0.06"/>
             <stop offset="100%" stopColor={COLOR} stopOpacity="0"/>
           </linearGradient>
         </defs>
-        <path d={`${path} L ${pts[pts.length-1].x},${H} L 0,${H} Z`} fill={`url(#${gradId})`}/>
-        <path d={path} fill="none" stroke={COLOR} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        {pts.map((p,i) => <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={C.bg} stroke={COLOR} strokeWidth="2"/>)}
-      </svg>
-      <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
-        {data.map((d,i) => (
-          <div key={i} style={{fontSize:9,color:C.textDim,textAlign:"center"}}>
-            <div style={{color:C.textSub}}>{d.weight}kg</div>
-            <div>{d.date.split("/").slice(1).join("/")}</div>
-          </div>
+        {/* グラデーション塗り */}
+        <path d={`${smoothPath} L ${last.x},${H} L ${pts[0].x},${H} Z`} fill={`url(#${gradId})`}/>
+        {/* スムーズ曲線 */}
+        <path d={smoothPath} fill="none" stroke={COLOR} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* 中間ドット（薄め） */}
+        {pts.slice(0, -1).map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="2" fill={COLOR} fillOpacity="0.45"/>
         ))}
+        {/* 最新点：ハロー + 塗りつぶし */}
+        <circle cx={last.x} cy={last.y} r="9" fill={COLOR} fillOpacity="0.12"/>
+        <circle cx={last.x} cy={last.y} r="4.5" fill={COLOR} stroke={C.card} strokeWidth="2.5"/>
+      </svg>
+      {/* フッター：開始日 / 最新体重+増減 / 終了日 */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8}}>
+        <span style={{fontSize:9,color:C.textFaint}}>{firstDate}</span>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          {rawDiff !== 0 && (
+            <span style={{fontSize:10,fontWeight:800,letterSpacing:0.3,color:isUp?"#f97316":"#22c55e"}}>
+              {isUp ? "▲" : "▼"}{Math.abs(rawDiff)}kg
+            </span>
+          )}
+          <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:COLOR,lineHeight:1}}>
+            {lastVal}<span style={{fontSize:11,fontWeight:700}}>kg</span>
+          </span>
+        </div>
+        <span style={{fontSize:9,fontWeight:isToday?700:400,color:isToday?COLOR:C.textFaint}}>
+          {endLabel}
+        </span>
       </div>
     </div>
   );
