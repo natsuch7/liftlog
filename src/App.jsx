@@ -1558,16 +1558,16 @@ function WeightChart({ data, C }) {
   );
   const vals = data.map(d => d.weight);
   const minV = Math.min(...vals) - 1, maxV = Math.max(...vals) + 1;
-  const W = 280, H = 60;
+  const W = 280, H = 60, PAD = 5;
   const pts = vals.map((v,i) => ({
     x: (i/(vals.length-1))*W,
-    y: H - ((v-minV)/(maxV-minV||1))*H,
+    y: PAD + (H - PAD*2) - ((v-minV)/(maxV-minV||1))*(H - PAD*2),
   }));
   const path = pts.map((p,i) => `${i===0?"M":"L"} ${p.x},${p.y}`).join(" ");
   const gradId = "gwt06b6d4";
   return (
     <div>
-      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{display:"block"}}>
         <defs>
           <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%"   stopColor={COLOR} stopOpacity="0.3"/>
