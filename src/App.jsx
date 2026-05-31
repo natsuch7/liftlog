@@ -2826,8 +2826,8 @@ export default function App() {
     trackCompleteSession({ weekNumber: week, completed: true });
     setSessionInputs(prev=>{const n={...prev};delete n[dayKey];return n;});
     setExpandDay(null);
-    // Android TWA: セッション保存後に広告をトリガー
-    triggerNativeAd();
+    // プレミアムユーザーには広告を表示しない
+    if (!premium) triggerNativeAd();
   }
 
   function triggerNativeAd() {
@@ -3347,41 +3347,41 @@ export default function App() {
 
                 {/* Tapering week banner */}
                 {cy.isDeload&&(
-                  <div style={{background:"linear-gradient(135deg,#1a1200,#2d2000)",borderRadius:14,padding:"14px 16px",marginBottom:14,border:"1px solid #4a3800"}}>
+                  <div style={{background:theme==="light"?"linear-gradient(135deg,#fffbeb,#fef3c7)":"linear-gradient(135deg,#1a1200,#2d2000)",borderRadius:14,padding:"14px 16px",marginBottom:14,border:`1px solid ${theme==="light"?"#d97706":"#4a3800"}`}}>
                     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
                       <span style={{fontSize:16}}>🔽</span>
                       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,letterSpacing:2,color:"#f59e0b"}}>{T.plan.tapering}</div>
                     </div>
-                    <div style={{fontSize:11,color:"#8a6f2a",lineHeight:1.7}}>{T.plan.taperingDesc}</div>
+                    <div style={{fontSize:11,color:theme==="light"?"#92400e":"#8a6f2a",lineHeight:1.7}}>{T.plan.taperingDesc}</div>
                   </div>
                 )}
 
                 {/* MAX week banner */}
                 {cy.isMaxWeek&&!cy.isRMTest&&(
-                  <div style={{background:"linear-gradient(135deg,#1a0a2e,#2d1060)",borderRadius:14,padding:"16px 18px",marginBottom:14,border:"1px solid #3d1a80"}}>
+                  <div style={{background:theme==="light"?"linear-gradient(135deg,#f5f3ff,#ede9fe)":"linear-gradient(135deg,#1a0a2e,#2d1060)",borderRadius:14,padding:"16px 18px",marginBottom:14,border:`1px solid ${theme==="light"?"#7c3aed":"#3d1a80"}`}}>
                     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                       <Award size={18} color="#8b5cf6"/>
                       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:2,color:"#8b5cf6"}}>MAX TESTING WEEK</div>
                     </div>
-                    <div style={{fontSize:11,color:"#6d4dc8",lineHeight:1.7}}>{T.plan.maxDesc}</div>
+                    <div style={{fontSize:11,color:theme==="light"?"#5b21b6":"#6d4dc8",lineHeight:1.7}}>{T.plan.maxDesc}</div>
                     <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
                       {["40%×8","60%×5","75%×3","87%×1","93%×1","105〜107.5%!"].map(s=>(
-                        <div key={s} style={{background:"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:"#6d4dc8",border:"1px solid #2d1060"}}>{s}</div>
+                        <div key={s} style={{background:theme==="light"?"#7c3aed11":"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:theme==="light"?"#5b21b6":"#6d4dc8",border:`1px solid ${theme==="light"?"#c4b5fd":"#2d1060"}`}}>{s}</div>
                       ))}
                     </div>
                   </div>
                 )}
                 {cy.isRMTest&&(
-                  <div style={{background:"linear-gradient(135deg,#061a1f,#0a2d35)",borderRadius:14,padding:"16px 18px",marginBottom:14,border:"1px solid #0e4a5a"}}>
+                  <div style={{background:theme==="light"?"linear-gradient(135deg,#ecfeff,#cffafe)":"linear-gradient(135deg,#061a1f,#0a2d35)",borderRadius:14,padding:"16px 18px",marginBottom:14,border:`1px solid ${theme==="light"?"#0891b2":"#0e4a5a"}`}}>
                     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                       <Award size={18} color="#06b6d4"/>
                       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18,letterSpacing:2,color:"#06b6d4"}}>RM ESTIMATION TEST</div>
                     </div>
-                    <div style={{fontSize:11,color:"#0891b2",lineHeight:1.7}} dangerouslySetInnerHTML={{__html:T.plan.rmTestDesc}}/>
-                    <div style={{marginTop:10,padding:"8px 12px",background:"#ffffff06",borderRadius:8,border:"1px solid #0e4a5a",fontSize:11,color:"#0891b2"}} dangerouslySetInnerHTML={{__html:T.plan.rmTestExample}}/>
+                    <div style={{fontSize:11,color:theme==="light"?"#155e75":"#0891b2",lineHeight:1.7}} dangerouslySetInnerHTML={{__html:T.plan.rmTestDesc}}/>
+                    <div style={{marginTop:10,padding:"8px 12px",background:theme==="light"?"#0891b211":"#ffffff06",borderRadius:8,border:`1px solid ${theme==="light"?"#a5f3fc":"#0e4a5a"}`,fontSize:11,color:theme==="light"?"#155e75":"#0891b2"}} dangerouslySetInnerHTML={{__html:T.plan.rmTestExample}}/>
                     <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
                       {["40%×8","60%×5","75%×3","87%×1","93%×1","90%×5rep!"].map(s=>(
-                        <div key={s} style={{background:"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:"#0891b2",border:"1px solid #0e4a5a"}}>{s}</div>
+                        <div key={s} style={{background:theme==="light"?"#0891b211":"#ffffff0a",borderRadius:6,padding:"4px 10px",fontSize:10,fontWeight:700,color:theme==="light"?"#155e75":"#0891b2",border:`1px solid ${theme==="light"?"#a5f3fc":"#0e4a5a"}`}}>{s}</div>
                       ))}
                     </div>
                   </div>
@@ -3410,13 +3410,13 @@ export default function App() {
                   const isMax=cy.isMaxWeek;
 
                   return (
-                    <div key={dm.key} style={{borderRadius:14,marginBottom:10,overflow:"hidden",border:`1px solid ${isMax?"#2d1a5a":C[dm.key].border}`,background:C.surface}}>
+                    <div key={dm.key} style={{borderRadius:14,marginBottom:10,overflow:"hidden",border:`1px solid ${isMax?(theme==="light"?"#c4b5fd":"#2d1a5a"):C[dm.key].border}`,background:C.surface}}>
                       {/* Card header */}
                       <div onClick={()=>{
                           if(!isOpen) trackStartSession({weekNumber:week,phase:cy.phase});
                           setExpandDay(isOpen?null:dm.key);
                         }}
-                        style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",cursor:"pointer",background:isMax?"#0d0818":C[dm.key].dim}}>
+                        style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",cursor:"pointer",background:isMax?(theme==="light"?"#f5f3ff":"#0d0818"):C[dm.key].dim}}>
                         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:10,color:isMax?C.ppC.accent:dm.c.accent,letterSpacing:1}}>DAY</div>
                           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:isMax?C.ppC.accent:dm.c.accent,lineHeight:1}}>{di+1}</div>
@@ -3444,7 +3444,7 @@ export default function App() {
                       {isOpen&&(
                         <div style={{padding:"14px 12px 16px",borderTop:C.bFaint,background:C.surface2}}>
                           {isMax?(
-                            <div style={{background:"#0d0818",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:11,color:"#6d4dc8",border:"1px solid #2d1060",lineHeight:1.6}}>
+                            <div style={{background:theme==="light"?"#f5f3ff":"#0d0818",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:11,color:theme==="light"?"#5b21b6":"#6d4dc8",border:`1px solid ${theme==="light"?"#c4b5fd":"#2d1060"}`,lineHeight:1.6}}>
                               {T.plan.maxHint}
                             </div>
                           ):(
